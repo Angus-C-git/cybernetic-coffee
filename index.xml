@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Cybernetic Coffee</title>
+    <link>https://angus-c-git.github.io/cybernetic-coffee/</link>
+    <description>Recent content on Cybernetic Coffee</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://angus-c-git.github.io/cybernetic-coffee/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Activity Feed</title>
+      <link>https://angus-c-git.github.io/cybernetic-coffee/feed/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://angus-c-git.github.io/cybernetic-coffee/feed/</guid>
+      <description>import { Octokit } from &#34;https://cdn.skypack.dev/@octokit/core&#34;; const octokit = new Octokit(); /* async function pullRepoUpdate(){ // TODO: Fix repo hardcode FLAG{omg_comments_in_prod} let response = await octokit.request(&#39;GET /networks/Angus-C-git/VERTO/events&#39;, { owner: &#39;Angus-C-git&#39;, repo: &#39;VERTO&#39; }) console.log(response); } */ function handle(dataObject){ if (dataObject.type === &#34;PushEvent&#34;){ // response.data[i] let eventDate = dataObject.created_at.slice(0, 16).replace(&#34;T&#34;, &#34; &#34;); let eventTitle = dataObject.repo.name; let eventBody = dataObject.payload.commits[0].message; /* console.log(eventDate); console.log(eventTitle); console.log(eventBody); */ let injectPoint = document.getElementById(&#34;feed&#34;); injectPoint.</description>
+    </item>
+    
+    <item>
+      <title>CDC Generator</title>
+      <link>https://angus-c-git.github.io/cybernetic-coffee/all-projects/cdc-generator/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://angus-c-git.github.io/cybernetic-coffee/all-projects/cdc-generator/</guid>
+      <description>Coming soon &amp;hellip;</description>
+    </item>
+    
+    <item>
+      <title>Cookie Forge</title>
+      <link>https://angus-c-git.github.io/cybernetic-coffee/all-projects/cookie-forge/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://angus-c-git.github.io/cybernetic-coffee/all-projects/cookie-forge/</guid>
+      <description>Coming soon &amp;hellip;</description>
+    </item>
+    
+    <item>
+      <title>Hello World</title>
+      <link>https://angus-c-git.github.io/cybernetic-coffee/blog/hello-world/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://angus-c-git.github.io/cybernetic-coffee/blog/hello-world/</guid>
+      <description>Computer Security Roadmap Introductions Computer security is no longer a sacred art practiced by a small number of insular nerds, but rather a global issue where large teams work together to improve the privacy and saftey of all &amp;hellip;
+Why Would I Read This? You have now read far enough to question why you are reading this blog article in your limited amount, of what I can only assume to be, spare time.</description>
+    </item>
+    
+    <item>
+      <title>Live Breach Timeline</title>
+      <link>https://angus-c-git.github.io/cybernetic-coffee/all-projects/livebreachtimeline/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://angus-c-git.github.io/cybernetic-coffee/all-projects/livebreachtimeline/</guid>
+      <description>      </description>
+    </item>
+    
+    <item>
+      <title>Need To Know Crypto</title>
+      <link>https://angus-c-git.github.io/cybernetic-coffee/all-projects/need-to-know-crypto/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://angus-c-git.github.io/cybernetic-coffee/all-projects/need-to-know-crypto/</guid>
+      <description>Coming soon &amp;hellip;</description>
+    </item>
+    
+    <item>
+      <title>OTP-Cracker</title>
+      <link>https://angus-c-git.github.io/cybernetic-coffee/all-projects/otp-cracker/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://angus-c-git.github.io/cybernetic-coffee/all-projects/otp-cracker/</guid>
+      <description>Coming soon &amp;hellip;</description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>https://angus-c-git.github.io/cybernetic-coffee/projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://angus-c-git.github.io/cybernetic-coffee/projects/</guid>
+      <description>import { Octokit } from &#34;https://cdn.skypack.dev/@octokit/core&#34;; const octokit = new Octokit(); const excludedRepos = [&#34;Angus-C-git&#34;, &#34;insurance-management-system&#34;, &#34;ipcalc&#34;, &#34;freeCodeCamp&#34;, &#34;first-contributions&#34;]; const specials = [&#34;LiveBreachTimeline&#34;]; let oddity = 2; function handle(responseObj){ if (excludedRepos.includes(responseObj.name)){ return } let flagDir = &#34;direction-r&#34;; if (oddity % 2 !== 0) { flagDir = &#34;direction-l&#34; } let projName = responseObj.name; let projDesc = responseObj.description; let projDate = responseObj.created_at.slice(0,7); let readmeLink = &#34;../all-projects/&#34; + responseObj.name.toLowerCase(); let timelineEndPoint = document.</description>
+    </item>
+    
+    <item>
+      <title>Verto</title>
+      <link>https://angus-c-git.github.io/cybernetic-coffee/all-projects/verto/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://angus-c-git.github.io/cybernetic-coffee/all-projects/verto/</guid>
+      <description>Coming soon &amp;hellip;</description>
+    </item>
+    
+  </channel>
+</rss>
