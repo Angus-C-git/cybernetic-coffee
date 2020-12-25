@@ -62,6 +62,6 @@ computer security and work up infinitely (as new techniques are developed) to me
 
 ```
 /**
-* Let me know what you think @ghostinthefibers on Twitter
+* Let me know what you think @ghostinthefiber on Twitter
 */
 ```
