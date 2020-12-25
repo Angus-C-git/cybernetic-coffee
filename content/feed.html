@@ -1,0 +1,72 @@
+---
+title: "Activity Feed"
+type: "nofmt"
+menu: "main"
+weight: 400
+keywords: "activity feed"
+---
+
+<ul id="feed" class="activity-timeline"></ul>
+
+<script type="module">
+    import { Octokit } from "https://cdn.skypack.dev/@octokit/core";
+    const octokit = new Octokit();
+    /*
+    async function pullRepoUpdate(){
+        // TODO: Fix repo hardcode FLAG{omg_comments_in_prod}
+        let response = await octokit.request('GET /networks/Angus-C-git/VERTO/events', {
+            owner: 'Angus-C-git',
+            repo: 'VERTO'
+        })
+
+        console.log(response);
+    }
+    */
+    
+    function handle(dataObject){
+        
+        if (dataObject.type === "PushEvent"){
+          // response.data[i]
+          let eventDate = dataObject.created_at.slice(0, 16).replace("T", " ");
+          let eventTitle = dataObject.repo.name;
+          let eventBody = dataObject.payload.commits[0].message;
+          /*
+          console.log(eventDate);
+          console.log(eventTitle);
+          console.log(eventBody);
+          */
+          let injectPoint = document.getElementById("feed");
+          injectPoint.innerHTML += "<li class='timeline-event'><label class='timeline-event-icon'></label>" +
+                                      "<div class='timeline-event-copy'>" +
+                                          "<p class='timeline-event-thumbnail'>" + eventDate + "</p>" +
+                                              "<h3>" + eventTitle + "</h3><br>" +
+                                                  "<p>" + eventBody + "</p>" +
+                                      "</div>" +
+                                      "</li>"
+        }
+    }
+
+    async function pullTweets(){
+
+        console.log("stub");
+
+        // for each -> handle
+    }
+
+    // Fetch recent activity from GitHub
+    // Date format: YYYY-MM-DDTHH:MM:SSZ
+    async function pullFeed(){
+        let response = await octokit.request('GET /users/{username}/events/public', {
+            username: 'Angus-C-git',
+            page: 1,
+            per_page: 30
+          })
+          
+        //console.log(response.data);  
+        response.data.forEach(handle);
+    }    
+    
+    pullFeed()
+    
+
+</script>

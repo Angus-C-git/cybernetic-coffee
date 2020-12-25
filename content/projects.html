@@ -1,0 +1,64 @@
+---
+title: "Projects"
+type: "nofmt"
+menu: "main"
+weight: 400
+keywords: "projects"
+---
+
+<link rel="stylesheet" src="static/css/main.css">
+
+<ul id="projTimeline" class="timeline">
+
+</ul>
+
+<script type="module">
+    import { Octokit } from "https://cdn.skypack.dev/@octokit/core";
+    const octokit = new Octokit();
+    
+    const excludedRepos = ["Angus-C-git", "insurance-management-system", "ipcalc", "freeCodeCamp", "first-contributions"];
+    const specials = ["LiveBreachTimeline"];
+    
+    let oddity = 2;
+
+    function handle(responseObj){
+
+        if (excludedRepos.includes(responseObj.name)){ return }
+
+        let flagDir = "direction-r";
+        if (oddity % 2 !== 0) { flagDir = "direction-l" }
+
+        let projName = responseObj.name;
+        let projDesc = responseObj.description;
+        let projDate = responseObj.created_at.slice(0,7);
+
+        let readmeLink = "../all-projects/" + responseObj.name.toLowerCase();
+
+        let timelineEndPoint = document.getElementById("projTimeline");
+
+        timelineEndPoint.innerHTML += "<li>" +
+                                        "<div class=" + flagDir + ">" +
+                                            "<div class='flag-wrapper'>" +
+                                                "<span class='hexa'></span>" +
+                                                "<span class='t_flag'><a href="+ readmeLink +">" + projName + "</a></span>" +
+                                                "<span class='time-wrapper'><span class='time'>" + projDate + "</span></span>" +
+                                                "</div>" +
+                                                "<div class='desc'>" + projDesc + "</div>" +
+                                            "</div>" +
+                                        "</li>";
+
+        oddity++;
+
+    }
+
+    async function pullRepos(){
+        let response = await octokit.request('GET /users/{username}/repos', {
+            username: 'Angus-C-git',
+            page: 1,
+            per_page: 30
+        })
+        console.log(response.data)
+        response.data.forEach(handle);
+    } 
+    pullRepos();
+</script>

@@ -1,0 +1,46 @@
+baseURL = "https://angus-c-git.github.io/cybernetic-coffee/"
+languageCode = "en-us"
+title = "Cybernetic Coffee"
+theme = "cybernetic-coffee"
+
+[params]
+    dateform        = "Jan 2, 2006"
+    dateformShort   = "Jan 2"
+    dateformNum     = "2006-01-02"
+    dateformNumTime = "2006-01-02 15:04"
+        
+defaultTheme = "dark"
+themeColor = "#252627"
+
+footerLeft = " "
+footerRight = "| Hacked together with &#10084; by <a href=\"https://github.com/Angus-C-git\">Angus C</a> |"
+
+
+  # Social icons
+  [[params.social]]
+    name = "twitter"
+    url  = "https://twitter.com/ghostinthefiber"
+
+  [[params.social]]
+    name = "github"
+    url  = "https://github.com/Angus-C-git"
+
+  [[params.social]]
+    name = "linkedin"
+    url  = "https://www.linkedin.com/"
+
+
+
+[languages]
+    [languages.en]
+        # copyright = " "
+    
+
+    [languages.en.params.logo]
+      logoText = "Cybernetic"
+      logoCursorColor = "#00ba68"
+
+[[menu.main]]
+    identifier = "blog"
+    name       = "Blog"
+    url        = "/blog"
