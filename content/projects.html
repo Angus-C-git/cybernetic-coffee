@@ -7,17 +7,18 @@ keywords: "projects"
 ---
 
 <hr />
+<br />
 
 <div class="project-timeline">
     <div class="row example-centered">
         <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
             <ul id="projects-timeline" class="timeline timeline-centered">
-                Loading ...
+                <i class="fas fa-spinner"></i> Loading ...
             </ul>
         </div>
     </div>
 </div>
-
+<br />
 
 <!-- -------------------------------------->
 
@@ -34,12 +35,9 @@ keywords: "projects"
             per_page: 30
         }).then(response => {
             let timeLine = document.getElementById("projects-timeline");
-            timeLine.innerText = '';
-            console.log(response.data)
+            timeLine.innerHTML = '';
             response.data.map(project => {
-                console.log(project.html_url);
                 if (!excludedRepos.includes(project.name))
-
                     timeLine.innerHTML += `{{< project-item
                                                 "${project.created_at.slice(0,7)}"
                                                 "${project.name}"
