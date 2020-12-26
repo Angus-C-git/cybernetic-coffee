@@ -2,16 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd83f7fd-c872-4297-8773-ba978981f4b5" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/themes/cybernetic-coffee/assets/scss/projects.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/themes/cybernetic-coffee/layouts/shortcodes/project-item.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/themes/cybernetic-coffee/layouts/shortcodes/project-timeline-period.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/themes/cybernetic-coffee/layouts/shortcodes/projects-timeline.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/themes/cybernetic-coffee/static/images/git-logo-tl.svg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/content/projects.html" beforeDir="false" afterPath="$PROJECT_DIR$/content/projects.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/_gen/assets/scss/cybernetic-coffee/scss/main.scss_de1a7f5f1c8c46959803c429bb697ff0.content" beforeDir="false" afterPath="$PROJECT_DIR$/resources/_gen/assets/scss/cybernetic-coffee/scss/main.scss_de1a7f5f1c8c46959803c429bb697ff0.content" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/_gen/assets/scss/cybernetic-coffee/scss/main.scss_de1a7f5f1c8c46959803c429bb697ff0.json" beforeDir="false" afterPath="$PROJECT_DIR$/resources/_gen/assets/scss/cybernetic-coffee/scss/main.scss_de1a7f5f1c8c46959803c429bb697ff0.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/cybernetic-coffee/assets/scss/main.scss" beforeDir="false" afterPath="$PROJECT_DIR$/themes/cybernetic-coffee/assets/scss/main.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/cybernetic-coffee/layouts/shortcodes/project-item.html" beforeDir="false" afterPath="$PROJECT_DIR$/themes/cybernetic-coffee/layouts/shortcodes/project-item.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,7 +57,7 @@
       <option name="presentableId" value="Default" />
       <updated>1608859757515</updated>
       <workItem from="1608859759214" duration="28126000" />
-      <workItem from="1608978205515" duration="3854000" />
+      <workItem from="1608978205515" duration="4124000" />
     </task>
     <servers />
   </component>
