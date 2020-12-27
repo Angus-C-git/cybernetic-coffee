@@ -3,6 +3,11 @@
   flex-grow: 0;
   color: $light-color-secondary;
 
+  a {
+    text-decoration: none;
+    color: #00BFA5;
+  }
+
   &__inner {
     display: flex;
     align-items: center;

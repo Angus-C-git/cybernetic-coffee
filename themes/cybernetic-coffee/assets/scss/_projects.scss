@@ -71,7 +71,7 @@ $primary-color-hover: scale-color($primary-color, $lightness: 32%);
 
 /*-- GENERAL STYLES
 ------------------------------*/
-.timeline {
+.project-timeline {
   line-height: 1.4em;
   list-style: none;
   margin: 0;
@@ -190,7 +190,7 @@ $primary-color-hover: scale-color($primary-color, $lightness: 32%);
 
 .timeline-split {
   @media (min-width: 768px) {
-    .timeline {
+    .activity-timeline {
       display: table;
     }
     .timeline-item {
