@@ -5,7 +5,9 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="author" content="">
-<meta name="description" content="import { Octokit } from &#34;https://cdn.skypack.dev/@octokit/core&#34;; const octokit = new Octokit(); /* async function pullRepoUpdate(){ // TODO: Fix repo hardcode FLAG{omg_comments_in_prod} let response = await octokit.request(&#39;GET /networks/Angus-C-git/VERTO/events&#39;, { owner: &#39;Angus-C-git&#39;, repo: &#39;VERTO&#39; }) console.log(response); } */ function handle(dataObject){ if (dataObject.type === &#34;PushEvent&#34;){ // response.data[i] let eventDate = dataObject.created_at.slice(0, 16).replace(&#34;T&#34;, &#34; &#34;); let eventTitle = dataObject.repo.name; let eventBody = dataObject.payload.commits[0].message; /* console.log(eventDate); console.log(eventTitle); console.log(eventBody); */ let injectPoint = document.getElementById(&#34;feed&#34;); injectPoint." />
+<meta name="description" content="  Loading ... import { Octokit } from &#34;https://cdn.skypack.dev/@octokit/core&#34;; const octokit = new Octokit(); // Fetch recent activity from GitHub (async function pullFeed(){ await octokit.request(&#39;GET /users/{username}/events/public&#39;, { username: &#39;Angus-C-git&#39;, page: 1, per_page: 30 }).then(response = { let feed = document.getElementById(&#34;feed&#34;); document.getElementById(&#39;loader&#39;).innerHTML = &#34; &#34;; response.data.map(event = { if (event.type === &#34;PushEvent&#34;) feed.innerHTML &#43;= `  ${event.created_at.slice(0, 10).concat(` `).concat(event.created_at.slice(11, 16))}
+ ${event.repo.name} ${event.payload.commits[0].message}
+  ` }); }); }());  " />
 <meta name="keywords" content="" />
 <meta name="robots" content="noodp" />
 <meta name="theme-color" content="#252627" />
@@ -25,7 +27,7 @@
 
 
 
-<link rel="stylesheet" href="/cybernetic-coffee/main.a4ab33247b5d6870ce5b51878dacae758431c39b08de2588681f045e2dec2d78.css">
+<link rel="stylesheet" href="/cybernetic-coffee/main.9eb1cbc180572eb0555b00994f9185ca3cd3c2c29ee3af65354d3e564d2fed87.css">
 
 
 
@@ -34,9 +36,11 @@
 
 
 <meta itemprop="name" content="Activity Feed">
-<meta itemprop="description" content="import { Octokit } from &#34;https://cdn.skypack.dev/@octokit/core&#34;; const octokit = new Octokit(); /* async function pullRepoUpdate(){ // TODO: Fix repo hardcode FLAG{omg_comments_in_prod} let response = await octokit.request(&#39;GET /networks/Angus-C-git/VERTO/events&#39;, { owner: &#39;Angus-C-git&#39;, repo: &#39;VERTO&#39; }) console.log(response); } */ function handle(dataObject){ if (dataObject.type === &#34;PushEvent&#34;){ // response.data[i] let eventDate = dataObject.created_at.slice(0, 16).replace(&#34;T&#34;, &#34; &#34;); let eventTitle = dataObject.repo.name; let eventBody = dataObject.payload.commits[0].message; /* console.log(eventDate); console.log(eventTitle); console.log(eventBody); */ let injectPoint = document.getElementById(&#34;feed&#34;); injectPoint.">
+<meta itemprop="description" content="  Loading ... import { Octokit } from &#34;https://cdn.skypack.dev/@octokit/core&#34;; const octokit = new Octokit(); // Fetch recent activity from GitHub (async function pullFeed(){ await octokit.request(&#39;GET /users/{username}/events/public&#39;, { username: &#39;Angus-C-git&#39;, page: 1, per_page: 30 }).then(response = { let feed = document.getElementById(&#34;feed&#34;); document.getElementById(&#39;loader&#39;).innerHTML = &#34; &#34;; response.data.map(event = { if (event.type === &#34;PushEvent&#34;) feed.innerHTML &#43;= `  ${event.created_at.slice(0, 10).concat(` `).concat(event.created_at.slice(11, 16))}
+ ${event.repo.name} ${event.payload.commits[0].message}
+  ` }); }); }());  ">
 
-<meta itemprop="wordCount" content="141">
+<meta itemprop="wordCount" content="63">
 
 
 
@@ -44,7 +48,9 @@
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Activity Feed"/>
-<meta name="twitter:description" content="import { Octokit } from &#34;https://cdn.skypack.dev/@octokit/core&#34;; const octokit = new Octokit(); /* async function pullRepoUpdate(){ // TODO: Fix repo hardcode FLAG{omg_comments_in_prod} let response = await octokit.request(&#39;GET /networks/Angus-C-git/VERTO/events&#39;, { owner: &#39;Angus-C-git&#39;, repo: &#39;VERTO&#39; }) console.log(response); } */ function handle(dataObject){ if (dataObject.type === &#34;PushEvent&#34;){ // response.data[i] let eventDate = dataObject.created_at.slice(0, 16).replace(&#34;T&#34;, &#34; &#34;); let eventTitle = dataObject.repo.name; let eventBody = dataObject.payload.commits[0].message; /* console.log(eventDate); console.log(eventTitle); console.log(eventBody); */ let injectPoint = document.getElementById(&#34;feed&#34;); injectPoint."/>
+<meta name="twitter:description" content="  Loading ... import { Octokit } from &#34;https://cdn.skypack.dev/@octokit/core&#34;; const octokit = new Octokit(); // Fetch recent activity from GitHub (async function pullFeed(){ await octokit.request(&#39;GET /users/{username}/events/public&#39;, { username: &#39;Angus-C-git&#39;, page: 1, per_page: 30 }).then(response = { let feed = document.getElementById(&#34;feed&#34;); document.getElementById(&#39;loader&#39;).innerHTML = &#34; &#34;; response.data.map(event = { if (event.type === &#34;PushEvent&#34;) feed.innerHTML &#43;= `  ${event.created_at.slice(0, 10).concat(` `).concat(event.created_at.slice(11, 16))}
+ ${event.repo.name} ${event.payload.commits[0].message}
+  ` }); }); }());  "/>
 
 
 
@@ -70,8 +76,8 @@
 <a href="/cybernetic-coffee" style="text-decoration: none;">
     <div class="logo">
         
-            <span class="logo__mark">~></span>
-            <span class="logo__text">Cybernetic <i class="fas fa-mug-hot"></i></span>
+            <span class="logo__text">Cybernetic <i class="fas fa-mug-hot"> </i> </span>
+            <span class="logo__mark"><i class="fas fa-terminal"></i></span>
             <span class="logo__cursor" style=
                   "
                    background-color:#00ba68;
@@ -125,68 +131,39 @@
             
 
             <div class="post-content">
-                
+                <hr />
 <ul id="feed" class="activity-timeline"></ul>
+
+<span id="loader"><i class="fas fa-spinner"></i> Loading ...</span>
 
 <script type="module">
     import { Octokit } from "https://cdn.skypack.dev/@octokit/core";
     const octokit = new Octokit();
-    /*
-    async function pullRepoUpdate(){
-        // TODO: Fix repo hardcode FLAG{omg_comments_in_prod}
-        let response = await octokit.request('GET /networks/Angus-C-git/VERTO/events', {
-            owner: 'Angus-C-git',
-            repo: 'VERTO'
-        })
-
-        console.log(response);
-    }
-    */
-    
-    function handle(dataObject){
-        
-        if (dataObject.type === "PushEvent"){
-          // response.data[i]
-          let eventDate = dataObject.created_at.slice(0, 16).replace("T", " ");
-          let eventTitle = dataObject.repo.name;
-          let eventBody = dataObject.payload.commits[0].message;
-          /*
-          console.log(eventDate);
-          console.log(eventTitle);
-          console.log(eventBody);
-          */
-          let injectPoint = document.getElementById("feed");
-          injectPoint.innerHTML += "<li class='timeline-event'><label class='timeline-event-icon'></label>" +
-                                      "<div class='timeline-event-copy'>" +
-                                          "<p class='timeline-event-thumbnail'>" + eventDate + "</p>" +
-                                              "<h3>" + eventTitle + "</h3><br>" +
-                                                  "<p>" + eventBody + "</p>" +
-                                      "</div>" +
-                                      "</li>"
-        }
-    }
-
-    async function pullTweets(){
-
-        console.log("stub");
-
-        // for each -> handle
-    }
 
     // Fetch recent activity from GitHub
-    // Date format: YYYY-MM-DDTHH:MM:SSZ
-    async function pullFeed(){
-        let response = await octokit.request('GET /users/{username}/events/public', {
+    (async function pullFeed(){
+        await octokit.request('GET /users/{username}/events/public', {
             username: 'Angus-C-git',
             page: 1,
             per_page: 30
-          })
-          
-        //console.log(response.data);  
-        response.data.forEach(handle);
-    }    
-    
-    pullFeed()
+        }).then(response => {
+            let feed = document.getElementById("feed");
+            document.getElementById('loader').innerHTML = " ";
+            response.data.map(event => {
+                if (event.type === "PushEvent")
+                    feed.innerHTML += `
+<li class="timeline-event">
+    <label class="timeline-event-icon"></label>
+    <div class="timeline-event-copy">
+        <p class="timeline-event-thumbnail">${event.created_at.slice(0, 10).concat(` `).concat(event.created_at.slice(11, 16))}</p>
+        <h3><i class="fab fa-git-alt"></i> ${event.repo.name}</h3>
+        <p>${event.payload.commits[0].message}</p>
+    </div>
+</li>
+`
+            });
+        });
+    }());
     
 
 </script>
@@ -213,7 +190,7 @@
     </div>
     <div class="footer__inner">
         <div class="footer__content">
-            <span>| Hacked together with &#10084; by <a href="https://github.com/Angus-C-git">Angus C</a> |</span>
+            <span>Hacked together with &#10084; by <a href="https://github.com/Angus-C-git">Angus C</a> <i class='fas fa-ghost'></i> </span>
           </div>
     </div>
 </footer>

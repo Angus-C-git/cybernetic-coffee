@@ -12,7 +12,9 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://angus-c-git.github.io/cybernetic-coffee/feed/</guid>
-      <description>import { Octokit } from &#34;https://cdn.skypack.dev/@octokit/core&#34;; const octokit = new Octokit(); /* async function pullRepoUpdate(){ // TODO: Fix repo hardcode FLAG{omg_comments_in_prod} let response = await octokit.request(&#39;GET /networks/Angus-C-git/VERTO/events&#39;, { owner: &#39;Angus-C-git&#39;, repo: &#39;VERTO&#39; }) console.log(response); } */ function handle(dataObject){ if (dataObject.type === &#34;PushEvent&#34;){ // response.data[i] let eventDate = dataObject.created_at.slice(0, 16).replace(&#34;T&#34;, &#34; &#34;); let eventTitle = dataObject.repo.name; let eventBody = dataObject.payload.commits[0].message; /* console.log(eventDate); console.log(eventTitle); console.log(eventBody); */ let injectPoint = document.getElementById(&#34;feed&#34;); injectPoint.</description>
+      <description>  Loading ... import { Octokit } from &#34;https://cdn.skypack.dev/@octokit/core&#34;; const octokit = new Octokit(); // Fetch recent activity from GitHub (async function pullFeed(){ await octokit.request(&#39;GET /users/{username}/events/public&#39;, { username: &#39;Angus-C-git&#39;, page: 1, per_page: 30 }).then(response = { let feed = document.getElementById(&#34;feed&#34;); document.getElementById(&#39;loader&#39;).innerHTML = &#34; &#34;; response.data.map(event = { if (event.type === &#34;PushEvent&#34;) feed.innerHTML += `  ${event.created_at.slice(0, 10).concat(` `).concat(event.created_at.slice(11, 16))}
+ ${event.repo.name} ${event.payload.commits[0].message}
+  ` }); }); }());  </description>
     </item>
     
     <item>
