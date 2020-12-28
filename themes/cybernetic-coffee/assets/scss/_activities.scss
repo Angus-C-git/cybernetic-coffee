@@ -1,8 +1,22 @@
-//* {
-//  -moz-box-sizing: border-box;
-//  -webkit-box-sizing: border-box;
-//  box-sizing: border-box;
+.feed-selected {
+  cursor: pointer;
+  color: #00BFA5;
+}
+
+//.feed-selected:hover {
+//  cursor: pointer;
+//  color: scale-color(#00BFA5, $lightness: 32%);
 //}
+
+.feed-non-selected{
+  color: black;
+}
+
+.feed-non-selected:hover {
+  cursor: pointer;
+  color: scale-color(black, $lightness: 32%);
+}
+
 
 /* Styling */
 .activity-timeline {

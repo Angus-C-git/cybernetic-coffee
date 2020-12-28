@@ -5,7 +5,15 @@ menu: "main"
 weight: 400
 keywords: "activity feed"
 ---
+
+{{< javascript >}}
+
 <hr />
+<h1>
+    <i id="github" class="fab fa-github-square feed-selected"></i>
+    <i id="twitter" class="fab fa-twitter-square feed-non-selected" onclick="twitterFeed()"></i>
+</h1>
+
 <ul id="feed" class="activity-timeline"></ul>
 
 <span id="loader"><i class="fas fa-spinner"></i> Loading ...</span>
