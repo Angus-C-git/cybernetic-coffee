@@ -6,30 +6,28 @@ weight: 400
 keywords: "activity feed"
 ---
 
-{{< javascript >}}
-
-<hr />
-<h1>
-    <i id="github" class="fab fa-github-square feed-selected"></i>
-    <i id="twitter" class="fab fa-twitter-square feed-non-selected" onclick="twitterFeed()"></i>
-</h1>
-
-<ul id="feed" class="activity-timeline"></ul>
-
-<span id="loader"><i class="fas fa-spinner"></i> Loading ...</span>
-
 <script type="module">
     import { Octokit } from "https://cdn.skypack.dev/@octokit/core";
     const octokit = new Octokit();
 
     // Fetch recent activity from GitHub
-    (async function pullFeed(){
+    window.pullFeed = async function pullFeed(){
         await octokit.request('GET /users/{username}/events/public', {
             username: 'Angus-C-git',
             page: 1,
             per_page: 30
         }).then(response => {
+
+            let nonSelected = document.getElementById('twitter');
+            nonSelected.classList.remove('feed-selected');
+            nonSelected.classList.add('feed-non-selected');
+
+            let selected = document.getElementById('github');
+            selected.classList.remove('feed-non-selected');
+            selected.classList.add('feed-selected');
+
             let feed = document.getElementById("feed");
+            feed.innerHTML = '';
             document.getElementById('loader').innerHTML = " ";
             response.data.map(event => {
                 if (event.type === "PushEvent")
@@ -40,7 +38,17 @@ keywords: "activity feed"
                     >}}`
             });
         });
-    }());
-    
-
+    }; pullFeed();
 </script>
+
+<hr />
+<h1>
+    <i id="github" class="fab fa-github-square feed-selected" onclick="pullFeed()"></i>
+    <i id="twitter" class="fab fa-twitter-square feed-non-selected" onclick="twitterFeed()"></i>
+</h1>
+
+<ul id="feed" class="activity-timeline"></ul>
+
+<span id="loader"><i class="fas fa-spinner"></i> Loading ...</span>
+
+
