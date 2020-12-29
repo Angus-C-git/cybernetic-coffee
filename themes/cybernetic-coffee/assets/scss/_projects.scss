@@ -18,6 +18,7 @@ $primary-color-hover: scale-color($primary-color, $lightness: 32%);
 .repo {
   cursor: pointer;
   color: $primary-color;
+  text-decoration: none;
 }
 
 .project-timeline a {

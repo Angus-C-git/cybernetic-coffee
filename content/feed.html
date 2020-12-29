@@ -17,7 +17,7 @@ keywords: "activity feed"
             page: 1,
             per_page: 30
         }).then(response => {
-
+            console.log(response.data);
             let nonSelected = document.getElementById('twitter');
             nonSelected.classList.remove('feed-selected');
             nonSelected.classList.add('feed-non-selected');
@@ -37,6 +37,8 @@ keywords: "activity feed"
                             date="${event.created_at.slice(0, 10).concat(` `).concat(event.created_at.slice(11, 16))}"
                             title="Pushed to ${event.repo.name}"
                             desc="${event.payload.commits[0].message}"
+                            commit="${event.payload.commits[0].sha}"
+                            repo="${event.repo.name}"
                         >}}`
                         break;
                     case "CreateEvent":

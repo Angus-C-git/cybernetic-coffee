@@ -31,7 +31,7 @@ function twitterFeed() {
                                         <label class="timeline-event-icon"></label>
                                         <div class="timeline-event-copy">
                                             <p class="timeline-event-thumbnail">Once Upon A Time ...</p>
-                                            <h3>${icon}</i> by ghostinthefiber</h3>
+                                            <h3>${icon}</i> <a class="repo" href="https://twitter.com/ghostinthefiber/status/${tweet.id}" target="_blank">by ghostinthefiber</a></h3>
                                             <p>${tweet.text}</p>
                                         </div>
                                     </li>`

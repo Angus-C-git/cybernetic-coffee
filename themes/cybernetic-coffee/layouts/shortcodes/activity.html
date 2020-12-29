@@ -11,13 +11,18 @@
             {{ else }}
                 <i class="fab fa-git-alt"></i>
             {{ end }}
-            {{ .Get "title" }}
+            {{ if isset .Params "link" }}
+                <a class="repo" onclick='window.open("https://github.com/{{.Get "link"}}", "_blank")'>
+            {{ else }}
+                <a class="repo" onclick='window.open("https://github.com/{{.Get "repo"}}/commit/{{.Get "commit"}}", "_blank")'>
+            {{ end }}
+            {{ .Get "title" }}</a>
         </h3>
         {{ if isset .Params "desc"}}
             <p>{{ .Get "desc" }}</p>
         {{ end }}
         {{ if isset .Params "link" }}
-            <a class="repo" onclick='window.open("https://github.com/{{.Get "link"}}", "_blank")'>@{{ .Get "link" }}</a>
+            <a style="cursor: pointer" onclick='window.open("https://github.com/{{.Get "link"}}", "_blank")'>@{{ .Get "link" }}</a>
         {{end }}
     </div>
 </li>
