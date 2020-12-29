@@ -36,6 +36,10 @@ keywords: "projects"
         }).then(response => {
             let timeLine = document.getElementById("projects-timeline");
             timeLine.innerHTML = '';
+            response.data.sort(function(a,b){
+                return new Date(b.created_at) - new Date(a.created_at);
+            });
+
             response.data.map(project => {
                 if (!excludedRepos.includes(project.name))
                     timeLine.innerHTML += `{{< project-item

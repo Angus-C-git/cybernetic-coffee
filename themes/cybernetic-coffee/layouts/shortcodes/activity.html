@@ -1,9 +1,23 @@
-
+<!----------------------------- Activity -------------------------------->
 <li class="timeline-event">
     <label class="timeline-event-icon"></label>
     <div class="timeline-event-copy">
         <p class="timeline-event-thumbnail">{{ .Get "date" }}</p>
-        <h3><i class="fab fa-git-alt"></i> {{ .Get "title" }}</h3>
-        <p>{{ .Get "desc" }}</p>
+        <h3>
+            {{ if isset .Params "link" }}
+                <i class="fas fa-eye"></i>
+            {{ else if isset .Params "created" }}
+                <i class="fas fa-code-branch"></i>
+            {{ else }}
+                <i class="fas fa-code-commit"></i>
+            {{ end }}
+            {{ .Get "title" }}
+        </h3>
+        {{ if isset .Params "desc"}}
+            <p>{{ .Get "desc" }}</p>
+        {{ end }}
+        {{ if isset .Params "link" }}
+            <a class="repo" onclick='window.open("https://github.com/{{.Get "link"}}", "_blank")'>@{{ .Get "link" }}</a>
+        {{end }}
     </div>
 </li>

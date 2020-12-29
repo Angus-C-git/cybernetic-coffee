@@ -30,12 +30,35 @@ keywords: "activity feed"
             feed.innerHTML = '';
             document.getElementById('loader').innerHTML = " ";
             response.data.map(event => {
-                if (event.type === "PushEvent")
-                    feed.innerHTML += `{{< activity
-                        date="${event.created_at.slice(0, 10).concat(` `).concat(event.created_at.slice(11, 16))}"
-                        title="${event.repo.name}"
-                        desc="${event.payload.commits[0].message}"
-                    >}}`
+                let eventBody = null;
+                switch (event.type) {
+                    case "PushEvent":
+                        eventBody = `{{< activity
+                            date="${event.created_at.slice(0, 10).concat(` `).concat(event.created_at.slice(11, 16))}"
+                            title="Pushed to ${event.repo.name}"
+                            desc="${event.payload.commits[0].message}"
+                        >}}`
+                        break;
+                    case "CreateEvent":
+                        eventBody = `{{< activity
+                            date="${event.created_at.slice(0, 10).concat(` `).concat(event.created_at.slice(11, 16))}"
+                            title="Created ${event.repo.name}"
+                            desc="${event.payload.description}"
+                            created="true"
+                        >}}`
+                        break;
+                    case "WatchEvent":
+                        eventBody = `{{< activity
+                            date="${event.created_at.slice(0, 10).concat(` `).concat(event.created_at.slice(11, 16))}"
+                            title="Started Watching ${event.repo.name}"
+                            link="${event.repo.name}"
+                        >}}`
+                        break;
+                    default:
+                        break;
+                }
+                if (eventBody)
+                    feed.innerHTML += eventBody;
             });
         });
     }; pullFeed();
