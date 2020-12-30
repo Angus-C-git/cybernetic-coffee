@@ -78,6 +78,10 @@ clone the repo:
 
 `git clone https://github.com/Angus-C-git/RESTPLATE.git && cd RESTPLATE`
 
+then install the dependencies with,
+
+`npm install`.
+
 ## Using The Template
 
 The template has the following structure, common to many APIS:
@@ -402,8 +406,10 @@ The following two blocks establish how requests to specific endpoints should be 
 the functions/files that should handle calls to a particular endpoint and store them in associated variables.
 
 ```javascript
-const authRoute = require('./routes/auth'); // route file to handel authentication
-const posts = require('./routes/posts');    // route file to handel post logic
+// route file to handel authentication
+const authRoute = require('./routes/auth');
+// route file to handel post logic
+const posts = require('./routes/posts');    
 ```
 
 Then we point specific external endpoints to these routes to be handled. 
@@ -417,8 +423,10 @@ Finally, we use a neat ternary operation to determine how the server should list
 locally in development mode or in production.
 
 ```javascript
-let port = process.env.PORT; // presence of enviroment variable PORT indicates prod mode
-port = (!port || port === "") ? 8000 : port; // listen on port 8000 in dev mode
+// presence of enviroment variable PORT indicates prod mode
+let port = process.env.PORT; 
+// listen on port 8000 in dev mode
+port = (!port || port === "") ? 8000 : port; 
 // API Listener init
 app.listen(port);
 ```
@@ -441,12 +449,116 @@ For more information the following resources should be enough to implement most 
 
 ## Hosting The REST API
 
-Coming soon ...
-
 ### Database
 
-Coming soon ...
+For database hosting we will be using MongoDB's own solution: [Atlas](https://www.mongodb.com/cloud/atlas). To begin with
+create an account, and a new cluster.
 
-### The API
+After spinning up a new cluster you will need to set up a user to authenticate to the DBMs and connect via your Node.js
+server. These credentials will then be stored in your `.env` file and used to establish a connection to the database
+after your node server starts up.
 
-Coming soon ...
+To start the setup process:
+
+`Your-Cluster => Connect => Create A User`
+
+### API Server
+
+There are a number of different options for hosting code for free these days some of my go to's are:
+
++ Firebase
++ Heroku
++ Surge
+
+but for this tutorial we will stick with Heroku for the hosting of the Node.js server. To begin with authenticate with
+heroku,
+
+`heroku login`
+
+then create a project on heroku with,
+
+`heroku create your-api-name`.
+
+Then stage and commit your changes with git.
+
+```shell
+git add .
+git commit -m "commit_message"
+```
+
+Finally, push your changes to heroku.
+
+```shell
+git push heroku master`
+```
+
+*Note*: If you get an error you may need to add your projects git remote as a remote origin.
+
+## Testing the API With Postman
+
+The final step is to test your API routes to ensure they behave as expected in all situations. [Postman](https://www.postman.com/) allows us to
+achieve this coverage by providing a clean UI, and a bunch of useful functionality to test our routes. Start by downloading
+the application and setting up a new project.
+
+### Testing A Route
+
+To demonstrate we will use postman to test the `/api/user/register` route from the template. I'll be using the local
+development server to demonstrate this, but the only difference is your url will replace `http://localhost:8000` with
+`https://your-sites-domain`. 
+
+First setup a new request like the one bellow:
+
+{{< image ref="images/blog/register-test-post.png" >}}
+
+{{< md_html >}}
+    <p style="text-align: center">
+        <b>[Postman Route Setup]</b>
+    </p>
+{{< /md_html >}}
+
+Then add a JSON body with the required fields to register a user under the 'Body' tab.
+
+```json
+{
+  "usrName": "devTest1",
+  "email": "devtest1@email.com",
+  "password": "stronkPasswd"
+}
+```
+
+{{< image ref="images/blog/register-test-res.png" >}}
+
+{{< md_html >}}
+    <p style="text-align: center">
+        <b>[Testing Valid Register]</b>
+    </p>
+{{< /md_html >}}
+
+We see that if we send the post request to the running backend server we are returned a JWT for the newly registered 
+user. Here we should also test that the API responds appropriately to invalid and malformed requests such as a 
+register request which is missing one of the required fields.
+
+{{< image ref="images/blog/register-test-missing.png" >}}
+
+{{< md_html >}}
+    <p style="text-align: center">
+        <b>[Testing Missing Fields]</b>
+    </p>
+{{< /md_html >}}
+
+### Testing Authenticated Routes
+
+To test a route which requires authentication we simply need to pass a valid JWT as a header with the required header
+name, in our case 'auth-token'. 
+
+
+{{< image ref="images/blog/test-auth-route.png" >}}
+
+{{< md_html >}}
+    <p style="text-align: center">
+        <b>[Testing Protected Routes]</b>
+    </p>
+{{< /md_html >}}
+
+
+~> If you have any comments or questions feel free to leave them on this [thread](https://twitter.com/ghostinthefiber/status/1344281710372954115)
