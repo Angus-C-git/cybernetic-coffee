@@ -36,7 +36,7 @@
 <meta itemprop="name" content="Building A REST API">
 <meta itemprop="description" content="The Power Of REST APIs REST APIs are a way to conveniently abstract away application logic and reduce the load on front-end processing. This is achieved by engineering the API to return data in such a way that we can simply render it straight out onto the page without sorting or intensive manipulation. In this way we can achieve faster load times for web pages, and at the same time reduce the amount of JavaScript running in users browsers.">
 
-<meta itemprop="wordCount" content="1973">
+<meta itemprop="wordCount" content="2394">
 
 
 
@@ -203,6 +203,8 @@ requests to the API.</li>
 dependencies I have created a template called <a href="https://github.com/Angus-C-git/RESTPLATE">RESTPLATE</a>. To get started
 clone the repo:</p>
 <p><code>git clone https://github.com/Angus-C-git/RESTPLATE.git &amp;&amp; cd RESTPLATE</code></p>
+<p>then install the dependencies with,</p>
+<p><code>npm install</code>.</p>
 <h2 id="using-the-template">Using The Template</h2>
 <p>The template has the following structure, common to many APIS:</p>
 <pre><code>RESTPLATE/
@@ -463,16 +465,20 @@ the appropriate routes and implements server configurations. This is where the <
 This will allow the API to interact with the database in later functions.</p>
 <p>The following two blocks establish how requests to specific endpoints should be mapped internally. Firstly we establish
 the functions/files that should handle calls to a particular endpoint and store them in associated variables.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">authRoute</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;./routes/auth&#39;</span>); <span style="color:#75715e">// route file to handel authentication
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">posts</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;./routes/posts&#39;</span>);    <span style="color:#75715e">// route file to handel post logic
-</span></code></pre></div><p>Then we point specific external endpoints to these routes to be handled.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#75715e">// route file to handel authentication
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">authRoute</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;./routes/auth&#39;</span>);
+<span style="color:#75715e">// route file to handel post logic
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">posts</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;./routes/posts&#39;</span>);    
+</code></pre></div><p>Then we point specific external endpoints to these routes to be handled.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">use</span>(<span style="color:#e6db74">&#39;/api/user&#39;</span>, <span style="color:#a6e22e">authRoute</span>);
 <span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">use</span>(<span style="color:#e6db74">&#39;/api/posts&#39;</span>, <span style="color:#a6e22e">posts</span>);
 </code></pre></div><p>Finally, we use a neat ternary operation to determine how the server should listen based on if the server is being run
 locally in development mode or in production.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">port</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">process</span>.<span style="color:#a6e22e">env</span>.<span style="color:#a6e22e">PORT</span>; <span style="color:#75715e">// presence of enviroment variable PORT indicates prod mode
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">port</span> <span style="color:#f92672">=</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">port</span> <span style="color:#f92672">||</span> <span style="color:#a6e22e">port</span> <span style="color:#f92672">===</span> <span style="color:#e6db74">&#34;&#34;</span>) <span style="color:#f92672">?</span> <span style="color:#ae81ff">8000</span> <span style="color:#f92672">:</span> <span style="color:#a6e22e">port</span>; <span style="color:#75715e">// listen on port 8000 in dev mode
-</span><span style="color:#75715e">// API Listener init
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#75715e">// presence of enviroment variable PORT indicates prod mode
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">port</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">process</span>.<span style="color:#a6e22e">env</span>.<span style="color:#a6e22e">PORT</span>; 
+<span style="color:#75715e">// listen on port 8000 in dev mode
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">port</span> <span style="color:#f92672">=</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">port</span> <span style="color:#f92672">||</span> <span style="color:#a6e22e">port</span> <span style="color:#f92672">===</span> <span style="color:#e6db74">&#34;&#34;</span>) <span style="color:#f92672">?</span> <span style="color:#ae81ff">8000</span> <span style="color:#f92672">:</span> <span style="color:#a6e22e">port</span>; 
+<span style="color:#75715e">// API Listener init
 </span><span style="color:#75715e"></span><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">listen</span>(<span style="color:#a6e22e">port</span>);
 </code></pre></div><h2 id="wrangling-the-api-to-your-needs">Wrangling the API to Your Needs</h2>
 <p>Adapting the API to suite your needs will mostly involve writing additional routes and creating additional models.
@@ -489,11 +495,94 @@ most IDE autocomplete libraries should provide enough details to implement commo
 <li><a href="https://jwt.io/">JWT Disassembly</a></li>
 </ul>
 <h2 id="hosting-the-rest-api">Hosting The REST API</h2>
-<p>Coming soon &hellip;</p>
 <h3 id="database">Database</h3>
-<p>Coming soon &hellip;</p>
-<h3 id="the-api">The API</h3>
-<p>Coming soon &hellip;</p>
+<p>For database hosting we will be using MongoDB&rsquo;s own solution: <a href="https://www.mongodb.com/cloud/atlas">Atlas</a>. To begin with
+create an account, and a new cluster.</p>
+<p>After spinning up a new cluster you will need to set up a user to authenticate to the DBMs and connect via your Node.js
+server. These credentials will then be stored in your <code>.env</code> file and used to establish a connection to the database
+after your node server starts up.</p>
+<p>To start the setup process:</p>
+<p><code>Your-Cluster =&gt; Connect =&gt; Create A User</code></p>
+<h3 id="api-server">API Server</h3>
+<p>There are a number of different options for hosting code for free these days some of my go to&rsquo;s are:</p>
+<ul>
+<li>Firebase</li>
+<li>Heroku</li>
+<li>Surge</li>
+</ul>
+<p>but for this tutorial we will stick with Heroku for the hosting of the Node.js server. To begin with authenticate with
+heroku,</p>
+<p><code>heroku login</code></p>
+<p>then create a project on heroku with,</p>
+<p><code>heroku create your-api-name</code>.</p>
+<p>Then stage and commit your changes with git.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git add .
+git commit -m <span style="color:#e6db74">&#34;commit_message&#34;</span>
+</code></pre></div><p>Finally, push your changes to heroku.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git push heroku master<span style="color:#e6db74">`</span>
+</code></pre></div><p><em>Note</em>: If you get an error you may need to add your projects git remote as a remote origin.</p>
+<h2 id="testing-the-api-with-postman">Testing the API With Postman</h2>
+<p>The final step is to test your API routes to ensure they behave as expected in all situations. <a href="https://www.postman.com/">Postman</a> allows us to
+achieve this coverage by providing a clean UI, and a bunch of useful functionality to test our routes. Start by downloading
+the application and setting up a new project.</p>
+<h3 id="testing-a-route">Testing A Route</h3>
+<p>To demonstrate we will use postman to test the <code>/api/user/register</code> route from the template. I&rsquo;ll be using the local
+development server to demonstrate this, but the only difference is your url will replace <code>http://localhost:8000</code> with
+<code>https://your-sites-domain</code>.</p>
+<p>First setup a new request like the one bellow:</p>
+
+
+    <img src="https://angus-c-git.github.io/cybernetic-coffee/images/blog/register-test-post.png">
+
+
+
+    <p style="text-align: center">
+        <b>[Postman Route Setup]</b>
+    </p>
+
+<p>Then add a JSON body with the required fields to register a user under the &lsquo;Body&rsquo; tab.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;usrName&#34;</span>: <span style="color:#e6db74">&#34;devTest1&#34;</span>,
+  <span style="color:#f92672">&#34;email&#34;</span>: <span style="color:#e6db74">&#34;devtest1@email.com&#34;</span>,
+  <span style="color:#f92672">&#34;password&#34;</span>: <span style="color:#e6db74">&#34;stronkPasswd&#34;</span>
+}
+</code></pre></div>
+
+    <img src="https://angus-c-git.github.io/cybernetic-coffee/images/blog/register-test-res.png">
+
+
+
+    <p style="text-align: center">
+        <b>[Testing Valid Register]</b>
+    </p>
+
+<p>We see that if we send the post request to the running backend server we are returned a JWT for the newly registered
+user. Here we should also test that the API responds appropriately to invalid and malformed requests such as a
+register request which is missing one of the required fields.</p>
+
+
+    <img src="https://angus-c-git.github.io/cybernetic-coffee/images/blog/register-test-missing.png">
+
+
+
+    <p style="text-align: center">
+        <b>[Testing Missing Fields]</b>
+    </p>
+
+<h3 id="testing-authenticated-routes">Testing Authenticated Routes</h3>
+<p>To test a route which requires authentication we simply need to pass a valid JWT as a header with the required header
+name, in our case &lsquo;auth-token&rsquo;.</p>
+
+
+    <img src="https://angus-c-git.github.io/cybernetic-coffee/images/blog/test-auth-route.png">
+
+
+
+    <p style="text-align: center">
+        <b>[Testing Protected Routes]</b>
+    </p>
+
+<p>~&gt; If you have any comments or questions feel free to leave them on this <a href="https://twitter.com/ghostinthefiber/status/1344281710372954115">thread</a></p>
 
             </div>
         </article>
