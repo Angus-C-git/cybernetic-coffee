@@ -5,10 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="author" content="">
-<meta name="description" content="The Power Of REST APIs Coming soon &amp;hellip;
-Getting Started Coming soon &amp;hellip;
-Using The Template Coming soon &amp;hellip;
-Wrangling the API to Your Needs Coming soon &amp;hellip;" />
+<meta name="description" content="The Power Of REST APIs REST APIs are a way to conveniently abstract away application logic and reduce the load on front-end processing. This is achieved by engineering the API to return data in such a way that we can simply render it straight out onto the page without sorting or intensive manipulation. In this way we can achieve faster load times for web pages, and at the same time reduce the amount of JavaScript running in users browsers." />
 <meta name="keywords" content="" />
 <meta name="robots" content="noodp" />
 <meta name="theme-color" content="#252627" />
@@ -37,12 +34,9 @@ Wrangling the API to Your Needs Coming soon &amp;hellip;" />
 
 
 <meta itemprop="name" content="Building A REST API">
-<meta itemprop="description" content="The Power Of REST APIs Coming soon &hellip;
-Getting Started Coming soon &hellip;
-Using The Template Coming soon &hellip;
-Wrangling the API to Your Needs Coming soon &hellip;">
+<meta itemprop="description" content="The Power Of REST APIs REST APIs are a way to conveniently abstract away application logic and reduce the load on front-end processing. This is achieved by engineering the API to return data in such a way that we can simply render it straight out onto the page without sorting or intensive manipulation. In this way we can achieve faster load times for web pages, and at the same time reduce the amount of JavaScript running in users browsers.">
 
-<meta itemprop="wordCount" content="28">
+<meta itemprop="wordCount" content="1087">
 
 
 
@@ -50,10 +44,7 @@ Wrangling the API to Your Needs Coming soon &hellip;">
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Building A REST API"/>
-<meta name="twitter:description" content="The Power Of REST APIs Coming soon &hellip;
-Getting Started Coming soon &hellip;
-Using The Template Coming soon &hellip;
-Wrangling the API to Your Needs Coming soon &hellip;"/>
+<meta name="twitter:description" content="The Power Of REST APIs REST APIs are a way to conveniently abstract away application logic and reduce the load on front-end processing. This is achieved by engineering the API to return data in such a way that we can simply render it straight out onto the page without sorting or intensive manipulation. In this way we can achieve faster load times for web pages, and at the same time reduce the amount of JavaScript running in users browsers."/>
 
 
 
@@ -136,12 +127,201 @@ Wrangling the API to Your Needs Coming soon &hellip;"/>
             <div class="post-content">
                 <hr>
 <h2 id="the-power-of-rest-apis">The Power Of REST APIs</h2>
-<p>Coming soon &hellip;</p>
+<p>REST APIs are a way to conveniently abstract away application logic and reduce the load on front-end
+processing. This is achieved by engineering the API to return data in such a way that we can simply
+render it straight out onto the page without sorting or intensive manipulation. In this way we can
+achieve faster load times for web pages, and at the same time reduce the amount of JavaScript running
+in users browsers.</p>
+<p>REST APIs have many other benefits too, two feature of REST APIs that I frequently exploit is their
+ability to remove the need for secret management on the front-end, and their ability to add dynamic
+behaviour to static webapps (like this one). You may have seen on the activity page of this site that
+my recent GitHub activity is rendered as a simple timeline. This fetching from the GitHub REST API is
+done in your browser via a small JS function. This works fine for the Git API because large portions of
+it are exposed unauthenticated meaning there is no need to worry about keys leaking from the front-end.
+The same is not true for the Twitter feed, also present on the activity feed page. Even tho I only wish
+to pull publicly available data from Twitter an API key is still required. Here a tactic I exploit is
+API chaining, my API which feeds the Twitter activity page acts as a wrapper for the Twitter REST API.
+Keeping my twitter access keys secret and exposing only data which is required for site functionality.</p>
+<p>From here it should be apparent that the functionality that a REST API can provide is diverse and relatively
+boundless. Let&rsquo;s explore how we can build one for your projects.</p>
 <h2 id="getting-started">Getting Started</h2>
-<p>Coming soon &hellip;</p>
+<p>For this article we will be exploring the creation of a REST API using:</p>
+<ul>
+<li>Node.js</li>
+<li>Express.js</li>
+<li>MongoDB</li>
+</ul>
+<p>three of the components which make up part of the exceptionally popular MEAN stack. However, this is but
+one approach to building a REST API. Alternatives include combinations of the following:</p>
+<ul>
+<li>Flask</li>
+<li>Django</li>
+<li>Postgres SQL</li>
+<li>MySQL</li>
+</ul>
+<p>However, there are many other stacks too.</p>
+<h3 id="clone-the-template">Clone the template</h3>
+<p>To speed up the process and reduce the boilerplate involved in setting up express, node and the other required
+dependencies I have created a template called <a href="https://github.com/Angus-C-git/RESTPLATE">RESTPLATE</a>. To get started
+clone the repo:</p>
+<p><code>git clone https://github.com/Angus-C-git/RESTPLATE.git &amp;&amp; cd RESTPLATE</code></p>
 <h2 id="using-the-template">Using The Template</h2>
+<p>The template has the following structure, common to many APIS:</p>
+<pre><code>RESTPLATE/
+    /models
+        * Post
+        * User
+    /routes
+        * auth
+        * posts
+        * validateJWT
+    * app.js
+    * validation.js
+    * package.json
+    * .env
+</code></pre><p>the template is populated with a number of example files including:</p>
+<ul>
+<li><code>models/Post.js</code></li>
+<li><code>models/User.js</code></li>
+<li><code>routes/posts.js</code></li>
+<li><code>routes/auth.js</code></li>
+<li><code>routes/validateJWT</code></li>
+<li><code>validation.js</code></li>
+</ul>
+<p>and several core files:</p>
+<ul>
+<li><code>app.js</code></li>
+<li><code>package.json</code></li>
+</ul>
+<h4 id="models">Models</h4>
+<p>Files under the <code>models</code> directory define database objects (which can be thought of as traditional database tables).
+This definition includes the fields found in the database schema, and their properties which typically includes:</p>
+<ul>
+<li>The type of the data; String, Number, Array &hellip;</li>
+<li>If the field is required</li>
+<li>The minimum and maximum length of the data in the field</li>
+</ul>
+<p>The Post model from the template:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">mongoose</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;mongoose&#39;</span>);
+
+<span style="color:#75715e">// DB Post schema
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">postSchema</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">mongoose</span>.<span style="color:#a6e22e">Schema</span>({
+    <span style="color:#a6e22e">author</span><span style="color:#f92672">:</span> {
+        <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> String,
+        <span style="color:#a6e22e">required</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+        <span style="color:#a6e22e">min</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">6</span>,
+        <span style="color:#a6e22e">max</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">25</span>
+    },
+    <span style="color:#a6e22e">message</span><span style="color:#f92672">:</span> {
+        <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> String,
+        <span style="color:#a6e22e">required</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>
+    },
+    <span style="color:#a6e22e">date</span><span style="color:#f92672">:</span> {
+        <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> Date,
+        <span style="color:#66d9ef">default</span><span style="color:#f92672">:</span> Date.<span style="color:#a6e22e">now</span>
+    }
+});
+
+<span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">mongoose</span>.<span style="color:#a6e22e">model</span>(<span style="color:#e6db74">&#39;Post&#39;</span>, <span style="color:#a6e22e">postSchema</span>);
+</code></pre></div><h4 id="routes">Routes</h4>
+<p>Files under the <code>routes</code> directory correlate to endpoints that can be &lsquo;hit&rsquo; (interacted with) by clients. Interactions
+for a REST API are the HTTP methods:</p>
+<ul>
+<li><code>GET</code>
+<ul>
+<li>Fetch a resource</li>
+</ul>
+</li>
+<li><code>POST</code>
+<ul>
+<li>Send a resource</li>
+</ul>
+</li>
+<li><code>PUT</code>
+<ul>
+<li>Update a resource</li>
+</ul>
+</li>
+<li><code>DELETE</code>
+<ul>
+<li>Remove a resource</li>
+</ul>
+</li>
+</ul>
+<p>the included routes in the template only demonstrate usage of <code>GET</code> and <code>POST</code> but the other methods are fairly
+self-explanatory.</p>
+<p>Lets take a look at the <code>posts</code> route.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">router</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;express&#39;</span>).<span style="color:#a6e22e">Router</span>();
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">verify</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;./validateJWT&#39;</span>);  <span style="color:#75715e">// Authenticated route
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">Post</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;../models/Post&#39;</span>);   <span style="color:#75715e">// Post model
+</span><span style="color:#75715e"></span>
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e"> * Fetch all shared posts ...
+</span><span style="color:#75715e"> * */</span>
+<span style="color:#a6e22e">router</span>.<span style="color:#a6e22e">get</span>(<span style="color:#e6db74">&#39;/&#39;</span>, <span style="color:#a6e22e">verify</span>, <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">res</span>) =&gt; {
+    <span style="color:#66d9ef">try</span> {
+        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">posts</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">Post</span>.<span style="color:#a6e22e">find</span>();
+        <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">status</span>(<span style="color:#ae81ff">200</span>).<span style="color:#a6e22e">json</span>(<span style="color:#a6e22e">posts</span>);
+    } <span style="color:#66d9ef">catch</span> (<span style="color:#a6e22e">err</span>) {
+        <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">status</span>(<span style="color:#ae81ff">503</span>).<span style="color:#a6e22e">json</span>({<span style="color:#a6e22e">error</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">err</span>});
+    }
+});
+
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e"> * Share a post ...
+</span><span style="color:#75715e"> * */</span>
+<span style="color:#a6e22e">router</span>.<span style="color:#a6e22e">post</span>(<span style="color:#e6db74">&#39;/&#39;</span>, <span style="color:#a6e22e">verify</span>, <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">res</span>) =&gt; {
+    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">post</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Post</span>({
+        <span style="color:#a6e22e">author</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">body</span>.<span style="color:#a6e22e">author</span>,
+        <span style="color:#a6e22e">postContents</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">body</span>.<span style="color:#a6e22e">postContents</span>
+    });
+
+    <span style="color:#66d9ef">try</span> {
+        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">savedPost</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">post</span>.<span style="color:#a6e22e">save</span>();
+        <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">status</span>(<span style="color:#ae81ff">200</span>).<span style="color:#a6e22e">json</span>(<span style="color:#a6e22e">savedPost</span>);
+    } <span style="color:#66d9ef">catch</span> (<span style="color:#a6e22e">err</span>) {
+        <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">status</span>(<span style="color:#ae81ff">503</span>).<span style="color:#a6e22e">json</span>({<span style="color:#a6e22e">error</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">err</span>});
+    }
+});
+
+<span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">router</span>;
+</code></pre></div><p>As discussed above a route will define HTTP methods that the endpoint can handle. This is typically inferred from the
+name of the endpoint. We would expect on your average website which has a page called posts that we would be able
+to <strong>share</strong> a post and <strong>view</strong> other posts. These terms map to the HTTP methods <code>GET</code> and <code>POST</code> on the backend. In
+many cases one would also expect to be able to <strong>remove</strong> (<code>DELETE</code>) a post, however we will not discuss this here.</p>
+<h5 id="get">GET</h5>
+<p>The <code>router.get ...</code> line in the code means that the route (in this case <code>/api/posts, discussed later)</code> accepts <code>GET</code> requests from a client. The route handler then queries the mongo database, with
+<code>Post.find()</code>, to retrieve all the posts stored there.</p>
+<p>The API then returns the found posts as a JSON object with,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">status</span>(<span style="color:#ae81ff">200</span>).<span style="color:#a6e22e">json</span>(<span style="color:#a6e22e">posts</span>);
+</code></pre></div><p>where status code 200 indicates a request ok.</p>
+<h5 id="post">POST</h5>
+<p>The <code>router.post...</code> line in the code means that <code>POST</code> requests made to this endpoint will be handled by this function.
+When the <code>POST</code> route is hit the function looks to create a new <code>Post</code> database object. Normally we would validate the
+<code>POST</code> request body sent to the route to avoid processing a malformed request, I.E one where a required field was left out.
+This process can be observed in the provided <code>auth</code> route,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> {<span style="color:#a6e22e">error</span>} <span style="color:#f92672">=</span> <span style="color:#a6e22e">registerSchema</span>.<span style="color:#a6e22e">validate</span>(<span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">body</span>);
+
+<span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">error</span>) {
+    <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">error</span>.<span style="color:#a6e22e">details</span>[<span style="color:#ae81ff">0</span>].<span style="color:#a6e22e">message</span>;
+    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">status</span>(<span style="color:#ae81ff">400</span>).<span style="color:#a6e22e">send</span>(<span style="color:#a6e22e">err</span>);
+}
+</code></pre></div><p>where an error will be thrown if the provided schema does not match the format of the defined register schema.</p>
+<h4 id="authenticated-routes">Authenticated Routes</h4>
+<p>In a lot of cases you will not want to allow anyone on the internet access to your routes, for example you can&rsquo;t view posts
+on instagram without creating an account. To provide this protection we implement authenticated routes, authenticated
+routes act as a way to ensure that only authenticated (registered) users can interact with a given endpoint.</p>
+<p>In the template this manifests as the <code>verify</code> parameter in the route header,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">router</span>.<span style="color:#a6e22e">get</span>(<span style="color:#e6db74">&#39;/&#39;</span>, <span style="color:#a6e22e">verify</span>, <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">res</span>) =&gt; { ...}
+</code></pre></div><h2 id="wrangling-the-api-to-your-needs">Wrangling the API to Your Needs</h2>
 <p>Coming soon &hellip;</p>
-<h2 id="wrangling-the-api-to-your-needs">Wrangling the API to Your Needs</h2>
+<h2 id="hosting-the-rest-api">Hosting The REST API</h2>
+<p>Coming soon &hellip;</p>
+<h3 id="database">Database</h3>
+<p>Coming soon &hellip;</p>
+<h3 id="the-api">The API</h3>
 <p>Coming soon &hellip;</p>
 
             </div>
