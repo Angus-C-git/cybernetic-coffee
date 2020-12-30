@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Cybernetic Coffee</title>
+    <link>https://angus-c-git.github.io/cybernetic-coffee/</link>
+    <description>Recent content on Cybernetic Coffee</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://angus-c-git.github.io/cybernetic-coffee/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Activity Feed</title>
+      <link>https://angus-c-git.github.io/cybernetic-coffee/feed/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://angus-c-git.github.io/cybernetic-coffee/feed/</guid>
+      <description>import { Octokit } from &#34;https://cdn.skypack.dev/@octokit/core&#34;; const octokit = new Octokit(); // Fetch recent activity from GitHub window.pullFeed = async function pullFeed(){ await octokit.request(&#39;GET /users/{username}/events/public&#39;, { username: &#39;Angus-C-git&#39;, page: 1, per_page: 30 }).then(response = { console.log(response.data); let nonSelected = document.getElementById(&#39;twitter&#39;); nonSelected.classList.remove(&#39;feed-selected&#39;); nonSelected.classList.add(&#39;feed-non-selected&#39;); let selected = document.getElementById(&#39;github&#39;); selected.classList.remove(&#39;feed-non-selected&#39;); selected.classList.add(&#39;feed-selected&#39;); let feed = document.getElementById(&#34;feed&#34;); feed.innerHTML = &#39;&#39;; document.getElementById(&#39;loader&#39;).innerHTML = &#34; &#34;; response.data.map(event = { let eventBody = null; switch (event.type) { case &#34;</description>
+    </item>
+    
+    <item>
+      <title>Building A REST API In 30 minutes</title>
+      <link>https://angus-c-git.github.io/cybernetic-coffee/blog/building-a-rest-api/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://angus-c-git.github.io/cybernetic-coffee/blog/building-a-rest-api/</guid>
+      <description>The Power Of REST APIs Coming soon &amp;hellip;
+Getting Started Coming soon &amp;hellip;
+Using The Template Coming soon &amp;hellip;
+Wrangling the API to Your Needs Coming soon &amp;hellip;</description>
+    </item>
+    
+    <item>
+      <title>CDC Generator</title>
+      <link>https://angus-c-git.github.io/cybernetic-coffee/all-projects/cdc-generator/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://angus-c-git.github.io/cybernetic-coffee/all-projects/cdc-generator/</guid>
+      <description>Coming soon &amp;hellip;</description>
+    </item>
+    
+    <item>
+      <title>Cookie Forge</title>
+      <link>https://angus-c-git.github.io/cybernetic-coffee/all-projects/cookie-forge/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://angus-c-git.github.io/cybernetic-coffee/all-projects/cookie-forge/</guid>
+      <description>Coming soon &amp;hellip;</description>
+    </item>
+    
+    <item>
+      <title>Live Breach Timeline</title>
+      <link>https://angus-c-git.github.io/cybernetic-coffee/all-projects/livebreachtimeline/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://angus-c-git.github.io/cybernetic-coffee/all-projects/livebreachtimeline/</guid>
+      <description>      </description>
+    </item>
+    
+    <item>
+      <title>Need To Know Crypto</title>
+      <link>https://angus-c-git.github.io/cybernetic-coffee/all-projects/need-to-know-crypto/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://angus-c-git.github.io/cybernetic-coffee/all-projects/need-to-know-crypto/</guid>
+      <description>Coming soon &amp;hellip;</description>
+    </item>
+    
+    <item>
+      <title>OTP-Cracker</title>
+      <link>https://angus-c-git.github.io/cybernetic-coffee/all-projects/otp-cracker/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://angus-c-git.github.io/cybernetic-coffee/all-projects/otp-cracker/</guid>
+      <description>Coming soon &amp;hellip;</description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>https://angus-c-git.github.io/cybernetic-coffee/projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://angus-c-git.github.io/cybernetic-coffee/projects/</guid>
+      <description>Loading ...     import { Octokit } from &#34;https://cdn.skypack.dev/@octokit/core&#34;; const octokit = new Octokit(); (async function pullRepos(){ const excludedRepos = [&#34;Angus-C-git&#34;, &#34;insurance-management-system&#34;, &#34;ipcalc&#34;, &#34;freeCodeCamp&#34;, &#34;first-contributions&#34;]; const specials = [&#34;LiveBreachTimeline&#34;]; await octokit.request(&#39;GET /users/{username}/repos&#39;, { username: &#39;Angus-C-git&#39;, page: 1, per_page: 30 }).then(response = { let timeLine = document.getElementById(&#34;projects-timeline&#34;); timeLine.innerHTML = &#39;&#39;; response.data.sort(function(a,b){ return new Date(b.created_at) - new Date(a.created_at); }); response.data.map(project = { if (!excludedRepos.includes(project.name)) timeLine.innerHTML += `${project.created_at.slice(0,7)}    ${project.</description>
+    </item>
+    
+    <item>
+      <title>Verto</title>
+      <link>https://angus-c-git.github.io/cybernetic-coffee/all-projects/verto/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://angus-c-git.github.io/cybernetic-coffee/all-projects/verto/</guid>
+      <description>Coming soon &amp;hellip;</description>
+    </item>
+    
+  </channel>
+</rss>

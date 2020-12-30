@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="">
+<meta name="description" content="Loading ...     import { Octokit } from &#34;https://cdn.skypack.dev/@octokit/core&#34;; const octokit = new Octokit(); (async function pullRepos(){ const excludedRepos = [&#34;Angus-C-git&#34;, &#34;insurance-management-system&#34;, &#34;ipcalc&#34;, &#34;freeCodeCamp&#34;, &#34;first-contributions&#34;]; const specials = [&#34;LiveBreachTimeline&#34;]; await octokit.request(&#39;GET /users/{username}/repos&#39;, { username: &#39;Angus-C-git&#39;, page: 1, per_page: 30 }).then(response = { let timeLine = document.getElementById(&#34;projects-timeline&#34;); timeLine.innerHTML = &#39;&#39;; response.data.sort(function(a,b){ return new Date(b.created_at) - new Date(a.created_at); }); response.data.map(project = { if (!excludedRepos.includes(project.name)) timeLine.innerHTML &#43;= `${project.created_at.slice(0,7)}    ${project." />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="#252627" />
+<link rel="canonical" href="https://angus-c-git.github.io/cybernetic-coffee/projects/" />
+
+
+    <title>
+        
+            Projects :: Cybernetic Coffee 
+        
+    </title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/cybernetic-coffee/main.943fc56dcf8e341a5acfbc995956b5ce172ef2805d89d728a368cfc007815f0d.css">
+
+
+
+
+<link rel="shortcut icon" href="https://angus-c-git.github.io/cybernetic-coffee/images/favicon.svg" />
+
+
+<meta itemprop="name" content="Projects">
+<meta itemprop="description" content="Loading ...     import { Octokit } from &#34;https://cdn.skypack.dev/@octokit/core&#34;; const octokit = new Octokit(); (async function pullRepos(){ const excludedRepos = [&#34;Angus-C-git&#34;, &#34;insurance-management-system&#34;, &#34;ipcalc&#34;, &#34;freeCodeCamp&#34;, &#34;first-contributions&#34;]; const specials = [&#34;LiveBreachTimeline&#34;]; await octokit.request(&#39;GET /users/{username}/repos&#39;, { username: &#39;Angus-C-git&#39;, page: 1, per_page: 30 }).then(response = { let timeLine = document.getElementById(&#34;projects-timeline&#34;); timeLine.innerHTML = &#39;&#39;; response.data.sort(function(a,b){ return new Date(b.created_at) - new Date(a.created_at); }); response.data.map(project = { if (!excludedRepos.includes(project.name)) timeLine.innerHTML &#43;= `${project.created_at.slice(0,7)}    ${project.">
+
+<meta itemprop="wordCount" content="70">
+
+
+
+<meta itemprop="keywords" content="" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Projects"/>
+<meta name="twitter:description" content="Loading ...     import { Octokit } from &#34;https://cdn.skypack.dev/@octokit/core&#34;; const octokit = new Octokit(); (async function pullRepos(){ const excludedRepos = [&#34;Angus-C-git&#34;, &#34;insurance-management-system&#34;, &#34;ipcalc&#34;, &#34;freeCodeCamp&#34;, &#34;first-contributions&#34;]; const specials = [&#34;LiveBreachTimeline&#34;]; await octokit.request(&#39;GET /users/{username}/repos&#39;, { username: &#39;Angus-C-git&#39;, page: 1, per_page: 30 }).then(response = { let timeLine = document.getElementById(&#34;projects-timeline&#34;); timeLine.innerHTML = &#39;&#39;; response.data.sort(function(a,b){ return new Date(b.created_at) - new Date(a.created_at); }); response.data.map(project = { if (!excludedRepos.includes(project.name)) timeLine.innerHTML &#43;= `${project.created_at.slice(0,7)}    ${project."/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <script src="https://kit.fontawesome.com/5eb4842dc5.js" crossorigin="anonymous"></script>
+
+<a href="/cybernetic-coffee" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__text">Cybernetic <i class="fas fa-mug-hot"> </i> </span>
+            <span class="logo__mark"><i class="fas fa-terminal"></i></span>
+            <span class="logo__cursor" style=
+                  "
+                   background-color:#00ba68;
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://angus-c-git.github.io/cybernetic-coffee/feed/">Activity Feed</a></li><li><a href="https://angus-c-git.github.io/cybernetic-coffee/projects/">Projects</a></li><li><a href="https://angus-c-git.github.io/cybernetic-coffee/blog">Blog</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            
+            </p>
+        </div>
+
+        <article>
+            <h2 class="post-title"><a href="https://angus-c-git.github.io/cybernetic-coffee/projects/">Projects</a></h2>
+
+            
+
+            
+
+            <div class="post-content">
+                
+<hr />
+<br />
+
+<div class="project-timeline">
+    <div class="row example-centered">
+        <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+            <ul id="projects-timeline" class="project-timeline timeline-centered">
+                <i class="fas fa-spinner"></i> Loading ...
+            </ul>
+        </div>
+    </div>
+</div>
+<br />
+
+<!-- -------------------------------------->
+
+<script type="module">
+    import { Octokit } from "https://cdn.skypack.dev/@octokit/core";
+    const octokit = new Octokit();
+
+    (async function pullRepos(){
+        const excludedRepos = ["Angus-C-git", "insurance-management-system", "ipcalc", "freeCodeCamp", "first-contributions"];
+        const specials = ["LiveBreachTimeline"];
+        await octokit.request('GET /users/{username}/repos', {
+            username: 'Angus-C-git',
+            page: 1,
+            per_page: 30
+        }).then(response => {
+            let timeLine = document.getElementById("projects-timeline");
+            timeLine.innerHTML = '';
+            response.data.sort(function(a,b){
+                return new Date(b.created_at) - new Date(a.created_at);
+            });
+
+            response.data.map(project => {
+                if (!excludedRepos.includes(project.name))
+                    timeLine.innerHTML += `<li class="timeline-item">
+    <div class="timeline-info">
+        <span>${project.created_at.slice(0,7)}</span>                       
+    </div>
+    <div class="timeline-marker"></div>
+    <div class="timeline-content">
+        <h3 class="timeline-title">
+            <i class="fab fa-gitkraken"></i>
+            <a class="repo" onclick='window.open("https://github.com/Angus-C-git/${project.name}", "_blank")'>${project.name}</a>
+        </h3>
+        <p>${project.description}</p>
+    </div>
+</li>`
+            });
+        });
+    }());
+
+</script>
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+            
+            
+  		</div>
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Hacked together with &#10084; by <a href="https://github.com/Angus-C-git">Angus C</a> <i class='fas fa-ghost'></i> </span>
+          </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/cybernetic-coffee/bundle.min.ff52c164fcff61710b0c5cf41319e6eb65e344a7546c48f86135504c534badd8f9fccbe3fb73b3b5f22a3e692c7532f0e982e7bab069e95063bbc4878f8700ee.js" integrity="sha512-/1LBZPz/YXELDFz0Exnm62XjRKdUbEj4YTVQTFNLrdj5/Mvj&#43;3OztfIqPmksdTLw6YLnurBp6VBju8SHj4cA7g=="></script>
+
+
+
+    </body>
+</html>
