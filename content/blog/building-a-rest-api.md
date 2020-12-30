@@ -1,5 +1,5 @@
 ---
-title: "Building A REST API In 30 minutes"
+title: "Building A REST API"
 weight: 400
 keywords: "blog REST API "
 ---
