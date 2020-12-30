@@ -34,7 +34,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/themes/cybernetic-coffee/static/images" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../PrinciplesProjects/crypt--api" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
@@ -62,7 +62,7 @@
       <workItem from="1609072088207" duration="1311000" />
       <workItem from="1609138058360" duration="6779000" />
       <workItem from="1609149947731" duration="13037000" />
-      <workItem from="1609298368511" duration="9131000" />
+      <workItem from="1609298368511" duration="14926000" />
     </task>
     <servers />
   </component>
