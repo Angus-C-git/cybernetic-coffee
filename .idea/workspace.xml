@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd83f7fd-c872-4297-8773-ba978981f4b5" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/content/blog/hello-world.md" beforeDir="false" afterPath="$PROJECT_DIR$/content/blog/building-a-rest-api.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/cybernetic-coffee/layouts/partials/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/themes/cybernetic-coffee/layouts/partials/footer.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/content/blog/building-a-rest-api.md" beforeDir="false" afterPath="$PROJECT_DIR$/content/blog/building-a-rest-api.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +61,7 @@
       <workItem from="1609072088207" duration="1311000" />
       <workItem from="1609138058360" duration="6779000" />
       <workItem from="1609149947731" duration="13037000" />
-      <workItem from="1609298368511" duration="699000" />
+      <workItem from="1609298368511" duration="902000" />
     </task>
     <servers />
   </component>
