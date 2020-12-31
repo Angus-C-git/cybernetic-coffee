@@ -561,4 +561,4 @@ name, in our case 'auth-token'.
 {{< /md_html >}}
 
 
-~> If you have any comments or questions feel free to leave them on this [thread](https://twitter.com/ghostinthefiber/status/1344281710372954115)
+~> If you have any comments or questions feel free to leave them on this [thread](https://twitter.com/ghostinthefiber/status/1344281710372954115).

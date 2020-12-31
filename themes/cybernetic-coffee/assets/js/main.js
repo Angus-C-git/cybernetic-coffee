@@ -25,13 +25,13 @@ function twitterFeed() {
             feed.innerHTML = '';
             loader.innerHTML = '';
 
-            result.data.map(tweet => {
+            result.map(tweet => {
                 let icon = (tweet.text.indexOf('RT') >= 0) ? `<i class="fas fa-retweet"></i>` : `<i class="fab fa-twitter">`;
                 feed.innerHTML += `<li class="timeline-event">
                                         <label class="timeline-event-icon"></label>
                                         <div class="timeline-event-copy">
-                                            <p class="timeline-event-thumbnail">Once Upon A Time ...</p>
-                                            <h3>${icon}</i> <a class="repo" href="https://twitter.com/ghostinthefiber/status/${tweet.id}" target="_blank">by ghostinthefiber</a></h3>
+                                            <p class="timeline-event-thumbnail">${tweet.created_at.slice(0, 16)}</p>
+                                            <h3>${icon}</i> <a class="repo" href="https://twitter.com/ghostinthefiber/status/${tweet.id_str}" target="_blank">by ghostinthefiber</a></h3>
                                             <p>${tweet.text}</p>
                                         </div>
                                     </li>`

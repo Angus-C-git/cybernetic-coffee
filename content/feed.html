@@ -17,7 +17,7 @@ keywords: "activity feed"
             page: 1,
             per_page: 30
         }).then(response => {
-            console.log(response.data);
+
             let nonSelected = document.getElementById('twitter');
             nonSelected.classList.remove('feed-selected');
             nonSelected.classList.add('feed-non-selected');
