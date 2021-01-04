@@ -1,11 +1,12 @@
 ---
 title: "Building A REST API"
-date: "2020-12-30 8:00"
+categories: ["Development"]
+tags: ["REST API", "Backend", "Node.js", "express"]
+date: "2020-12-28"
+type: "post"
 weight: 400
 keywords: "blog REST API "
 ---
-
------
 
 ## The Power Of REST APIs
 

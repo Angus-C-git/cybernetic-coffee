@@ -1,7 +1,7 @@
 .sharing-buttons {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  //justify-content: space-between;
 
   .resp-sharing-button__icon,
   .resp-sharing-button__link {
@@ -21,8 +21,8 @@
   }
 
   .resp-sharing-button__icon svg {
-    width: 1em;
-    height: 1em;
+    width: 2em;
+    height: 2em;
     margin-right: 0.4em;
     vertical-align: top;
   }

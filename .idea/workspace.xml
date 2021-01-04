@@ -2,10 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd83f7fd-c872-4297-8773-ba978981f4b5" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/content/blog/test-blog.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.toml" beforeDir="false" afterPath="$PROJECT_DIR$/config.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/content/blog/building-a-rest-api.md" beforeDir="false" afterPath="$PROJECT_DIR$/content/blog/building-a-rest-api.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/content/feed.html" beforeDir="false" afterPath="$PROJECT_DIR$/content/feed.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/cybernetic-coffee/assets/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/themes/cybernetic-coffee/assets/js/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/content/projects.html" beforeDir="false" afterPath="$PROJECT_DIR$/content/projects.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/_gen/assets/scss/cybernetic-coffee/scss/main.scss_de1a7f5f1c8c46959803c429bb697ff0.content" beforeDir="false" afterPath="$PROJECT_DIR$/resources/_gen/assets/scss/cybernetic-coffee/scss/main.scss_de1a7f5f1c8c46959803c429bb697ff0.content" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/_gen/assets/scss/cybernetic-coffee/scss/main.scss_de1a7f5f1c8c46959803c429bb697ff0.json" beforeDir="false" afterPath="$PROJECT_DIR$/resources/_gen/assets/scss/cybernetic-coffee/scss/main.scss_de1a7f5f1c8c46959803c429bb697ff0.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/cybernetic-coffee/assets/scss/_sharing-buttons.scss" beforeDir="false" afterPath="$PROJECT_DIR$/themes/cybernetic-coffee/assets/scss/_sharing-buttons.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/cybernetic-coffee/layouts/_default/single.html" beforeDir="false" afterPath="$PROJECT_DIR$/themes/cybernetic-coffee/layouts/_default/single.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/cybernetic-coffee/layouts/partials/sharing-buttons.html" beforeDir="false" afterPath="$PROJECT_DIR$/themes/cybernetic-coffee/layouts/partials/sharing-buttons.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/cybernetic-coffee/layouts/posts/single.html" beforeDir="false" afterPath="$PROJECT_DIR$/themes/cybernetic-coffee/layouts/posts/single.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +77,9 @@
       <workItem from="1609072088207" duration="1311000" />
       <workItem from="1609138058360" duration="6779000" />
       <workItem from="1609149947731" duration="13037000" />
-      <workItem from="1609298368511" duration="25129000" />
+      <workItem from="1609298368511" duration="25632000" />
+      <workItem from="1609653977205" duration="24000" />
+      <workItem from="1609715747809" duration="6282000" />
     </task>
     <servers />
   </component>

@@ -8,7 +8,31 @@ theme = "cybernetic-coffee"
     dateformShort   = "Jan 2"
     dateformNum     = "2006-01-02"
     dateformNumTime = "2006-01-02 15:04"
-        
+
+
+#[permalinks]
+#    posts = "/posts/:year/:month/:title/"
+
+lastModDisplay = "Modified:"
+
+archetypeDir = "archetypes"
+contentDir   = "content"
+dataDir      = "data"
+layoutDir    = "layouts"
+publishDir   = "public"
+
+
+buildDrafts  = false
+buildFuture  = false
+buildExpired = false
+canonifyURLs = true
+
+enableRobotsTXT = true
+enableGitInfo   = false
+enableEmoji     = true
+
+enableSharingButtons = true
+
 defaultTheme = "dark"
 themeColor = "#252627"
 
