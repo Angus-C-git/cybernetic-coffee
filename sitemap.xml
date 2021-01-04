@@ -3,11 +3,12 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://angus-c-git.github.io/cybernetic-coffee/feed/</loc>
+    <loc>https://angus-c-git.github.io/cybernetic-coffee/blog/building-a-rest-api/</loc>
+    <lastmod>2020-12-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://angus-c-git.github.io/cybernetic-coffee/blog/building-a-rest-api/</loc>
+    <loc>https://angus-c-git.github.io/cybernetic-coffee/feed/</loc>
   </url>
   
   <url>
@@ -39,23 +40,52 @@
   </url>
   
   <url>
-    <loc>https://angus-c-git.github.io/cybernetic-coffee/all-projects/</loc>
+    <loc>https://angus-c-git.github.io/cybernetic-coffee/tags/backend/</loc>
+    <lastmod>2020-12-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://angus-c-git.github.io/cybernetic-coffee/blog/</loc>
+    <lastmod>2020-12-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://angus-c-git.github.io/cybernetic-coffee/categories/</loc>
+    <lastmod>2020-12-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://angus-c-git.github.io/cybernetic-coffee/</loc>
+    <lastmod>2020-12-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://angus-c-git.github.io/cybernetic-coffee/categories/development/</loc>
+    <lastmod>2020-12-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://angus-c-git.github.io/cybernetic-coffee/tags/express/</loc>
+    <lastmod>2020-12-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://angus-c-git.github.io/cybernetic-coffee/tags/node.js/</loc>
+    <lastmod>2020-12-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://angus-c-git.github.io/cybernetic-coffee/tags/rest-api/</loc>
+    <lastmod>2020-12-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://angus-c-git.github.io/cybernetic-coffee/tags/</loc>
+    <lastmod>2020-12-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://angus-c-git.github.io/cybernetic-coffee/all-projects/</loc>
   </url>
   
 </urlset>

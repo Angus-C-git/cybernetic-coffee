@@ -5,6 +5,43 @@
     <link>https://angus-c-git.github.io/cybernetic-coffee/tags/</link>
     <description>Recent content in Tags on Cybernetic Coffee</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https://angus-c-git.github.io/cybernetic-coffee/tags/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language>
+    <lastBuildDate>Mon, 28 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://angus-c-git.github.io/cybernetic-coffee/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Backend</title>
+      <link>https://angus-c-git.github.io/cybernetic-coffee/tags/backend/</link>
+      <pubDate>Mon, 28 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://angus-c-git.github.io/cybernetic-coffee/tags/backend/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>express</title>
+      <link>https://angus-c-git.github.io/cybernetic-coffee/tags/express/</link>
+      <pubDate>Mon, 28 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://angus-c-git.github.io/cybernetic-coffee/tags/express/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Node.js</title>
+      <link>https://angus-c-git.github.io/cybernetic-coffee/tags/node.js/</link>
+      <pubDate>Mon, 28 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://angus-c-git.github.io/cybernetic-coffee/tags/node.js/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>REST API</title>
+      <link>https://angus-c-git.github.io/cybernetic-coffee/tags/rest-api/</link>
+      <pubDate>Mon, 28 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://angus-c-git.github.io/cybernetic-coffee/tags/rest-api/</guid>
+      <description></description>
+    </item>
+    
   </channel>
 </rss>
