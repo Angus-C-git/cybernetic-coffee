@@ -68,3 +68,9 @@ footerRight = "Hacked together with &#10084; by <a href=\"https://github.com/Ang
     identifier = "blog"
     name       = "Blog"
     url        = "/blog"
+
+[[menu.main]]
+    identifier = "Capture The Flag"
+    name       = "CTF"
+    url        = "/ctf"
+

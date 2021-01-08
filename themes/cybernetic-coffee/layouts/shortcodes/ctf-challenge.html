@@ -1,0 +1,29 @@
+<div class="card">
+
+    {{ if .Get "ref" }}
+        <img src="{{ .Get "ref" | absURL }}" class="{{ .Get "class" }}">
+    {{ end }}
+    <p class="card__name">Challenge Name</p>
+    <div class="grid-container">
+
+        <div class="grid-child-posts">
+            150pts
+        </div>
+
+        <div class="grid-child-followers">
+            0 Solves
+        </div>
+
+    </div>
+
+    <p class="challenge-description">
+        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore
+        et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et
+        ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    </p>
+
+    Flag
+    <input type="text" id="name" placeholder="CYB{...}"  class="">
+
+    <button class="btn draw-border">Submit</button>
+</div>
