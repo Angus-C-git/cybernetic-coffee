@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="">
+<meta name="description" content="Welcome ______  &#34;The year is 2084. A company called SharpNet control over 80% of traffic on the internet. A resistance company OpenWaves seeks to restore balance to the internet. You work as a ghost for the resistance hacking SharpNet systems in an effort to protect the original mission of the internet.&#34;   OSINT Acquisition 150pts  0 Solves   NextStart has just been acquired by SharpNet. The resistance wants you figure out which SharpNet employee is managing the asset." />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="#252627" />
+<link rel="canonical" href="https://angus-c-git.github.io/cybernetic-coffee/ctf/" />
+
+
+    <title>
+        
+            Capture The Flag :: Cybernetic Coffee 
+        
+    </title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/cybernetic-coffee/main.4c5d72531eee06dc0d1b1cb1d76898eee5b95340992d7dba9018462525340525.css">
+
+
+
+
+<link rel="shortcut icon" href="https://angus-c-git.github.io/cybernetic-coffee/images/favicon.svg" />
+
+
+<meta itemprop="name" content="Capture The Flag">
+<meta itemprop="description" content="Welcome ______  &#34;The year is 2084. A company called SharpNet control over 80% of traffic on the internet. A resistance company OpenWaves seeks to restore balance to the internet. You work as a ghost for the resistance hacking SharpNet systems in an effort to protect the original mission of the internet.&#34;   OSINT Acquisition 150pts  0 Solves   NextStart has just been acquired by SharpNet. The resistance wants you figure out which SharpNet employee is managing the asset.">
+
+<meta itemprop="wordCount" content="227">
+
+
+
+<meta itemprop="keywords" content="" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Capture The Flag"/>
+<meta name="twitter:description" content="Welcome ______  &#34;The year is 2084. A company called SharpNet control over 80% of traffic on the internet. A resistance company OpenWaves seeks to restore balance to the internet. You work as a ghost for the resistance hacking SharpNet systems in an effort to protect the original mission of the internet.&#34;   OSINT Acquisition 150pts  0 Solves   NextStart has just been acquired by SharpNet. The resistance wants you figure out which SharpNet employee is managing the asset."/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <script src="https://kit.fontawesome.com/5eb4842dc5.js" crossorigin="anonymous"></script>
+
+<a href="/cybernetic-coffee" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__text">Cybernetic <i class="fas fa-mug-hot"> </i> </span>
+            <span class="logo__mark"><i class="fas fa-terminal"></i></span>
+            <span class="logo__cursor" style=
+                  "
+                   background-color:#00ba68;
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://angus-c-git.github.io/cybernetic-coffee/feed/">Activity Feed</a></li><li><a href="https://angus-c-git.github.io/cybernetic-coffee/projects/">Projects</a></li><li><a href="https://angus-c-git.github.io/cybernetic-coffee/blog">Blog</a></li><li><a href="https://angus-c-git.github.io/cybernetic-coffee/ctf">CTF</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+        
+
+        <article>
+            <h2 class="post-title"><a href="https://angus-c-git.github.io/cybernetic-coffee/ctf/">Capture The Flag</a></h2>
+
+            
+
+            <hr />
+
+            
+
+            
+
+            <div class="post-content">
+                <h4>Welcome ______</h4>
+<blockquote class="ctf-intro">
+    <i>
+        "The year is 2084. A company called SharpNet control over 80% of traffic on the internet. A resistance company
+        OpenWaves seeks to restore balance to the internet. You work as a ghost for the resistance hacking SharpNet systems
+        in an effort to protect the original mission of the internet."
+    </i>
+</blockquote>
+
+
+<h2 class="ctf-section-head">OSINT</h2>
+
+<div class="challenge-container">
+
+    <div class="card">
+
+    
+        <img src="https://angus-c-git.github.io/cybernetic-coffee/images/ctf/flag-placeholder-img.png" class="card__image">
+    
+    <p class="card__name">
+        
+            Acquisition
+        
+    </p>
+    <div class="grid-container">
+
+        <div class="grid-child-posts">
+            150pts
+        </div>
+
+        <div class="grid-child-followers">
+            0 Solves
+        </div>
+
+    </div>
+
+    <p class="challenge-description">
+        
+            NextStart has just been acquired by SharpNet. The resistance wants you figure out which SharpNet employee is managing the asset.
+        
+    </p>
+
+    <div class="challenge-resources">
+        
+        <button onclick="window.open('https:\/\/next-start.github.io\/', '_blank')">
+            
+                <i class="fas fa-external-link-alt"></i>
+            
+        </button>
+        
+    </div>
+
+    <input type="text" id="name" placeholder="CYB{flag_text}"  class="">
+
+    <button class="btn draw-border">Submit</button>
+</div>
+
+    <div class="card">
+
+    
+        <img src="https://angus-c-git.github.io/cybernetic-coffee/images/ctf/flag-placeholder-img.png" class="card__image">
+    
+    <p class="card__name">
+        
+            Challenge Name
+        
+    </p>
+    <div class="grid-container">
+
+        <div class="grid-child-posts">
+            150pts
+        </div>
+
+        <div class="grid-child-followers">
+            0 Solves
+        </div>
+
+    </div>
+
+    <p class="challenge-description">
+        
+            Coming soon ...
+        
+    </p>
+
+    <div class="challenge-resources">
+        
+    </div>
+
+    <input type="text" id="name" placeholder="CYB{flag_text}"  class="">
+
+    <button class="btn draw-border">Submit</button>
+</div>
+
+    <div class="card">
+
+    
+        <img src="https://angus-c-git.github.io/cybernetic-coffee/images/ctf/flag-placeholder-img.png" class="card__image">
+    
+    <p class="card__name">
+        
+            Challenge Name
+        
+    </p>
+    <div class="grid-container">
+
+        <div class="grid-child-posts">
+            150pts
+        </div>
+
+        <div class="grid-child-followers">
+            0 Solves
+        </div>
+
+    </div>
+
+    <p class="challenge-description">
+        
+            Coming soon ...
+        
+    </p>
+
+    <div class="challenge-resources">
+        
+    </div>
+
+    <input type="text" id="name" placeholder="CYB{flag_text}"  class="">
+
+    <button class="btn draw-border">Submit</button>
+</div>
+
+    <div class="card">
+
+    
+        <img src="https://angus-c-git.github.io/cybernetic-coffee/images/ctf/flag-placeholder-img.png" class="card__image">
+    
+    <p class="card__name">
+        
+            Challenge Name
+        
+    </p>
+    <div class="grid-container">
+
+        <div class="grid-child-posts">
+            150pts
+        </div>
+
+        <div class="grid-child-followers">
+            0 Solves
+        </div>
+
+    </div>
+
+    <p class="challenge-description">
+        
+            Coming soon ...
+        
+    </p>
+
+    <div class="challenge-resources">
+        
+    </div>
+
+    <input type="text" id="name" placeholder="CYB{flag_text}"  class="">
+
+    <button class="btn draw-border">Submit</button>
+</div>
+</div>
+<br/>
+
+<h2 class="ctf-section-head">Social Engineering</h2>
+
+<div class="challenge-container">
+
+    <div class="card">
+
+    
+        <img src="https://angus-c-git.github.io/cybernetic-coffee/images/ctf/flag-placeholder-img.png" class="card__image">
+    
+    <p class="card__name">
+        
+            Challenge Name
+        
+    </p>
+    <div class="grid-container">
+
+        <div class="grid-child-posts">
+            150pts
+        </div>
+
+        <div class="grid-child-followers">
+            0 Solves
+        </div>
+
+    </div>
+
+    <p class="challenge-description">
+        
+            Coming soon ...
+        
+    </p>
+
+    <div class="challenge-resources">
+        
+    </div>
+
+    <input type="text" id="name" placeholder="CYB{flag_text}"  class="">
+
+    <button class="btn draw-border">Submit</button>
+</div>
+
+    <div class="card">
+
+    
+        <img src="https://angus-c-git.github.io/cybernetic-coffee/images/ctf/flag-placeholder-img.png" class="card__image">
+    
+    <p class="card__name">
+        
+            Challenge Name
+        
+    </p>
+    <div class="grid-container">
+
+        <div class="grid-child-posts">
+            150pts
+        </div>
+
+        <div class="grid-child-followers">
+            0 Solves
+        </div>
+
+    </div>
+
+    <p class="challenge-description">
+        
+            Coming soon ...
+        
+    </p>
+
+    <div class="challenge-resources">
+        
+    </div>
+
+    <input type="text" id="name" placeholder="CYB{flag_text}"  class="">
+
+    <button class="btn draw-border">Submit</button>
+</div>
+
+    <div class="card">
+
+    
+        <img src="https://angus-c-git.github.io/cybernetic-coffee/images/ctf/flag-placeholder-img.png" class="card__image">
+    
+    <p class="card__name">
+        
+            Challenge Name
+        
+    </p>
+    <div class="grid-container">
+
+        <div class="grid-child-posts">
+            150pts
+        </div>
+
+        <div class="grid-child-followers">
+            0 Solves
+        </div>
+
+    </div>
+
+    <p class="challenge-description">
+        
+            Coming soon ...
+        
+    </p>
+
+    <div class="challenge-resources">
+        
+    </div>
+
+    <input type="text" id="name" placeholder="CYB{flag_text}"  class="">
+
+    <button class="btn draw-border">Submit</button>
+</div>
+</div>
+<br/>
+
+<h2 class="ctf-section-head">PWN</h2>
+
+<div class="challenge-container">
+
+    <div class="card">
+
+    
+        <img src="https://angus-c-git.github.io/cybernetic-coffee/images/ctf/flag-placeholder-img.png" class="card__image">
+    
+    <p class="card__name">
+        
+            Challenge Name
+        
+    </p>
+    <div class="grid-container">
+
+        <div class="grid-child-posts">
+            150pts
+        </div>
+
+        <div class="grid-child-followers">
+            0 Solves
+        </div>
+
+    </div>
+
+    <p class="challenge-description">
+        
+            Coming soon ...
+        
+    </p>
+
+    <div class="challenge-resources">
+        
+    </div>
+
+    <input type="text" id="name" placeholder="CYB{flag_text}"  class="">
+
+    <button class="btn draw-border">Submit</button>
+</div>
+
+    <div class="card">
+
+    
+        <img src="https://angus-c-git.github.io/cybernetic-coffee/images/ctf/flag-placeholder-img.png" class="card__image">
+    
+    <p class="card__name">
+        
+            Challenge Name
+        
+    </p>
+    <div class="grid-container">
+
+        <div class="grid-child-posts">
+            150pts
+        </div>
+
+        <div class="grid-child-followers">
+            0 Solves
+        </div>
+
+    </div>
+
+    <p class="challenge-description">
+        
+            Coming soon ...
+        
+    </p>
+
+    <div class="challenge-resources">
+        
+    </div>
+
+    <input type="text" id="name" placeholder="CYB{flag_text}"  class="">
+
+    <button class="btn draw-border">Submit</button>
+</div>
+
+    <div class="card">
+
+    
+        <img src="https://angus-c-git.github.io/cybernetic-coffee/images/ctf/flag-placeholder-img.png" class="card__image">
+    
+    <p class="card__name">
+        
+            Challenge Name
+        
+    </p>
+    <div class="grid-container">
+
+        <div class="grid-child-posts">
+            150pts
+        </div>
+
+        <div class="grid-child-followers">
+            0 Solves
+        </div>
+
+    </div>
+
+    <p class="challenge-description">
+        
+            Coming soon ...
+        
+    </p>
+
+    <div class="challenge-resources">
+        
+    </div>
+
+    <input type="text" id="name" placeholder="CYB{flag_text}"  class="">
+
+    <button class="btn draw-border">Submit</button>
+</div>
+</div>
+<br/>
+
+<h2 class="ctf-section-head">Web</h2>
+
+<div class="challenge-container">
+
+    <div class="card">
+
+    
+        <img src="https://angus-c-git.github.io/cybernetic-coffee/images/ctf/flag-placeholder-img.png" class="card__image">
+    
+    <p class="card__name">
+        
+            Challenge Name
+        
+    </p>
+    <div class="grid-container">
+
+        <div class="grid-child-posts">
+            150pts
+        </div>
+
+        <div class="grid-child-followers">
+            0 Solves
+        </div>
+
+    </div>
+
+    <p class="challenge-description">
+        
+            Coming soon ...
+        
+    </p>
+
+    <div class="challenge-resources">
+        
+    </div>
+
+    <input type="text" id="name" placeholder="CYB{flag_text}"  class="">
+
+    <button class="btn draw-border">Submit</button>
+</div>
+
+    <div class="card">
+
+    
+        <img src="https://angus-c-git.github.io/cybernetic-coffee/images/ctf/flag-placeholder-img.png" class="card__image">
+    
+    <p class="card__name">
+        
+            Challenge Name
+        
+    </p>
+    <div class="grid-container">
+
+        <div class="grid-child-posts">
+            150pts
+        </div>
+
+        <div class="grid-child-followers">
+            0 Solves
+        </div>
+
+    </div>
+
+    <p class="challenge-description">
+        
+            Coming soon ...
+        
+    </p>
+
+    <div class="challenge-resources">
+        
+    </div>
+
+    <input type="text" id="name" placeholder="CYB{flag_text}"  class="">
+
+    <button class="btn draw-border">Submit</button>
+</div>
+
+    <div class="card">
+
+    
+        <img src="https://angus-c-git.github.io/cybernetic-coffee/images/ctf/flag-placeholder-img.png" class="card__image">
+    
+    <p class="card__name">
+        
+            Challenge Name
+        
+    </p>
+    <div class="grid-container">
+
+        <div class="grid-child-posts">
+            150pts
+        </div>
+
+        <div class="grid-child-followers">
+            0 Solves
+        </div>
+
+    </div>
+
+    <p class="challenge-description">
+        
+            Coming soon ...
+        
+    </p>
+
+    <div class="challenge-resources">
+        
+    </div>
+
+    <input type="text" id="name" placeholder="CYB{flag_text}"  class="">
+
+    <button class="btn draw-border">Submit</button>
+</div>
+
+    <div class="card">
+
+    
+        <img src="https://angus-c-git.github.io/cybernetic-coffee/images/ctf/flag-placeholder-img.png" class="card__image">
+    
+    <p class="card__name">
+        
+            Challenge Name
+        
+    </p>
+    <div class="grid-container">
+
+        <div class="grid-child-posts">
+            150pts
+        </div>
+
+        <div class="grid-child-followers">
+            0 Solves
+        </div>
+
+    </div>
+
+    <p class="challenge-description">
+        
+            Coming soon ...
+        
+    </p>
+
+    <div class="challenge-resources">
+        
+    </div>
+
+    <input type="text" id="name" placeholder="CYB{flag_text}"  class="">
+
+    <button class="btn draw-border">Submit</button>
+</div>
+</div>
+<br/>
+
+<h2 class="ctf-section-head">Reverse Engineering</h2>
+
+<div class="challenge-container">
+
+    <div class="card">
+
+    
+        <img src="https://angus-c-git.github.io/cybernetic-coffee/images/ctf/flag-placeholder-img.png" class="card__image">
+    
+    <p class="card__name">
+        
+            Challenge Name
+        
+    </p>
+    <div class="grid-container">
+
+        <div class="grid-child-posts">
+            150pts
+        </div>
+
+        <div class="grid-child-followers">
+            0 Solves
+        </div>
+
+    </div>
+
+    <p class="challenge-description">
+        
+            Coming soon ...
+        
+    </p>
+
+    <div class="challenge-resources">
+        
+    </div>
+
+    <input type="text" id="name" placeholder="CYB{flag_text}"  class="">
+
+    <button class="btn draw-border">Submit</button>
+</div>
+
+    <div class="card">
+
+    
+        <img src="https://angus-c-git.github.io/cybernetic-coffee/images/ctf/flag-placeholder-img.png" class="card__image">
+    
+    <p class="card__name">
+        
+            Challenge Name
+        
+    </p>
+    <div class="grid-container">
+
+        <div class="grid-child-posts">
+            150pts
+        </div>
+
+        <div class="grid-child-followers">
+            0 Solves
+        </div>
+
+    </div>
+
+    <p class="challenge-description">
+        
+            Coming soon ...
+        
+    </p>
+
+    <div class="challenge-resources">
+        
+    </div>
+
+    <input type="text" id="name" placeholder="CYB{flag_text}"  class="">
+
+    <button class="btn draw-border">Submit</button>
+</div>
+
+    <div class="card">
+
+    
+        <img src="https://angus-c-git.github.io/cybernetic-coffee/images/ctf/flag-placeholder-img.png" class="card__image">
+    
+    <p class="card__name">
+        
+            Challenge Name
+        
+    </p>
+    <div class="grid-container">
+
+        <div class="grid-child-posts">
+            150pts
+        </div>
+
+        <div class="grid-child-followers">
+            0 Solves
+        </div>
+
+    </div>
+
+    <p class="challenge-description">
+        
+            Coming soon ...
+        
+    </p>
+
+    <div class="challenge-resources">
+        
+    </div>
+
+    <input type="text" id="name" placeholder="CYB{flag_text}"  class="">
+
+    <button class="btn draw-border">Submit</button>
+</div>
+</div>
+<br/>
+
+<!--TODO: fix this with css -->
+
+<br />
+<br />
+
+            </div>
+        </article>
+
+        <hr />
+
+        
+
+
+        
+
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Hacked together with &#10084; by <a href="https://github.com/Angus-C-git">Angus C</a> <i class='fas fa-ghost'></i> </span>
+          </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/cybernetic-coffee/bundle.min.8afe18907751e600e80fc8308e77d4272c1ed8c68bc88d7d1ff639f72b9c7312c9a757b59de224bb08f8d3c7bc4622e03958e1e68b43504da8623ec54dc63d63.js" integrity="sha512-iv4YkHdR5gDoD8gwjnfUJywe2MaLyI19H/Y59yuccxLJp1e1neIkuwj408e8RiLgOVjh5otDUE2oYj7FTcY9Yw=="></script>
+
+
+
+    </body>
+</html>
