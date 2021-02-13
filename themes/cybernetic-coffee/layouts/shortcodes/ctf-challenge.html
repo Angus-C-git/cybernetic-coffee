@@ -3,7 +3,13 @@
     {{ if .Get "ref" }}
         <img src="{{ .Get "ref" | absURL }}" class="{{ .Get "class" }}">
     {{ end }}
-    <p class="card__name">Challenge Name</p>
+    <p class="card__name">
+        {{ if .Get "title" }}
+            {{ .Get "title" }}
+        {{ else }}
+            Challenge Name
+        {{ end }}
+    </p>
     <div class="grid-container">
 
         <div class="grid-child-posts">
@@ -17,8 +23,24 @@
     </div>
 
     <p class="challenge-description">
-        Coming soon ...
+        {{ if .Get "desc" }}
+            {{ .Get "desc" }}
+        {{ else }}
+            Coming soon ...
+        {{ end }}
     </p>
+
+    <div class="challenge-resources">
+        {{ if .Get "resources" }}
+        <button onclick="window.open('{{ .Get "resource" }}', '_blank')">
+            {{ if .Get "link" }}
+                <i class="fas fa-external-link-alt"></i>
+            {{ else if .Get "download" }}
+                <i class="fas fa-file-download"></i>
+            {{ end }}
+        </button>
+        {{ end }}
+    </div>
 
     <input type="text" id="name" placeholder="CYB{flag_text}"  class="">
 

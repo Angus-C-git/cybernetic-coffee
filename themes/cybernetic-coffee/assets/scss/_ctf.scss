@@ -1,5 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Baloo+Paaji+2:wght@400;500&display=swap");
 
+.ctf-intro {
+  padding-bottom: 2%;
+}
 
 .ctf-section-head {
   font-family: 'Inconsolata', sans-serif;
@@ -17,6 +20,22 @@
   font-family: 'Inconsolata', sans-serif ;
 }
 
+.challenge-resources {
+  padding-bottom: 2%;
+}
+
+.challenge-resources button {
+  border-radius: 50%;
+  height: 50px;
+  width: 50px;
+  background: #272133;
+}
+
+.challenge-resources button:hover {
+  cursor: pointer;
+  background: #eb196e;
+}
+
 .card {
   background-color: #222831;
   height: auto;
@@ -31,7 +50,7 @@
 }
 
 .card__name {
-  margin-top: 15px;
+  margin-top: 25px;
   font-size: 1.5em;
 }
 

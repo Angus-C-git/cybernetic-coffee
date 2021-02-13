@@ -1,4 +1,5 @@
 
 {{ if .Get "ref" }}
+    <br/>
     <img src="{{ .Get "ref" | absURL }}" class="{{ .Get "class" }}">
 {{ end }}
