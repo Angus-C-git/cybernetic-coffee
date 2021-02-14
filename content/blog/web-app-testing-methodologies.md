@@ -286,8 +286,16 @@ with urgency.
 
 By way of closure here is a checklist which summaries the approaches outlined in this post.
 
-Coming soon ...
-
-{{< md_html >}}
-    <iframe src='https://svelte3-todo.surge.sh/'></iframe>
-{{< /md_html >}}
+{{< checklist 
+    "Explore the site with burp running" 
+    "Fingerprint The Site"
+    "Look for things of interest in dev tools"
+    "Check robots.txt"
+    "Port scan the webserver"
+    "Enumerate subdomains"
+    "Check TLS/SSL certificates with sslscan"
+    "Check for sensitive information in local storage"
+    "Look for endpoints and other information in js files"
+    "Look for OWASP top 10"
+    "Look to chain exploits"
+>}}
