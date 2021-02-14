@@ -2,13 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd83f7fd-c872-4297-8773-ba978981f4b5" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/themes/cybernetic-coffee/assets/scss/_checkboxs.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/themes/cybernetic-coffee/layouts/shortcodes/checklist.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/content/blog/web-app-testing-methodologies.md" beforeDir="false" afterPath="$PROJECT_DIR$/content/blog/web-app-testing-methodologies.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/_gen/assets/scss/cybernetic-coffee/scss/main.scss_de1a7f5f1c8c46959803c429bb697ff0.content" beforeDir="false" afterPath="$PROJECT_DIR$/resources/_gen/assets/scss/cybernetic-coffee/scss/main.scss_de1a7f5f1c8c46959803c429bb697ff0.content" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/_gen/assets/scss/cybernetic-coffee/scss/main.scss_de1a7f5f1c8c46959803c429bb697ff0.json" beforeDir="false" afterPath="$PROJECT_DIR$/resources/_gen/assets/scss/cybernetic-coffee/scss/main.scss_de1a7f5f1c8c46959803c429bb697ff0.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/themes/cybernetic-coffee/assets/scss/main.scss" beforeDir="false" afterPath="$PROJECT_DIR$/themes/cybernetic-coffee/assets/scss/main.scss" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,7 +82,7 @@
       <workItem from="1610363205437" duration="604000" />
       <workItem from="1611635141171" duration="8551000" />
       <workItem from="1612067700991" duration="5142000" />
-      <workItem from="1613213263244" duration="9689000" />
+      <workItem from="1613213263244" duration="9983000" />
     </task>
     <servers />
   </component>
