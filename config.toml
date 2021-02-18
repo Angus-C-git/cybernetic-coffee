@@ -1,4 +1,4 @@
-baseURL = "https://angus-c-git.github.io/cybernetic-coffee/"
+baseURL = "https://cybernetic.coffee/"
 languageCode = "en-us"
 title = "Cybernetic Coffee"
 theme = "cybernetic-coffee"

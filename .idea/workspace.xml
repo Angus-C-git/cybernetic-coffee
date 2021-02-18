@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd83f7fd-c872-4297-8773-ba978981f4b5" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.toml" beforeDir="false" afterPath="$PROJECT_DIR$/config.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/content/blog/web-app-testing-methodologies.md" beforeDir="false" afterPath="$PROJECT_DIR$/content/blog/web-app-testing-methodologies.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -82,7 +84,10 @@
       <workItem from="1610363205437" duration="604000" />
       <workItem from="1611635141171" duration="8551000" />
       <workItem from="1612067700991" duration="5142000" />
-      <workItem from="1613213263244" duration="9983000" />
+      <workItem from="1613213263244" duration="10049000" />
+      <workItem from="1613283491976" duration="24000" />
+      <workItem from="1613343042799" duration="22000" />
+      <workItem from="1613657215119" duration="27000" />
     </task>
     <servers />
   </component>
