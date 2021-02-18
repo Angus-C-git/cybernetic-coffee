@@ -9,7 +9,7 @@
 <meta name="keywords" content=", REST API, Backend, Node.js, express" />
 <meta name="robots" content="noodp" />
 <meta name="theme-color" content="#252627" />
-<link rel="canonical" href="https://angus-c-git.github.io/cybernetic-coffee/blog/building-a-rest-api/" />
+<link rel="canonical" href="https://cybernetic.coffee/blog/building-a-rest-api/" />
 
 
     <title>
@@ -25,12 +25,12 @@
 
 
 
-<link rel="stylesheet" href="/cybernetic-coffee/main.0aeda7abffb733f347cab53fa7c81a3e16ac95b74fd15251d150d1f4e7d9a109.css">
+<link rel="stylesheet" href="/main.0aeda7abffb733f347cab53fa7c81a3e16ac95b74fd15251d150d1f4e7d9a109.css">
 
 
 
 
-<link rel="shortcut icon" href="https://angus-c-git.github.io/cybernetic-coffee/images/favicon.svg" />
+<link rel="shortcut icon" href="https://cybernetic.coffee/images/favicon.svg" />
 
 
 <meta itemprop="name" content="Building A REST API">
@@ -72,7 +72,7 @@
     <span class="header__inner">
         <script src="https://kit.fontawesome.com/5eb4842dc5.js" crossorigin="anonymous"></script>
 
-<a href="/cybernetic-coffee" style="text-decoration: none;">
+<a href="/" style="text-decoration: none;">
     <div class="logo">
         
             <span class="logo__text">Cybernetic <i class="fas fa-mug-hot"> </i> </span>
@@ -90,7 +90,7 @@
         <span class="header__right">
             
                 <nav class="menu">
-    <ul class="menu__inner"><li><a href="https://angus-c-git.github.io/cybernetic-coffee/feed/">Activity Feed</a></li><li><a href="https://angus-c-git.github.io/cybernetic-coffee/projects/">Projects</a></li><li><a href="https://angus-c-git.github.io/cybernetic-coffee/blog">Blog</a></li><li><a href="https://angus-c-git.github.io/cybernetic-coffee/ctf">CTF</a></li>
+    <ul class="menu__inner"><li><a href="https://cybernetic.coffee/feed/">Activity Feed</a></li><li><a href="https://cybernetic.coffee/projects/">Projects</a></li><li><a href="https://cybernetic.coffee/blog">Blog</a></li><li><a href="https://cybernetic.coffee/ctf">CTF</a></li>
     </ul>
 </nav>
 
@@ -135,7 +135,7 @@
         
 
         <article>
-            <h2 class="post-title"><a href="https://angus-c-git.github.io/cybernetic-coffee/blog/building-a-rest-api/">Building A REST API</a></h2>
+            <h2 class="post-title"><a href="https://cybernetic.coffee/blog/building-a-rest-api/">Building A REST API</a></h2>
 
             
             <div class="post-info">
@@ -150,7 +150,7 @@
 
 
 
-<a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?url=https%3a%2f%2fangus-c-git.github.io%2fcybernetic-coffee%2fblog%2fbuilding-a-rest-api%2f" target="_blank" rel="noopener" aria-label="" title="Share on twitter">
+<a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?url=https%3a%2f%2fcybernetic.coffee%2fblog%2fbuilding-a-rest-api%2f" target="_blank" rel="noopener" aria-label="" title="Share on twitter">
   <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small">
       <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
@@ -192,7 +192,7 @@
 
 
 
-<a class="resp-sharing-button__link" href="https://reddit.com/submit/?url=https%3a%2f%2fangus-c-git.github.io%2fcybernetic-coffee%2fblog%2fbuilding-a-rest-api%2f&amp;resubmit=true&amp;title=Building%20A%20REST%20API" target="_blank" rel="noopener" aria-label="" title="Share on reddit">
+<a class="resp-sharing-button__link" href="https://reddit.com/submit/?url=https%3a%2f%2fcybernetic.coffee%2fblog%2fbuilding-a-rest-api%2f&amp;resubmit=true&amp;title=Building%20A%20REST%20API" target="_blank" rel="noopener" aria-label="" title="Share on reddit">
   <div class="resp-sharing-button resp-sharing-button--reddit resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
     </div>
@@ -216,7 +216,7 @@
 
 
 
-<a class="resp-sharing-button__link" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fangus-c-git.github.io%2fcybernetic-coffee%2fblog%2fbuilding-a-rest-api%2f&amp;t=Building%20A%20REST%20API" target="_blank" rel="noopener" aria-label="" title="Share on hacker news">
+<a class="resp-sharing-button__link" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fcybernetic.coffee%2fblog%2fbuilding-a-rest-api%2f&amp;t=Building%20A%20REST%20API" target="_blank" rel="noopener" aria-label="" title="Share on hacker news">
   <div class="resp-sharing-button resp-sharing-button--hackernews resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M0 24V0h24v24H0zM6.951 5.896l4.112 7.708v5.064h1.583v-4.972l4.148-7.799h-1.749l-2.457 4.875c-.372.745-.688 1.434-.688 1.434s-.297-.708-.651-1.434L8.831 5.896h-1.88z"/></svg>
     </div>
@@ -649,7 +649,7 @@ development server to demonstrate this, but the only difference is your url will
 
 
     <br/>
-    <img src="https://angus-c-git.github.io/cybernetic-coffee/images/blog/register-test-post.png" class="">
+    <img src="https://cybernetic.coffee/images/blog/register-test-post.png" class="">
 
 
 
@@ -666,7 +666,7 @@ development server to demonstrate this, but the only difference is your url will
 </code></pre></div>
 
     <br/>
-    <img src="https://angus-c-git.github.io/cybernetic-coffee/images/blog/register-test-res.png" class="">
+    <img src="https://cybernetic.coffee/images/blog/register-test-res.png" class="">
 
 
 
@@ -680,7 +680,7 @@ register request which is missing one of the required fields.</p>
 
 
     <br/>
-    <img src="https://angus-c-git.github.io/cybernetic-coffee/images/blog/register-test-missing.png" class="">
+    <img src="https://cybernetic.coffee/images/blog/register-test-missing.png" class="">
 
 
 
@@ -694,7 +694,7 @@ name, in our case &lsquo;auth-token&rsquo;.</p>
 
 
     <br/>
-    <img src="https://angus-c-git.github.io/cybernetic-coffee/images/blog/test-auth-route.png" class="">
+    <img src="https://cybernetic.coffee/images/blog/test-auth-route.png" class="">
 
 
 
@@ -715,10 +715,10 @@ name, in our case &lsquo;auth-token&rsquo;.</p>
     <p>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
 
-        <span class="tag"><a href="https://angus-c-git.github.io/cybernetic-coffee/tags/rest-api/">REST API</a></span>
-        <span class="tag"><a href="https://angus-c-git.github.io/cybernetic-coffee/tags/backend/">Backend</a></span>
-        <span class="tag"><a href="https://angus-c-git.github.io/cybernetic-coffee/tags/node.js/">Node.js</a></span>
-        <span class="tag"><a href="https://angus-c-git.github.io/cybernetic-coffee/tags/express/">express</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/rest-api/">REST API</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/backend/">Backend</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/node.js/">Node.js</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/express/">express</a></span>
         
     </p>
 
@@ -749,7 +749,7 @@ name, in our case &lsquo;auth-token&rsquo;.</p>
                     <div class="pagination__buttons">
                         
                         <span class="button previous">
-                      <a href="https://angus-c-git.github.io/cybernetic-coffee/blog/web-app-testing-methodologies/">
+                      <a href="https://cybernetic.coffee/blog/web-app-testing-methodologies/">
                         <span class="button__icon">←</span>
                         <span class="button__text">Web Application Testing Methodologies</span>
                       </a>
@@ -788,7 +788,7 @@ name, in our case &lsquo;auth-token&rsquo;.</p>
 
 
 
-<script type="text/javascript" src="/cybernetic-coffee/bundle.min.8afe18907751e600e80fc8308e77d4272c1ed8c68bc88d7d1ff639f72b9c7312c9a757b59de224bb08f8d3c7bc4622e03958e1e68b43504da8623ec54dc63d63.js" integrity="sha512-iv4YkHdR5gDoD8gwjnfUJywe2MaLyI19H/Y59yuccxLJp1e1neIkuwj408e8RiLgOVjh5otDUE2oYj7FTcY9Yw=="></script>
+<script type="text/javascript" src="/bundle.min.8afe18907751e600e80fc8308e77d4272c1ed8c68bc88d7d1ff639f72b9c7312c9a757b59de224bb08f8d3c7bc4622e03958e1e68b43504da8623ec54dc63d63.js" integrity="sha512-iv4YkHdR5gDoD8gwjnfUJywe2MaLyI19H/Y59yuccxLJp1e1neIkuwj408e8RiLgOVjh5otDUE2oYj7FTcY9Yw=="></script>
 
 
 

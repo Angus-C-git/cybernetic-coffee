@@ -2,71 +2,71 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Cybernetic Coffee</title>
-    <link>https://angus-c-git.github.io/cybernetic-coffee/tags/</link>
+    <link>https://cybernetic.coffee/tags/</link>
     <description>Recent content in Tags on Cybernetic Coffee</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 14 Feb 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://angus-c-git.github.io/cybernetic-coffee/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 14 Feb 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://cybernetic.coffee/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Hacking</title>
-      <link>https://angus-c-git.github.io/cybernetic-coffee/tags/hacking/</link>
+      <link>https://cybernetic.coffee/tags/hacking/</link>
       <pubDate>Sun, 14 Feb 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://angus-c-git.github.io/cybernetic-coffee/tags/hacking/</guid>
+      <guid>https://cybernetic.coffee/tags/hacking/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Pentesting</title>
-      <link>https://angus-c-git.github.io/cybernetic-coffee/tags/pentesting/</link>
+      <link>https://cybernetic.coffee/tags/pentesting/</link>
       <pubDate>Sun, 14 Feb 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://angus-c-git.github.io/cybernetic-coffee/tags/pentesting/</guid>
+      <guid>https://cybernetic.coffee/tags/pentesting/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Web App Testing</title>
-      <link>https://angus-c-git.github.io/cybernetic-coffee/tags/web-app-testing/</link>
+      <link>https://cybernetic.coffee/tags/web-app-testing/</link>
       <pubDate>Sun, 14 Feb 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://angus-c-git.github.io/cybernetic-coffee/tags/web-app-testing/</guid>
+      <guid>https://cybernetic.coffee/tags/web-app-testing/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Backend</title>
-      <link>https://angus-c-git.github.io/cybernetic-coffee/tags/backend/</link>
+      <link>https://cybernetic.coffee/tags/backend/</link>
       <pubDate>Mon, 28 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://angus-c-git.github.io/cybernetic-coffee/tags/backend/</guid>
+      <guid>https://cybernetic.coffee/tags/backend/</guid>
       <description></description>
     </item>
     
     <item>
       <title>express</title>
-      <link>https://angus-c-git.github.io/cybernetic-coffee/tags/express/</link>
+      <link>https://cybernetic.coffee/tags/express/</link>
       <pubDate>Mon, 28 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://angus-c-git.github.io/cybernetic-coffee/tags/express/</guid>
+      <guid>https://cybernetic.coffee/tags/express/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Node.js</title>
-      <link>https://angus-c-git.github.io/cybernetic-coffee/tags/node.js/</link>
+      <link>https://cybernetic.coffee/tags/node.js/</link>
       <pubDate>Mon, 28 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://angus-c-git.github.io/cybernetic-coffee/tags/node.js/</guid>
+      <guid>https://cybernetic.coffee/tags/node.js/</guid>
       <description></description>
     </item>
     
     <item>
       <title>REST API</title>
-      <link>https://angus-c-git.github.io/cybernetic-coffee/tags/rest-api/</link>
+      <link>https://cybernetic.coffee/tags/rest-api/</link>
       <pubDate>Mon, 28 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://angus-c-git.github.io/cybernetic-coffee/tags/rest-api/</guid>
+      <guid>https://cybernetic.coffee/tags/rest-api/</guid>
       <description></description>
     </item>
     
