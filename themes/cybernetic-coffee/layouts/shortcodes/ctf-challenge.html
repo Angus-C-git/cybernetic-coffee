@@ -1,4 +1,5 @@
-<div class="card">
+<div class="card" onclick="expand_challenge(this.children[7])">
+
 
     {{ if .Get "ref" }}
         <img src="{{ .Get "ref" | absURL }}" class="{{ .Get "class" }}">
@@ -21,8 +22,8 @@
         </div>
 
     </div>
-
-    <p class="challenge-description">
+    <!-- EXPANDER HERE   -->
+    <p class="challenge-description collapse-aoe">
         {{ if .Get "desc" }}
             {{ .Get "desc" }}
         {{ else }}
@@ -30,7 +31,7 @@
         {{ end }}
     </p>
 
-    <div class="challenge-resources">
+    <div class="challenge-resources collapse-aoe">
         {{ if .Get "resources" }}
         <button onclick="window.open('{{ .Get "resource" }}', '_blank')">
             {{ if .Get "link" }}
@@ -42,7 +43,10 @@
         {{ end }}
     </div>
 
-    <input type="text" id="name" placeholder="CYB{flag_text}"  class="">
+    <input type="text" id="name" placeholder="CYB{flag_text}"  class="collapse-aoe">
 
-    <button class="btn draw-border">Submit</button>
+    <button class="btn draw-border collapse-aoe">Submit</button>
+
+    <span id="" class="challenge-expander" ><i class="fas fa-chevron-down"></i></span> <!--    onclick="expand_challenge(this)"-->
+
 </div>

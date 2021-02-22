@@ -40,3 +40,25 @@ function twitterFeed() {
         .catch(error => console.log('error', error));
 }
 
+
+function expand_challenge(card) {
+    card.innerHTML = (card.id === "") ? "<i class=\"fas fa-chevron-up\"></i>" : "<i class=\"fas fa-chevron-down\"></i>"
+    card.id = (card.id === "active") ? "" : "active";
+
+    // TODO: Fix this pain :C
+    if (card.id === "active") {
+        card.parentElement.children[3].classList.remove("collapse-aoe");
+        card.parentElement.children[4].classList.remove("collapse-aoe");
+        card.parentElement.children[5].classList.remove("collapse-aoe");
+        card.parentElement.children[6].classList.remove("collapse-aoe");
+    } else {
+        card.parentElement.children[3].classList.add("collapse-aoe");
+        card.parentElement.children[4].classList.add("collapse-aoe");
+        card.parentElement.children[5].classList.add("collapse-aoe");
+        card.parentElement.children[6].classList.add("collapse-aoe");
+    }
+
+
+
+
+}
