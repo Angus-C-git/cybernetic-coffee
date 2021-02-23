@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd83f7fd-c872-4297-8773-ba978981f4b5" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/_gen/assets/scss/scss/main.scss_de1a7f5f1c8c46959803c429bb697ff0.content" beforeDir="false" afterPath="$PROJECT_DIR$/resources/_gen/assets/scss/scss/main.scss_de1a7f5f1c8c46959803c429bb697ff0.content" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/_gen/assets/scss/scss/main.scss_de1a7f5f1c8c46959803c429bb697ff0.json" beforeDir="false" afterPath="$PROJECT_DIR$/resources/_gen/assets/scss/scss/main.scss_de1a7f5f1c8c46959803c429bb697ff0.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/cybernetic-coffee/assets/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/themes/cybernetic-coffee/assets/js/main.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/themes/cybernetic-coffee/assets/scss/_ctf.scss" beforeDir="false" afterPath="$PROJECT_DIR$/themes/cybernetic-coffee/assets/scss/_ctf.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/themes/cybernetic-coffee/layouts/shortcodes/ctf-challenge.html" beforeDir="false" afterPath="$PROJECT_DIR$/themes/cybernetic-coffee/layouts/shortcodes/ctf-challenge.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,7 +92,8 @@
       <workItem from="1613343042799" duration="22000" />
       <workItem from="1613657215119" duration="1598000" />
       <workItem from="1613709443153" duration="83000" />
-      <workItem from="1613999881506" duration="6424000" />
+      <workItem from="1613999881506" duration="7763000" />
+      <workItem from="1614048772330" duration="1414000" />
     </task>
     <servers />
   </component>

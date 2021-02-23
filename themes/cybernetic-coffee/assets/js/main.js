@@ -42,7 +42,7 @@ function twitterFeed() {
 
 
 function expand_challenge(card) {
-    card.innerHTML = (card.id === "") ? "<i class=\"fas fa-chevron-up\"></i>" : "<i class=\"fas fa-chevron-down\"></i>"
+    card.innerHTML = (card.id === "") ? "<i class=\"fas fa-chevron-up fa-lg\"></i>" : "<i class=\"fas fa-chevron-down fa-lg\"></i>"
     card.id = (card.id === "active") ? "" : "active";
 
     // TODO: Fix this pain :C
