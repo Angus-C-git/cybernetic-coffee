@@ -1,3 +1,5 @@
+const BASE_URL = "https://cybernetic-coffee-api.herokuapp.com";
+
 
 function twitterFeed() {
     document.getElementById('feed').innerHTML = '';
@@ -44,21 +46,60 @@ function twitterFeed() {
 function expand_challenge(card) {
     card.innerHTML = (card.id === "") ? "<i class=\"fas fa-chevron-up fa-lg\"></i>" : "<i class=\"fas fa-chevron-down fa-lg\"></i>"
     card.id = (card.id === "active") ? "" : "active";
-
+    // console.log(card);
     // TODO: Fix this pain :C
     if (card.id === "active") {
         card.parentElement.children[3].classList.remove("collapse-aoe");
         card.parentElement.children[4].classList.remove("collapse-aoe");
         card.parentElement.children[5].classList.remove("collapse-aoe");
-        card.parentElement.children[6].classList.remove("collapse-aoe");
     } else {
         card.parentElement.children[3].classList.add("collapse-aoe");
         card.parentElement.children[4].classList.add("collapse-aoe");
         card.parentElement.children[5].classList.add("collapse-aoe");
-        card.parentElement.children[6].classList.add("collapse-aoe");
     }
-
-
-
-
 }
+
+
+async function submit_flag(flag, challengeID) {
+    console.log(flag, challengeID);
+
+    const body = JSON.stringify({flag: flag, challengeID: challengeID});
+    console.log(body);
+    //const url = 'https://cybernetic-coffee-api.herokuapp.com/api/ctf/challenge/solve';
+    const url = 'http://localhost:2048/api/ctf/challenge/solve';
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDU1ZDA4ZWYyNDM2ODNlNmUxYjk5ZTEiLCJpYXQiOjE2MTYyMzY2ODZ9.cRXLq8FmfH4qstR0qNWyiuW4HyGgIKf2fDS5VdFA_tI';
+    // try {
+       const res = await fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+                //TODO: remove this
+                'auth-token': token
+            },
+            body: body
+        });
+
+        console.log("Res:", res.json().status);
+
+    // } catch (e)  {
+    //     alert("Failed to submit flag, service down"); // TODO: Improve this
+    // }
+}
+
+// async function getLeaderboard(){
+//     console.log("[>>] Retrieving leaderboard");
+//     // const url = 'http://localhost:2048/api/ctf/challenge/solve';
+//     // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDU1ZDA4ZWYyNDM2ODNlNmUxYjk5ZTEiLCJpYXQiOjE2MTYyMzY2ODZ9.cRXLq8FmfH4qstR0qNWyiuW4HyGgIKf2fDS5VdFA_tI';
+//     //
+//     // const res = await fetch(url, {
+//     //     method: 'GET',
+//     //     mode: 'cors',
+//     //     headers: {
+//     //         'Content-Type': 'application/json',
+//     //         //TODO: remove this
+//     //         'auth-token': token
+//     //     }
+//     // });
+//     // console.log("Res:", res.json());
+// }

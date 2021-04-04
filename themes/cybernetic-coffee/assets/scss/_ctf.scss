@@ -21,6 +21,14 @@
   }
 }
 
+.flag-input-form {
+  text-align: center;
+  width: 100%;
+}
+
+.flag-input-form button {
+  display: initial;
+}
 
 .challenge-resources {
   padding-bottom: 2%;
@@ -30,7 +38,10 @@
   border-radius: 50%;
   height: 50px;
   width: 50px;
-  background: #272133;
+
+  .dark-theme & {
+    background: #272133;
+  }
 }
 
 .challenge-resources button:hover {
@@ -38,8 +49,9 @@
   background: #eb196e;
 }
 
+
 .card {
-  background-color: #222831;
+  background-color: #FCF6F5FF;
   height: auto;
   width: 24rem;
   padding-top: 6%;
@@ -49,7 +61,12 @@
   flex-direction: column;
   align-items: center;
   box-shadow: rgba(0, 0, 0, 0.7);
-  color: white;
+  color: black;
+
+  .dark-theme & {
+    background-color: #222831;
+    color: white;
+  }
 
   @media #{$media-size-tablet} {
     width: 22rem;
@@ -66,9 +83,13 @@
   height: 85px;
   width: 85px;
   border-radius: 50%;
-  border: 5px solid #272133;
+  border: 2px solid #603F83FF;
   margin-top: 18px;
   box-shadow: 0 0 25px rgba(235, 25, 110, 1);
+
+  .dark-theme & {
+    border: 5px solid #272133;
+  }
 }
 
 .challenge-description {

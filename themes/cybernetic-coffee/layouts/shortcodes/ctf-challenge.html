@@ -43,9 +43,13 @@
         {{ end }}
     </div>
 
-    <input type="text" id="name" placeholder="CYB{flag_text}"  class="collapse-aoe">
-
-    <button class="btn draw-border collapse-aoe">Submit</button>
+    <div class="collapse-aoe flag-input-form">
+        <input type="text" id='{{ .Get "title" }}' placeholder="CYB{flag_text}">
+        <button class="btn draw-border" onclick="(function () {
+        	const flag = document.getElementById('{{ .Get "title" }}').value;
+            submit_flag(flag, '{{ .Get "title" }}');
+        })()">Submit</button>
+    </div>
 
     <span id="" class="challenge-expander" onclick="expand_challenge(this)"><i class="fas fa-chevron-down fa-lg"></i></span> <!--    onclick="expand_challenge(this)"-->
 

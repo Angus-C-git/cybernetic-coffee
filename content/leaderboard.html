@@ -1,0 +1,55 @@
+---
+title: "Leaderboard"
+type: "nofmt"
+menu: ""
+weight: 400
+keywords: "CTF hacking leaderboard"
+ctf: "true"
+---
+
+<div class="leaderboard-container">
+    <ul class="responsive-table leaderboard-ul" id="leaderboard-inject">
+        <li class="table-header">
+            <div class="col col-1">Rank</div>
+            <div class="col col-2">Username</div>
+            <div class="col col-3">Points</div>
+        </li>
+
+    </ul>
+</div>
+
+<script>
+    (function getLeaderboard() {
+        console.log("[>>] Pulling leaderboard");
+
+        const url = 'https://cybernetic-coffee-api.herokuapp.com/api/ctf/leaderboard';
+        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDU1ZDA4ZWYyNDM2ODNlNmUxYjk5ZTEiLCJpYXQiOjE2MTYyMzY2ODZ9.cRXLq8FmfH4qstR0qNWyiuW4HyGgIKf2fDS5VdFA_tI';
+
+        fetch(url, {
+            method: 'GET',
+            mode: 'cors',
+            redirect: 'follow',
+            headers: {
+                'Content-Type': 'application/json',
+                //TODO: remove this
+                'auth-token': token
+            }
+        })
+        .then(response => response.json())
+        .then(result => {
+            let rows = document.getElementById('leaderboard-inject');
+            console.log(result.leaderboard);
+
+            result.leaderboard.map((row, count=1) => {
+                rows.innerHTML += `{{< leaderboard-row
+                                        rank="${count}"
+                                        usrName="${row.usrName}"
+                                        score="${row.score}"
+                                    >}}`
+            })
+        })
+        .catch(error => console.log('error', error));
+
+    })();
+
+</script>

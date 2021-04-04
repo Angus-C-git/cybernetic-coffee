@@ -28,6 +28,14 @@
         <article>
             <h2 class="post-title"><a href="{{ .Permalink }}">{{ .Title | markdownify }}</a></h2>
 
+            {{ if .Params.ctf }}
+                <div class="post-info">
+                    <div class="sharing-buttons">
+                        {{ partial "ctf-nav-bar.html" . }}
+                    </div>
+                </div>
+            {{ end }}
+
             {{ if .Params.date}}
             <div class="post-info">
                 {{- if .Site.Params.EnableSharingButtons }}
