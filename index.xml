@@ -6,7 +6,16 @@
     <description>Recent content on Cybernetic Coffee</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 14 Feb 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://cybernetic.coffee/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 01 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://cybernetic.coffee/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Basic Stack Based Overflows</title>
+      <link>https://cybernetic.coffee/blog/basic-stack-based-overflows/</link>
+      <pubDate>Thu, 01 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/blog/basic-stack-based-overflows/</guid>
+      <description>Overview Stack based buffer overflows are old as fuck. Like I was literally dead when the most advanced techniques for exploiting them were conceived. However pwntools is a exploitation framework that has been around for a much shorter period of time and adds a new level of simplicity which makes exploit development more approachable. Of course there exist a great number of better binary exploitation courses and guides, a few of which I will link in the resources section bellow.</description>
+    </item>
+    
     <item>
       <title>Web Application Testing Methodologies</title>
       <link>https://cybernetic.coffee/blog/web-app-testing-methodologies/</link>
@@ -40,7 +49,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://cybernetic.coffee/ctf/</guid>
-      <description>  Coming Soon ... </description>
+      <description>Welcome ______  &#34;The year is 2084. A company called SharpNet control over 80% of traffic on the internet. A resistance company OpenWaves seeks to restore balance to the internet. You work as a ghost for the resistance hacking SharpNet systems in an effort to protect the original mission of the internet.&#34;   OSINT Acquisition 150pts  0 Solves   NextStart has just been acquired by SharpNet.</description>
     </item>
     
     <item>
@@ -59,6 +68,15 @@
       
       <guid>https://cybernetic.coffee/all-projects/cookie-forge/</guid>
       <description>Coming soon &amp;hellip;</description>
+    </item>
+    
+    <item>
+      <title>Cybernetic Coffee CTF</title>
+      <link>https://cybernetic.coffee/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/about/</guid>
+      <description>A CTF inspired by the real world.</description>
     </item>
     
     <item>

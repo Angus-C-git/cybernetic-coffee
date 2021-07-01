@@ -6,7 +6,43 @@
     <description>Recent content in Tags on Cybernetic Coffee</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 14 Feb 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://cybernetic.coffee/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 01 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://cybernetic.coffee/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Buffer Overflows</title>
+      <link>https://cybernetic.coffee/tags/buffer-overflows/</link>
+      <pubDate>Thu, 01 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/buffer-overflows/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Exploit Development</title>
+      <link>https://cybernetic.coffee/tags/exploit-development/</link>
+      <pubDate>Thu, 01 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/exploit-development/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>pwntools</title>
+      <link>https://cybernetic.coffee/tags/pwntools/</link>
+      <pubDate>Thu, 01 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/pwntools/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Stack Based Overflows</title>
+      <link>https://cybernetic.coffee/tags/stack-based-overflows/</link>
+      <pubDate>Thu, 01 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/stack-based-overflows/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>Hacking</title>
       <link>https://cybernetic.coffee/tags/hacking/</link>
