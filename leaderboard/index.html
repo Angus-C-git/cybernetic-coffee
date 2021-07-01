@@ -5,16 +5,16 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="author" content="">
-<meta name="description" content="A CTF inspired by the real world." />
+<meta name="description" content=" Rank Username Points     (function getLeaderboard() { console.log(&#34;[] Pulling leaderboard&#34;); const url = &#39;https://cybernetic-coffee-api.herokuapp.com/api/ctf/leaderboard&#39;; const token = &#39;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDU1ZDA4ZWYyNDM2ODNlNmUxYjk5ZTEiLCJpYXQiOjE2MTYyMzY2ODZ9.cRXLq8FmfH4qstR0qNWyiuW4HyGgIKf2fDS5VdFA_tI&#39;; fetch(url, { method: &#39;GET&#39;, mode: &#39;cors&#39;, redirect: &#39;follow&#39;, headers: { &#39;Content-Type&#39;: &#39;application/json&#39;, //TODO: remove this &#39;auth-token&#39;: token } }) .then(response = response.json()) .then(result = { let rows = document.getElementById(&#39;leaderboard-inject&#39;); console.log(result.leaderboard); result.leaderboard.map((row, count=1) = { rows.innerHTML &#43;= `${count} ${row.usrName} ${row.score} ` }) }) .catch(error = console.log(&#39;error&#39;, error)); })(); " />
 <meta name="keywords" content="" />
 <meta name="robots" content="noodp" />
 <meta name="theme-color" content="#252627" />
-<link rel="canonical" href="https://cybernetic.coffee/about/" />
+<link rel="canonical" href="https://cybernetic.coffee/leaderboard/" />
 
 
     <title>
         
-            Cybernetic Coffee CTF :: Cybernetic Coffee 
+            Leaderboard :: Cybernetic Coffee 
         
     </title>
 
@@ -33,14 +33,14 @@
 <link rel="shortcut icon" href="https://cybernetic.coffee/images/favicon.svg" />
 
 
-<meta itemprop="name" content="Cybernetic Coffee CTF">
-<meta itemprop="description" content="A CTF inspired by the real world.">
+<meta itemprop="name" content="Leaderboard">
+<meta itemprop="description" content=" Rank Username Points     (function getLeaderboard() { console.log(&#34;[] Pulling leaderboard&#34;); const url = &#39;https://cybernetic-coffee-api.herokuapp.com/api/ctf/leaderboard&#39;; const token = &#39;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDU1ZDA4ZWYyNDM2ODNlNmUxYjk5ZTEiLCJpYXQiOjE2MTYyMzY2ODZ9.cRXLq8FmfH4qstR0qNWyiuW4HyGgIKf2fDS5VdFA_tI&#39;; fetch(url, { method: &#39;GET&#39;, mode: &#39;cors&#39;, redirect: &#39;follow&#39;, headers: { &#39;Content-Type&#39;: &#39;application/json&#39;, //TODO: remove this &#39;auth-token&#39;: token } }) .then(response = response.json()) .then(result = { let rows = document.getElementById(&#39;leaderboard-inject&#39;); console.log(result.leaderboard); result.leaderboard.map((row, count=1) = { rows.innerHTML &#43;= `${count} ${row.usrName} ${row.score} ` }) }) .catch(error = console.log(&#39;error&#39;, error)); })(); ">
 
-<meta itemprop="wordCount" content="7">
+<meta itemprop="wordCount" content="64">
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Cybernetic Coffee CTF"/>
-<meta name="twitter:description" content="A CTF inspired by the real world."/>
+<meta name="twitter:title" content="Leaderboard"/>
+<meta name="twitter:description" content=" Rank Username Points     (function getLeaderboard() { console.log(&#34;[] Pulling leaderboard&#34;); const url = &#39;https://cybernetic-coffee-api.herokuapp.com/api/ctf/leaderboard&#39;; const token = &#39;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDU1ZDA4ZWYyNDM2ODNlNmUxYjk5ZTEiLCJpYXQiOjE2MTYyMzY2ODZ9.cRXLq8FmfH4qstR0qNWyiuW4HyGgIKf2fDS5VdFA_tI&#39;; fetch(url, { method: &#39;GET&#39;, mode: &#39;cors&#39;, redirect: &#39;follow&#39;, headers: { &#39;Content-Type&#39;: &#39;application/json&#39;, //TODO: remove this &#39;auth-token&#39;: token } }) .then(response = response.json()) .then(result = { let rows = document.getElementById(&#39;leaderboard-inject&#39;); console.log(result.leaderboard); result.leaderboard.map((row, count=1) = { rows.innerHTML &#43;= `${count} ${row.usrName} ${row.score} ` }) }) .catch(error = console.log(&#39;error&#39;, error)); })(); "/>
 
 
 
@@ -110,7 +110,7 @@
         
 
         <article>
-            <h2 class="post-title"><a href="https://cybernetic.coffee/about/">Cybernetic Coffee CTF</a></h2>
+            <h2 class="post-title"><a href="https://cybernetic.coffee/leaderboard/">Leaderboard</a></h2>
 
             
                 <div class="post-info">
@@ -172,8 +172,53 @@
             
 
             <div class="post-content">
-                <p>A CTF inspired by the real world.</p>
+                
+<div class="leaderboard-container">
+    <ul class="responsive-table leaderboard-ul" id="leaderboard-inject">
+        <li class="table-header">
+            <div class="col col-1">Rank</div>
+            <div class="col col-2">Username</div>
+            <div class="col col-3">Points</div>
+        </li>
 
+    </ul>
+</div>
+
+<script>
+    (function getLeaderboard() {
+        console.log("[>>] Pulling leaderboard");
+
+        const url = 'https://cybernetic-coffee-api.herokuapp.com/api/ctf/leaderboard';
+        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDU1ZDA4ZWYyNDM2ODNlNmUxYjk5ZTEiLCJpYXQiOjE2MTYyMzY2ODZ9.cRXLq8FmfH4qstR0qNWyiuW4HyGgIKf2fDS5VdFA_tI';
+
+        fetch(url, {
+            method: 'GET',
+            mode: 'cors',
+            redirect: 'follow',
+            headers: {
+                'Content-Type': 'application/json',
+                //TODO: remove this
+                'auth-token': token
+            }
+        })
+        .then(response => response.json())
+        .then(result => {
+            let rows = document.getElementById('leaderboard-inject');
+            console.log(result.leaderboard);
+
+            result.leaderboard.map((row, count=1) => {
+                rows.innerHTML += `<li class="table-row">
+    <div class="col col-1" data-label="Job Id">${count}</div>
+    <div class="col col-2" data-label="Customer Name">${row.usrName}</div>
+    <div class="col col-3" data-label="Amount">${row.score}</div>
+</li>`
+            })
+        })
+        .catch(error => console.log('error', error));
+
+    })();
+
+</script>
             </div>
         </article>
 

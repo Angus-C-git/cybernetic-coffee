@@ -49,7 +49,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://cybernetic.coffee/ctf/</guid>
-      <description>Welcome ______  &#34;The year is 2084. A company called SharpNet control over 80% of traffic on the internet. A resistance company OpenWaves seeks to restore balance to the internet. You work as a ghost for the resistance hacking SharpNet systems in an effort to protect the original mission of the internet.&#34;   OSINT Acquisition 150pts  0 Solves   NextStart has just been acquired by SharpNet.</description>
+      <description>  Coming soon ... </description>
     </item>
     
     <item>
@@ -77,6 +77,15 @@
       
       <guid>https://cybernetic.coffee/about/</guid>
       <description>A CTF inspired by the real world.</description>
+    </item>
+    
+    <item>
+      <title>Leaderboard</title>
+      <link>https://cybernetic.coffee/leaderboard/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/leaderboard/</guid>
+      <description> Rank Username Points     (function getLeaderboard() { console.log(&#34;[] Pulling leaderboard&#34;); const url = &#39;https://cybernetic-coffee-api.herokuapp.com/api/ctf/leaderboard&#39;; const token = &#39;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDU1ZDA4ZWYyNDM2ODNlNmUxYjk5ZTEiLCJpYXQiOjE2MTYyMzY2ODZ9.cRXLq8FmfH4qstR0qNWyiuW4HyGgIKf2fDS5VdFA_tI&#39;; fetch(url, { method: &#39;GET&#39;, mode: &#39;cors&#39;, redirect: &#39;follow&#39;, headers: { &#39;Content-Type&#39;: &#39;application/json&#39;, //TODO: remove this &#39;auth-token&#39;: token } }) .then(response = response.json()) .then(result = { let rows = document.getElementById(&#39;leaderboard-inject&#39;); console.log(result.leaderboard); result.leaderboard.map((row, count=1) = { rows.innerHTML += `${count} ${row.usrName} ${row.score} ` }) }) .catch(error = console.log(&#39;error&#39;, error)); })(); </description>
     </item>
     
     <item>
