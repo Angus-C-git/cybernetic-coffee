@@ -1,7 +1,7 @@
 ---
 title: "Building A REST API"
-categories: ["Development"]
-tags: ["REST API", "Backend", "Node.js", "express"]
+categories: ["Development", "Backend"]
+tags: ["REST API", "Backend", "Node.js", "express", "web"]
 date: "2020-12-28"
 type: "post"
 weight: 400

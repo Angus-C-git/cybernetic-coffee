@@ -1,7 +1,7 @@
 ---
 title: "Web Application Testing Methodologies"
 categories: ["Pentesting", "Hacking"]
-tags: ["Pentesting", "Hacking", "Web App Testing"]
+tags: ["pentesting", "hacking", "Web App Testing", "web"]
 date: "2021-02-14"
 type: "post"
 weight: 400
