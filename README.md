@@ -12,6 +12,11 @@ git commit -m "<changes>"
 ./deploy_ghp.sh
 ```
 
+
+### Blogs
+
+Write blogs on blogs branch while drafting.
+
 ### Saving Whole Project
 
 ```
