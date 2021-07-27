@@ -36,7 +36,7 @@
 <meta itemprop="name" content="Basic Stack Based Overflows">
 <meta itemprop="description" content="Overview Stack based buffer overflows are old as fuck. Like I was literally dead when the most advanced techniques for exploiting them were conceived. However pwntools is a exploitation framework that has been around for a much shorter period of time and adds a new level of simplicity which makes exploit development more approachable. Of course there exist a great number of better binary exploitation courses and guides, a few of which I will link in the resources section bellow."><meta itemprop="datePublished" content="2021-07-01T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-07-01T00:00:00+00:00" />
-<meta itemprop="wordCount" content="3492">
+<meta itemprop="wordCount" content="3514">
 <meta itemprop="keywords" content="Buffer Overflows,Exploit Development,Stack Based Overflows,pwntools,pentesting,hacking," />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Basic Stack Based Overflows"/>
@@ -722,6 +722,10 @@ proc<span style="color:#f92672">.</span>sendline(payload)
 proc<span style="color:#f92672">.</span>interactive()
 </code></pre></div><p>I highly recommend stepping through the exploit with gdb attached and observing how the flow of the program changes to the buffer and watching as the instructions we placed get executed one by one.</p>
 <h2 id="resources">Resources</h2>
+<p><em>Note the above binaries were compiled with gcc as follows</em></p>
+<blockquote>
+<p><code>gcc -z execstack -fno-stack-protector -no-pie -z norelro -m32 -g &lt;c_source&gt; -o &lt;binary&gt;</code></p>
+</blockquote>
 <ul>
 <li><a href="https://guyinatuxedo.github.io">Nightmare</a></li>
 <li><a href="https://www.youtube.com/watch?v=iyAyN3GFM7A&amp;list=PLhixgUqwRTjxglIswKp9mpkfPNfHkzyeN">Liveoverflow Binary Exploitation</a></li>
@@ -760,7 +764,7 @@ proc<span style="color:#f92672">.</span>interactive()
                     <line x1="16" y1="17" x2="8" y2="17"></line>
                     <polyline points="10 9 9 9 8 9"></polyline>
                 </svg>
-                3492 Words
+                3514 Words
             </p>
   		</div>
         
