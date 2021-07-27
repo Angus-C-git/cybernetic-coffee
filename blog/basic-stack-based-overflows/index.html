@@ -722,10 +722,8 @@ proc<span style="color:#f92672">.</span>sendline(payload)
 proc<span style="color:#f92672">.</span>interactive()
 </code></pre></div><p>I highly recommend stepping through the exploit with gdb attached and observing how the flow of the program changes to the buffer and watching as the instructions we placed get executed one by one.</p>
 <h2 id="resources">Resources</h2>
-<p><em>Note the above binaries were compiled with gcc as follows</em></p>
-<blockquote>
+<p><em>Note the above binaries were compiled with gcc as follows:</em></p>
 <p><code>gcc -z execstack -fno-stack-protector -no-pie -z norelro -m32 -g &lt;c_source&gt; -o &lt;binary&gt;</code></p>
-</blockquote>
 <ul>
 <li><a href="https://guyinatuxedo.github.io">Nightmare</a></li>
 <li><a href="https://www.youtube.com/watch?v=iyAyN3GFM7A&amp;list=PLhixgUqwRTjxglIswKp9mpkfPNfHkzyeN">Liveoverflow Binary Exploitation</a></li>
