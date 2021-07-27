@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="author" content="">
 <meta name="description" content="The Power Of REST APIs REST APIs are a way to conveniently abstract away application logic and reduce the load on front-end processing. This is achieved by engineering the API to return data in such a way that we can simply render it straight out onto the page without sorting or intensive manipulation. In this way we can achieve faster load times for web pages, and at the same time reduce the amount of JavaScript running in users browsers." />
-<meta name="keywords" content=", REST API, Backend, Node.js, express" />
+<meta name="keywords" content=", REST API, Backend, Node.js, express, web" />
 <meta name="robots" content="noodp" />
 <meta name="theme-color" content="#252627" />
 <link rel="canonical" href="https://cybernetic.coffee/blog/building-a-rest-api/" />
@@ -34,10 +34,10 @@
 
 
 <meta itemprop="name" content="Building A REST API">
-<meta itemprop="description" content="The Power Of REST APIs REST APIs are a way to conveniently abstract away application logic and reduce the load on front-end processing. This is achieved by engineering the API to return data in such a way that we can simply render it straight out onto the page without sorting or intensive manipulation. In this way we can achieve faster load times for web pages, and at the same time reduce the amount of JavaScript running in users browsers."><meta itemprop="datePublished" content="2020-12-28T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-12-28T00:00:00&#43;00:00" />
+<meta itemprop="description" content="The Power Of REST APIs REST APIs are a way to conveniently abstract away application logic and reduce the load on front-end processing. This is achieved by engineering the API to return data in such a way that we can simply render it straight out onto the page without sorting or intensive manipulation. In this way we can achieve faster load times for web pages, and at the same time reduce the amount of JavaScript running in users browsers."><meta itemprop="datePublished" content="2020-12-28T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-12-28T00:00:00+00:00" />
 <meta itemprop="wordCount" content="2394">
-<meta itemprop="keywords" content="REST API,Backend,Node.js,express," />
+<meta itemprop="keywords" content="REST API,Backend,Node.js,express,web," />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Building A REST API"/>
 <meta name="twitter:description" content="The Power Of REST APIs REST APIs are a way to conveniently abstract away application logic and reduce the load on front-end processing. This is achieved by engineering the API to return data in such a way that we can simply render it straight out onto the page without sorting or intensive manipulation. In this way we can achieve faster load times for web pages, and at the same time reduce the amount of JavaScript running in users browsers."/>
@@ -47,6 +47,8 @@
 
 
     <meta property="article:section" content="Development" />
+
+    <meta property="article:section" content="Backend" />
 
 
 
@@ -355,7 +357,7 @@ This definition includes the fields found in the database schema, and their prop
 <li>The minimum and maximum length of the data in the field</li>
 </ul>
 <p>The Post model from the template:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">mongoose</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;mongoose&#39;</span>);
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">mongoose</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;mongoose&#39;</span>);
 
 <span style="color:#75715e">// DB Post schema
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">postSchema</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">mongoose</span>.<span style="color:#a6e22e">Schema</span>({
@@ -404,7 +406,7 @@ for a REST API are the HTTP methods:</p>
 <p>the included routes in the template only demonstrate usage of <code>GET</code> and <code>POST</code> but the other methods are fairly
 self-explanatory.</p>
 <p>Lets take a look at the <code>posts</code> route.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">router</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;express&#39;</span>).<span style="color:#a6e22e">Router</span>();
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">router</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;express&#39;</span>).<span style="color:#a6e22e">Router</span>();
 <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">verify</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;./validateJWT&#39;</span>);  <span style="color:#75715e">// Authenticated route
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">Post</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;../models/Post&#39;</span>);   <span style="color:#75715e">// Post model
 </span><span style="color:#75715e"></span>
@@ -448,14 +450,14 @@ many cases one would also expect to be able to <strong>remove</strong> (<code>DE
 <p>The <code>router.get ...</code> line in the code means that the route (in this case <code>/api/posts, discussed later)</code> accepts <code>GET</code> requests from a client. The route handler then queries the mongo database, with
 <code>Post.find()</code>, to retrieve all the posts stored there.</p>
 <p>The API then returns the found posts as a JSON object with,</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">status</span>(<span style="color:#ae81ff">200</span>).<span style="color:#a6e22e">json</span>(<span style="color:#a6e22e">posts</span>);
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">status</span>(<span style="color:#ae81ff">200</span>).<span style="color:#a6e22e">json</span>(<span style="color:#a6e22e">posts</span>);
 </code></pre></div><p>where status code 200 indicates a request ok.</p>
 <h4 id="post">POST</h4>
 <p>The <code>router.post...</code> line in the code means that <code>POST</code> requests made to this endpoint will be handled by this function.
 When the <code>POST</code> route is hit the function looks to create a new <code>Post</code> database object. Normally we would validate the
 <code>POST</code> request body sent to the route to avoid processing a malformed request, I.E one where a required field was left out.
 This process can be observed in the provided <code>auth</code> route,</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> {<span style="color:#a6e22e">error</span>} <span style="color:#f92672">=</span> <span style="color:#a6e22e">registerSchema</span>.<span style="color:#a6e22e">validate</span>(<span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">body</span>);
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> {<span style="color:#a6e22e">error</span>} <span style="color:#f92672">=</span> <span style="color:#a6e22e">registerSchema</span>.<span style="color:#a6e22e">validate</span>(<span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">body</span>);
 
 <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">error</span>) {
     <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">error</span>.<span style="color:#a6e22e">details</span>[<span style="color:#ae81ff">0</span>].<span style="color:#a6e22e">message</span>;
@@ -467,10 +469,10 @@ This process can be observed in the provided <code>auth</code> route,</p>
 on instagram without creating an account. To provide this protection we implement authenticated routes, authenticated
 routes act as a way to ensure that only authenticated (registered) users can interact with a given endpoint.</p>
 <p>In the template this manifests as the <code>verify</code> parameter in the route header,</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">router</span>.<span style="color:#a6e22e">get</span>(<span style="color:#e6db74">&#39;/&#39;</span>, <span style="color:#a6e22e">verify</span>, <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">res</span>) =&gt; { ...}
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">router</span>.<span style="color:#a6e22e">get</span>(<span style="color:#e6db74">&#39;/&#39;</span>, <span style="color:#a6e22e">verify</span>, <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">res</span>) =&gt; { ...}
 </code></pre></div><p>which will drop requests which do not include a valid authentication header in the request.</p>
 <p>The verify function, exported from the <code>validateJWT</code> route, looks like this:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">jwt</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;jsonwebtoken&#39;</span>);
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">jwt</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;jsonwebtoken&#39;</span>);
 
 <span style="color:#75715e">/**
 </span><span style="color:#75715e"> * Validate Auth Tokens
@@ -491,7 +493,7 @@ routes act as a way to ensure that only authenticated (registered) users can int
 we perform a precursor check to ensure that an authentication token is present before we continue creating an early
 exit and reducing processing time of clearly invalid requests.</p>
 <p>Next we enter the crux of the function:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">user</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">jwt</span>.<span style="color:#a6e22e">verify</span>(<span style="color:#a6e22e">token</span>, <span style="color:#a6e22e">process</span>.<span style="color:#a6e22e">env</span>.<span style="color:#a6e22e">TOKEN_SECRET</span>);
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">user</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">jwt</span>.<span style="color:#a6e22e">verify</span>(<span style="color:#a6e22e">token</span>, <span style="color:#a6e22e">process</span>.<span style="color:#a6e22e">env</span>.<span style="color:#a6e22e">TOKEN_SECRET</span>);
 </code></pre></div><p>where we pass the token provided in the request header to the <code>verify()</code> function which checks that the provided token
 is signed correctly in accordance with the signing secret, stored as an environment variable (in our .env file). If the
 token is valid the <code>next()</code> call continues the execution from whence <code>verify</code> was called. Otherwise, a 403 is returned,
@@ -499,7 +501,7 @@ and an error message sent.</p>
 <h3 id="the-api-core-appjs">The API Core: <code>app.js</code></h3>
 <p>To bind all of this functionality together we require a runner of sorts which maps inbound requests to the server to
 the appropriate routes and implements server configurations. This is where the <code>app.js</code> file comes into play.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#75715e">/**
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#75715e">/**
 </span><span style="color:#75715e"> * &lt;-------------------------&gt; IMPORTS &lt;-------------------------&gt;
 </span><span style="color:#75715e"> * */</span>
 
@@ -554,23 +556,23 @@ the appropriate routes and implements server configurations. This is where the <
 <span style="color:#75715e">// API Listener init
 </span><span style="color:#75715e"></span><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">listen</span>(<span style="color:#a6e22e">port</span>);
 </code></pre></div><p>First we see a number of our dependencies being imported with require and some configuration settings being bound with</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">app</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">express</span>();
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">app</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">express</span>();
 <span style="color:#a6e22e">dotenv</span>.<span style="color:#a6e22e">config</span>();
 </code></pre></div><p>and</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">use</span>(<span style="color:#a6e22e">express</span>.<span style="color:#a6e22e">json</span>());
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">use</span>(<span style="color:#a6e22e">express</span>.<span style="color:#a6e22e">json</span>());
 <span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">use</span>(<span style="color:#a6e22e">cors</span>());
 </code></pre></div><p>of note here is that <code>cors</code> is currently set to accept all origins, this should be adjusted to something like</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">corsOptions</span> <span style="color:#f92672">=</span> {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">corsOptions</span> <span style="color:#f92672">=</span> {
     <span style="color:#a6e22e">origin</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;http://my-site.com&#39;</span>,
     <span style="color:#a6e22e">optionsSuccessStatus</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">200</span>
 }
 </code></pre></div><p>and then used on routes like this</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">get</span>(<span style="color:#e6db74">&#39;/posts&#39;</span>, <span style="color:#a6e22e">cors</span>(<span style="color:#a6e22e">corsOptions</span>), <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">res</span>, <span style="color:#a6e22e">next</span>) {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">get</span>(<span style="color:#e6db74">&#39;/posts&#39;</span>, <span style="color:#a6e22e">cors</span>(<span style="color:#a6e22e">corsOptions</span>), <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">res</span>, <span style="color:#a6e22e">next</span>) {
   <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">json</span>({<span style="color:#a6e22e">msg</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;Only requests from http://my-site.com will reach here&#39;</span>});
 })
 </code></pre></div><p>in order to prevent access to the API from origins other than the frontend webapp.</p>
 <p>The next important function here is,</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#75715e">// DB Connection init
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#75715e">// DB Connection init
 </span><span style="color:#75715e"></span><span style="color:#a6e22e">mongoose</span>.<span style="color:#a6e22e">connect</span>(<span style="color:#a6e22e">process</span>.<span style="color:#a6e22e">env</span>.<span style="color:#a6e22e">DB_CONNECT</span>, { <span style="color:#a6e22e">useNewUrlParser</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span> }, () =&gt; {
         <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Connected to db...&#34;</span>);
 });
@@ -578,16 +580,16 @@ the appropriate routes and implements server configurations. This is where the <
 This will allow the API to interact with the database in later functions.</p>
 <p>The following two blocks establish how requests to specific endpoints should be mapped internally. Firstly we establish
 the functions/files that should handle calls to a particular endpoint and store them in associated variables.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#75715e">// route file to handel authentication
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#75715e">// route file to handel authentication
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">authRoute</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;./routes/auth&#39;</span>);
 <span style="color:#75715e">// route file to handel post logic
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">posts</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;./routes/posts&#39;</span>);    
 </code></pre></div><p>Then we point specific external endpoints to these routes to be handled.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">use</span>(<span style="color:#e6db74">&#39;/api/user&#39;</span>, <span style="color:#a6e22e">authRoute</span>);
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">use</span>(<span style="color:#e6db74">&#39;/api/user&#39;</span>, <span style="color:#a6e22e">authRoute</span>);
 <span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">use</span>(<span style="color:#e6db74">&#39;/api/posts&#39;</span>, <span style="color:#a6e22e">posts</span>);
 </code></pre></div><p>Finally, we use a neat ternary operation to determine how the server should listen based on if the server is being run
 locally in development mode or in production.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#75715e">// presence of enviroment variable PORT indicates prod mode
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#75715e">// presence of enviroment variable PORT indicates prod mode
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">port</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">process</span>.<span style="color:#a6e22e">env</span>.<span style="color:#a6e22e">PORT</span>; 
 <span style="color:#75715e">// listen on port 8000 in dev mode
 </span><span style="color:#75715e"></span><span style="color:#a6e22e">port</span> <span style="color:#f92672">=</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">port</span> <span style="color:#f92672">||</span> <span style="color:#a6e22e">port</span> <span style="color:#f92672">===</span> <span style="color:#e6db74">&#34;&#34;</span>) <span style="color:#f92672">?</span> <span style="color:#ae81ff">8000</span> <span style="color:#f92672">:</span> <span style="color:#a6e22e">port</span>; 
@@ -629,10 +631,10 @@ heroku,</p>
 <p>then create a project on heroku with,</p>
 <p><code>heroku create your-api-name</code>.</p>
 <p>Then stage and commit your changes with git.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git add .
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git add .
 git commit -m <span style="color:#e6db74">&#34;commit_message&#34;</span>
 </code></pre></div><p>Finally, push your changes to heroku.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git push heroku master<span style="color:#e6db74">`</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git push heroku master<span style="color:#e6db74">`</span>
 </code></pre></div><p><em>Note</em>: If you get an error you may need to add your projects git remote as a remote origin.</p>
 <h2 id="testing-the-api-with-postman">Testing the API With Postman</h2>
 <p>The final step is to test your API routes to ensure they behave as expected in all situations. <a href="https://www.postman.com/">Postman</a> allows us to
@@ -655,7 +657,7 @@ development server to demonstrate this, but the only difference is your url will
     </p>
 
 <p>Then add a JSON body with the required fields to register a user under the &lsquo;Body&rsquo; tab.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
   <span style="color:#f92672">&#34;usrName&#34;</span>: <span style="color:#e6db74">&#34;devTest1&#34;</span>,
   <span style="color:#f92672">&#34;email&#34;</span>: <span style="color:#e6db74">&#34;devtest1@email.com&#34;</span>,
   <span style="color:#f92672">&#34;password&#34;</span>: <span style="color:#e6db74">&#34;stronkPasswd&#34;</span>
@@ -716,6 +718,7 @@ name, in our case &lsquo;auth-token&rsquo;.</p>
         <span class="tag"><a href="https://cybernetic.coffee/tags/backend/">Backend</a></span>
         <span class="tag"><a href="https://cybernetic.coffee/tags/node.js/">Node.js</a></span>
         <span class="tag"><a href="https://cybernetic.coffee/tags/express/">express</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/web/">web</a></span>
         
     </p>
 
@@ -785,7 +788,7 @@ name, in our case &lsquo;auth-token&rsquo;.</p>
 
 
 
-<script type="text/javascript" src="/bundle.min.cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e.js" integrity="sha512-z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP&#43;DGNKHfuwvY7kxvUdBeoGlODJ6&#43;SfaPg=="></script>
+<script type="text/javascript" src="/bundle.min.549d9d8402283235466245c699b04a81b6fb2c75fc03669ba95af9f5e8ad22ab134f177abab9e431efc3441fe5921fd3fb3f8bf50f66dffbdce9eb7994ef69dc.js" integrity="sha512-VJ2dhAIoMjVGYkXGmbBKgbb7LHX8A2abqVr59eitIqsTTxd6urnkMe/DRB/lkh/T&#43;z&#43;L9Q9m3/vc6et5lO9p3A=="></script>
 
 
 
