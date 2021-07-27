@@ -613,6 +613,10 @@ I highly recommend stepping through the exploit with gdb attached and observing 
 
 ## Resources
 
+*Note the above binaries were compiled with gcc as follows*
+
+> `gcc -z execstack -fno-stack-protector -no-pie -z norelro -m32 -g <c_source> -o <binary>`
+
 + [Nightmare](https://guyinatuxedo.github.io)
 + [Liveoverflow Binary Exploitation](https://www.youtube.com/watch?v=iyAyN3GFM7A&list=PLhixgUqwRTjxglIswKp9mpkfPNfHkzyeN)
 + [pwntools tutorial](https://github.com/Gallopsled/pwntools-tutorial#readme)
