@@ -26,15 +26,6 @@
     </item>
     
     <item>
-      <title>Development</title>
-      <link>https://cybernetic.coffee/categories/development/</link>
-      <pubDate>Sun, 14 Feb 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://cybernetic.coffee/categories/development/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>Pentesting</title>
       <link>https://cybernetic.coffee/categories/pentesting/</link>
       <pubDate>Sun, 14 Feb 2021 00:00:00 +0000</pubDate>
@@ -44,20 +35,20 @@
     </item>
     
     <item>
-      <title>web</title>
-      <link>https://cybernetic.coffee/categories/web/</link>
-      <pubDate>Sun, 14 Feb 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://cybernetic.coffee/categories/web/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>Backend</title>
       <link>https://cybernetic.coffee/categories/backend/</link>
       <pubDate>Mon, 28 Dec 2020 00:00:00 +0000</pubDate>
       
       <guid>https://cybernetic.coffee/categories/backend/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Development</title>
+      <link>https://cybernetic.coffee/categories/development/</link>
+      <pubDate>Mon, 28 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/categories/development/</guid>
       <description></description>
     </item>
     
