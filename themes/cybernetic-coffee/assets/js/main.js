@@ -42,6 +42,9 @@ function twitterFeed() {
         .catch(error => console.log('error', error));
 }
 
+/*
+    Spoiler its becoming a react project <3
+*/
 
 function expand_challenge(card) {
     card.innerHTML = (card.id === "") ? "<i class=\"fas fa-chevron-up fa-lg\"></i>" : "<i class=\"fas fa-chevron-down fa-lg\"></i>"
@@ -60,37 +63,36 @@ function expand_challenge(card) {
 }
 
 
-async function submit_flag(flag, challengeID) {
-    console.log(flag, challengeID);
+// async function submit_flag(flag, challengeID) {
+//     console.log(flag, challengeID);
 
-    const body = JSON.stringify({flag: flag, challengeID: challengeID});
-    console.log(body);
-    //const url = 'https://cybernetic-coffee-api.herokuapp.com/api/ctf/challenge/solve';
-    const url = 'http://localhost:2048/api/ctf/challenge/solve';
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDU1ZDA4ZWYyNDM2ODNlNmUxYjk5ZTEiLCJpYXQiOjE2MTYyMzY2ODZ9.cRXLq8FmfH4qstR0qNWyiuW4HyGgIKf2fDS5VdFA_tI';
-    // try {
-       const res = await fetch(url, {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json',
-                //TODO: remove this
-                'auth-token': token
-            },
-            body: body
-        });
+//     const body = JSON.stringify({flag: flag, challengeID: challengeID});
+//     console.log(body);
+//     //const url = 'https://cybernetic-coffee-api.herokuapp.com/api/ctf/challenge/solve';
+//     const url = 'http://localhost:2048/api/ctf/challenge/solve';
+//     const token = 'redacted ;)';
+//     // try {
+//        const res = await fetch(url, {
+//             method: 'POST',
+//             mode: 'cors',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'auth-token': token
+//             },
+//             body: body
+//         });
 
-        console.log("Res:", res.json().status);
+//         console.log("Res:", res.json().status);
 
-    // } catch (e)  {
-    //     alert("Failed to submit flag, service down"); // TODO: Improve this
-    // }
-}
+//     // } catch (e)  {
+//     //     alert("Failed to submit flag, service down"); // TODO: Improve this
+//     // }
+// }
 
 // async function getLeaderboard(){
 //     console.log("[>>] Retrieving leaderboard");
 //     // const url = 'http://localhost:2048/api/ctf/challenge/solve';
-//     // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDU1ZDA4ZWYyNDM2ODNlNmUxYjk5ZTEiLCJpYXQiOjE2MTYyMzY2ODZ9.cRXLq8FmfH4qstR0qNWyiuW4HyGgIKf2fDS5VdFA_tI';
+//     // const token = 'redacted ;)';
 //     //
 //     // const res = await fetch(url, {
 //     //     method: 'GET',
