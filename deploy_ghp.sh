@@ -21,6 +21,7 @@ rm -rf public/*
 
 echo "Generating site"
 hugo
+echo "Adding CNAME record ..."
 cp CNAME public/
 
 echo "Updating gh-pages branch"
