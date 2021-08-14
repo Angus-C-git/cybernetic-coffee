@@ -50,8 +50,8 @@ footerRight = "Hacked together with &#10084; by <a href=\"https://github.com/Ang
     url  = "https://github.com/Angus-C-git"
 
   [[params.social]]
-    name = "linkedin"
-    url  = "https://www.linkedin.com/"
+    name = "ctftime"
+    url  = "https://ctftime.org/team/122125"
 
 
 
