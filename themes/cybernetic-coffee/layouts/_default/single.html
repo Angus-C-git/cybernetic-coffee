@@ -50,12 +50,12 @@
             <hr />
 
             {{ if .Params.toc }}
-                <hr />
+                <!-- <hr /> -->
                 <aside id="toc">
-                <div class="toc-title">{{ i18n "tableOfContents" }}</div>
+                <!-- <div class="toc-title">{{ i18n "tableOfContents" }}</div> -->
                     {{ .TableOfContents }}
                 </aside>
-                <hr />
+                <!-- <hr /> -->
             {{ end }}
 
             {{ with .Params.Cover }}
