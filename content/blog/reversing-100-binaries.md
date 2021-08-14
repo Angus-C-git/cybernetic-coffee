@@ -6,6 +6,7 @@ date: "2021-07-27"
 type: "post"
 weight: 400
 keywords: "hacking reversing reverse engineering"
+toc: "true"
 ---
 
 > *"If you know the enemy and know yourself, you need not fear the result of a hundred battles."*
@@ -155,7 +156,17 @@ fld     qword [eax-0x1fcc]
 fstp    qword [esp+0x18 {var_10}]
 ```
 
-So as we expect for our 7 type variables we see 7 variables being initialized here. 
+So as we expect for our 7 type variables we see 7 variables being initialized here. The important things we care about here to reverse the logic are the `x86` types and the weird instructions we see.
+
+Lets start by revisting the `x86` types again.
+
+| Identifer/Type  | Size  | Description |
+|-----------------| ----- | ----------  |
+| `byte` | `8 bits` | Shockingly |
+
+
++ `byte` - In a shocking twist this is a `8 bit` quantity
++ `word` 
 
 
 ### `add.c`
