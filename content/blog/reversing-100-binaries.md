@@ -102,18 +102,60 @@ Now lets take a look at how different types are represented in assembly. We will
 int 
 main(int argc, char const *argv[])
 {
-	char a;
-	int b;
-	short c;
-	long d;
-	unsigned int e;
-	float f;
-	double g;
+	char a = 'a';
+	short c = 40;
+	int b = 400;
+	long d = 4000000000;
+	unsigned int e = 400000000;
+	float f = 4000.55;
+	double g = 4000.58583;
 
 
 	return 0;
 }
 ```
+
+Once again looking at the `x86` assembly in binja we obtain the following block.
+
+
+```nasm
+main:
+endbr32 
+push    ebp {__saved_ebp}
+mov     ebp, esp {__saved_ebp}
+and     esp, 0xfffffff8
+sub     esp, 0x20
+call    __x86.get_pc_thunk.ax
+add     eax, 0x2e1d  {_GLOBAL_OFFSET_TABLE_}
+mov     byte [esp+0x5 {var_23}], 0x61
+mov     word [esp+0x6 {var_22}], 0x28
+mov     dword [esp+0x8 {var_20}], 0x190
+mov     dword [esp+0xc {var_1c}], 0xee6b2800  {0xee6b2800}
+mov     dword [esp+0x10 {var_18}], 0x17d78400
+fld     dword [eax-0x1fd4]
+fstp    dword [esp+0x14 {var_14}]
+fld     qword [eax-0x1fcc]
+fstp    qword [esp+0x18 {var_10}]
+mov     eax, 0x0
+leave    {__saved_ebp}
+retn     {__return_addr}
+```
+
+Now that we know how the main function, and functions more broadly, are setup we cant start by instantly ignoring all of the logic to setup the frame and 'weird' calls we explored prior. Thus we end up with an abstracted signature like the following.
+
+```nasm
+mov     byte [esp+0x5 {var_23}], 0x61
+mov     word [esp+0x6 {var_22}], 0x28
+mov     dword [esp+0x8 {var_20}], 0x190
+mov     dword [esp+0xc {var_1c}], 0xee6b2800  {0xee6b2800}
+mov     dword [esp+0x10 {var_18}], 0x17d78400
+fld     dword [eax-0x1fd4]
+fstp    dword [esp+0x14 {var_14}]
+fld     qword [eax-0x1fcc]
+fstp    qword [esp+0x18 {var_10}]
+```
+
+So as we expect for our 7 type variables we see 7 variables being initialized here. 
 
 
 ### `add.c`
