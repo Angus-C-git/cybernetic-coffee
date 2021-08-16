@@ -1,7 +1,7 @@
 ---
-title: "Reversing 100 Binaries for Fun and Regret"
+title: "Reversing 50 Binaries for Fun and Regret"
 categories: ["Hacking", "Reversing", "Binary Exploitation"]
-tags: ["hacking", "pentesting", "x86", "Exploit Development"]
+tags: ["reversing", "hacking", "pentesting", "x86", "Exploit Development"]
 date: "2021-07-27"
 type: "post"
 weight: 400
@@ -9,19 +9,22 @@ keywords: "hacking reversing reverse engineering"
 toc: "true"
 ---
 
-> *"If you know the enemy and know yourself, you need not fear the result of a hundred battles."*
+> *"If you know the enemy and know yourself, you need not fear the ~~result~~ assembly of ~~a hundred battles~~ fifty binaries."*
 > 
->   --  Sun Tzu, The Art of War 
+>   --  Sun Tzu, The Art of ~~War~~ Exploitation
 
 ## Overview
 
-Bit dramatic hey, and im not sure knowing yourself here will help much either but the point is:
+~~So you want to hack a program? Go to nsogroup.com~~ ...
 
-> you have to understand the intricacies of how something works in order to attack it most effectively.
+Reverse engineering, or 'reversing', is the process of taking something whose inner workings are not immediately clear or incredibly complex and making sense of them. Thus we see that reversing is not just a skill for security engineers but for all engineers, programmers and problem solvers. 
 
-Enter reverse engineering. Reverse engineering, or 'reversing', is the process of taking something whose inner workings are not immediately clear or incredibly complex and making sense of them. Thus we see that reversing is not just a skill for security engineers but for all engineers, programmers and problem solvers. 
 
-In this post we'll take a look at reverse engineering in the context of ELF 32 bit binaries and the accompanying x86 instruction set. We will see how to use pattern recognition to our advantage, harness the power of disassembler and untangle assembler logic.
+> *I'll never stop to be amazed by the amount of efforts people put into not understanding things*
+>
+> -- Mark Dowd
+
+In this post we'll take a look at reverse engineering in the context of ELF 32 bit binaries and the accompanying x86 instruction set. We will see how to use pattern recognition to our advantage, harness the power of disassemblers' and untangle assembler logic.
 
 ## Tooling
 
@@ -158,25 +161,78 @@ fstp    qword [esp+0x18 {var_10}]
 
 So as we expect for our 7 type variables we see 7 variables being initialized here. The important things we care about here to reverse the logic are the `x86` types and the weird instructions we see.
 
-Lets start by revisting the `x86` types again.
+Lets start by revisting the `x86` types.
 
-| Identifer/Type  | Size  | Description |
-|-----------------| ----- | ----------  |
-| `byte` | `8 bits` | Shockingly |
++ `byte` - In a shocking twist this is a `8 bit (1 byte)` quantity
+  + `0 - 255` unsigned range
++ `word` - A word is two bytes giving us a `16 bit (2 byte)` quantity
+  + `0 - 65535` unsigned range
++ `dword` - A double word, you guessed it, a `32 bit (4 byte)` quantity
+  + `0 - 4294967295` unsigned range
++ `qword` - A quad word, a `64 bit (8 byte)` quantity
+  + `0 - 18446744073709551615` unsigned range
 
 
-+ `byte` - In a shocking twist this is a `8 bit` quantity
-+ `word` 
+With this in mind we can start converting some of our easier types into their `C` equivalents. 
+
+```nasm
+mov     byte [esp+0x5 {var_23}], 0x61
+```
+
+This value must be a `char` and the hex value `0x61` falling within the ASCII character range is a dead giveaway that its the character `a`.
+
+Next up we have another relatively straightforward one. 
+
+```nasm
+mov     word [esp+0x6 {var_22}], 0x28
+```
+
+For starters we know we are dealing with a word which is `16 bits` in size. If we look at some `C` types we can accumulate the following list. For a better list see [Basic Types Table](https://devsheets.cybernetic.coffee/programming-languages/basic-c-syntax/#basic-types).
+
++ `char` - `1 byte`
+	+ `0 - 128`
++ `short` - `2 bytes`
+	+ `-32,768 - 32,767`
++ `int` - `4 bytes`
+	+  
+
 
 
 ### `add.c`
 
+```C
+int
+add()
+{
+	int a = 40;
+	int b = 2;
+	return a + b;
+}
+
+
+void main() {add();}
+```
 
 ### `sub.c`
 
+```C
+int
+sub()
+{
+	int a = 40;
+	int b = 2;
+	return a - b;
+}
+
+
+void main() {sub();}
+```
 
 ### `multiply.c`
 
+```C
+
+```
 
 ### `division.c`
 
@@ -198,9 +254,37 @@ main(int argc, char const *argv[])
 
 ### `modulo.c`
 
+```C
+int 
+main(int argc, char const *argv[])
+{
+	int res;
+	int a = 6;
+	int b = 1;
+	/* modulo*/
+
+	res = a % b;
+	return 0;
+}
+```
 
 ### `conditionals.c`
 
+
+```C
+int 
+main(int argc, char const *argv[])
+{
+	
+	int a = 9;
+	int b = 10;
+
+	if (a < b)
+		return 1;
+	
+	return 0;
+}
+```
 
 ### `loops.c`
 
@@ -235,58 +319,139 @@ main(int argc, char const *argv[])
 
 ### `arrays.c` 
 
+```C
+
+```
 
 ### `functions.c`
 
+```C
+
+```
 
 ### `bitshifts.c`
+
+```C
+
+```
+
 
 ## Scoping and Intermediate Structures
 
 ### `structs.c`
 
+```C
+
+```
 
 ### `unions.c`
 
+```C
+
+```
 
 ### `globals.c`
 
+```C
+
+```
 
 ### `arguments.c`
 
+```C
+
+```
 
 ### `recursion.c`
 
+```C
 
+```
 
 ### `switches.c`
 
+```C
+
+```
 
 ### `casting.c`
 
+```C
+
+```
 
 ## I/O
 
 
 ### `files.c`
 
+```C
 
-### `syscalls.c`
+```
 
+### `sockets.c`
+
+```C
+
+```
 
 
 ## Data Structures & Basic Algorithms
 
 ### `linkedlist.c`
 
+```C
+
+```
 
 ### `queue.c`
 
+```C
+
+```
 
 ### `stack.c`
 
+```C
+
+```
 
 ### `hashtable.c`
 
+```C
+
+```
 
 ### `tees.c`
+
+```C
+
+```
+
+
+## 'Complete' Programs
+
+Lets put our new skills to the test and reverse some larger programs which combine a lot of the elements we see above.
+
+### `argmultiplexer`
+
+
+{{< image ref="images/blog/argmultiplexer.jpeg" >}}
+
+
+### `calculator`
+
+
+{{< image ref="images/blog/calculator.jpeg" >}}
+
+
+### `rv_bind`
+
+
+{{< image ref="images/blog/rv_bind.jpeg" >}}
+
+
+### `bitprotect`
+
+
+{{< image ref="images/blog/bitprotect.jpeg" >}}
