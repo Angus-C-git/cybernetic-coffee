@@ -179,7 +179,15 @@ With this in mind we can start converting some of our easier types into their `C
 mov     byte [esp+0x5 {var_23}], 0x61
 ```
 
-This value must be a `char` and the hex value `0x61` falling within the ASCII character range is a dead giveaway that its the character `a`.
+This value must be a `char` and the hex value `0x61` falling within the ASCII character range is a dead giveaway that its the character `a`. So we now have the following `C` snippet
+
+```C
+int
+main()
+{
+	char var_23 = 'a';
+}
+```
 
 Next up we have another relatively straightforward one. 
 
@@ -190,12 +198,34 @@ mov     word [esp+0x6 {var_22}], 0x28
 For starters we know we are dealing with a word which is `16 bits` in size. If we look at some `C` types we can accumulate the following list. For a better list see [Basic Types Table](https://devsheets.cybernetic.coffee/programming-languages/basic-c-syntax/#basic-types).
 
 + `char` - `1 byte`
-	+ `0 - 128`
+	+ `0 - 255` (unsigned)
+	+ `-128 - 127` (signed)
 + `short` - `2 bytes`
-	+ `-32,768 - 32,767`
+	+ `0 - 65535` (unsigned)
+	+ `-32,768 - 32,767` (signed)
 + `int` - `4 bytes`
-	+  
+	+ `0 - 4294967296` (unsigned)
+	+  `-2,147,483,648 - 2,147,483,647` (signed)
 
+Now comparing this to the `x86` equivalents we know that a word will range from `0 - 65535` which corresponds to a short. Next we see `0x28` is moved into the place the variable points in memory,
++ `[]` indicates a dereference  
+
+if we convert this to decimal we get the value `40` and thus we obtain the next `C` snippet.
+
+```C
+int
+main()
+{
+	char var_23 = 'a';
+	short var_22 = 40;
+}
+```
+
+We now proceed with the following snippet.
+
+```nasm
+//todo
+```
 
 
 ### `add.c`
