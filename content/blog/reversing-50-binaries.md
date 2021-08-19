@@ -100,6 +100,8 @@ We now proceed to the functions epilog where we clean up the created stack frame
 
 ### `types.c`
 
+*Note: when we talk about types here we do so in the context of 32bit programs*
+
 Now lets take a look at how different types are represented in assembly. We will use the following stripped back `C` program to do so.
 
 ```C
@@ -182,8 +184,8 @@ mov     byte [esp+0x5 {var_23}], 0x61
 This value must be a `char` and the hex value `0x61` falling within the ASCII character range is a dead giveaway that its the character `a`. So we now have the following `C` snippet
 
 ```C
-int
-main()
+int 
+main(int argc, char const *argv[])
 {
 	char var_23 = 'a';
 }
@@ -204,7 +206,7 @@ For starters we know we are dealing with a word which is `16 bits` in size. If w
 	+ `0 - 65535` (unsigned)
 	+ `-32,768 - 32,767` (signed)
 + `int` - `4 bytes`
-	+ `0 - 4294967296` (unsigned)
+	+ `0 - 4294967295` (unsigned)
 	+  `-2,147,483,648 - 2,147,483,647` (signed)
 
 Now comparing this to the `x86` equivalents we know that a word will range from `0 - 65535` which corresponds to a short. Next we see `0x28` is moved into the place the variable points in memory,
@@ -213,8 +215,8 @@ Now comparing this to the `x86` equivalents we know that a word will range from 
 if we convert this to decimal we get the value `40` and thus we obtain the next `C` snippet.
 
 ```C
-int
-main()
+int 
+main(int argc, char const *argv[])
 {
 	char var_23 = 'a';
 	short var_22 = 40;
@@ -224,11 +226,113 @@ main()
 We now proceed with the following snippet.
 
 ```nasm
-//todo
+mov     dword [esp+0x8 {var_20}], 0x190
 ```
 
+At this stage we have the pattern sorted so we skip straight to matching the size and convert the hex to decimal `400` and produce the `C` snippet.
+
+```C
+int 
+main(int argc, char const *argv[])
+{
+	char var_23 = 'a';
+	short var_22 = 40;
+	int var_20 = 400;
+}
+```
+
+Now its time for,
+
+```nasm
+mov     dword [esp+0xc {var_1c}], 0xee6b2800  {0xee6b2800}
+```
+
+at this point you're like its a `int` mate, and you'd be correct, for 32 bit programs, and ofc systems, `longs` and `ints` are both the same size `4 bytes`. Hence we make the hex conversion and assume an integer. *This assumption does not matter since any vulnerabilities introduced by a `long` would be identical for an `int`*.
+
+```C
+int 
+main(int argc, char const *argv[])
+{
+	char var_23 = 'a';
+	short var_22 = 40;
+	int var_20 = 400;
+	int var_1c = 4000000000;
+}
+```
+
+To save time with the following snippet we encounter a similar situation where the number of bytes used to represent the value is a `dword` which is the same size as the previously examined `int` and `long` values and thus all we can guarantee is that it will have at least the same size as an integer quantity in a 32 bit environment. 
+
+```nasm
+mov     dword [esp+0x10 {var_18}], 0x17d78400
+
+```
+
+```C
+int 
+main(int argc, char const *argv[])
+{
+	char var_23 = 'a';
+	short var_22 = 40;
+	int var_20 = 400;
+	int var_1c = 4000000000;
+	int var_18 = 400000000;
+}
+```
+
+Now we start getting into the 'interesting' parts of the program, lets look at the next snippet.
+
+```nasm
+fld     dword [eax-0x1fd4]
+fstp    dword [esp+0x14 {var_14}]
+```
+
+Here we encounter two new unfamiliar instructions.
+
++ `fld` - Load Floating Point Value
++ `fstp` - Store Floating Point Value
+
+
+Both are irresponsible for interacting with the floating point register so we know we are dealing with some kind of floating point value. What is interesting however here is that we don't see any associated value being moved around we just get a dereference to `var_14`. This is because for whatever reason floating point values are stored in the `.rodata` section of the ELF. The information we can figure out here tho is the type of precision associated with the floating point value. In this case we see that the size of the data referenced at that memory location is a `dword`. That means the floating point value is represented by a `4 byte` value. Hence we can determine by looking at the spec that this is a floating point value with the precision of the `C` type `float`.
+
+```C
+int 
+main(int argc, char const *argv[])
+{
+	char var_23 = 'a';
+	short var_22 = 40;
+	int var_20 = 400;
+	int var_1c = 4000000000;
+	int var_18 = 400000000;
+	float var_14; // unknown value
+}
+```
+
+Finally we see a very similar instruction sequence.
+
+```nasm
+fld     qword [eax-0x1fcc]
+fstp    qword [esp+0x18 {var_10}]
+```
+
+With the only difference being the precision of the floating point value which we now see has increased to `8 bytes` in size. This corresponds to the `C` type of `double`. 
+
+This completes our recovered `C` snippet leaving us with two unresolved values of known type. If we desired we could easily recover the values with further static analysis on the `.rodata` section or with dynamic analysis in GDB.
+
+```C
+{
+	char var_23 = 'a';
+	short var_22 = 40;
+	int var_20 = 400;
+	int var_1c = 4000000000;
+	int var_18 = 400000000;
+	float var_14; // unknown value
+	double var_10; // unknown value
+}
+```
 
 ### `add.c`
+
+Next up lets get into some basic arithmetic starting with every computers favorite, addition.
 
 ```C
 int
@@ -243,7 +347,62 @@ add()
 void main() {add();}
 ```
 
+Opening the compiled binary in binja we get the following disassembly for the `add` function.
+
+```nasm
+add:
+endbr32 
+push    ebp {__saved_ebp}
+mov     ebp, esp {__saved_ebp}
+sub     esp, 0x10
+call    __x86.get_pc_thunk.ax
+add     eax, 0x2e20  {_GLOBAL_OFFSET_TABLE_}
+mov     dword [ebp-0x8 {var_c}], 0x28
+mov     dword [ebp-0x4 {var_8}], 0x2
+mov     edx, dword [ebp-0x8 {var_c}]
+mov     eax, dword [ebp-0x4 {var_8}]
+add     eax, edx  {0x2a}
+leave    {__saved_ebp}
+retn     {__return_addr}
+```
+
+As we will often do from here start by nuking the 'boilerplate' used to setup and collapse the stackframe.
+
+```nasm
+mov     dword [ebp-0x8 {var_c}], 0x28
+mov     dword [ebp-0x4 {var_8}], 0x2
+mov     edx, dword [ebp-0x8 {var_c}]
+mov     eax, dword [ebp-0x4 {var_8}]
+add     eax, edx  {0x2a}
+leave    {__saved_ebp}
+```
+
+To begin with we see two variables being setup. Now that we can reverse types it's pretty easy to see that we assign two integers as follows.
+
+```C
+int var_c = 40;
+int var_8 = 2;
+```
+
+Over the next few lines we see the variables being moved into general purpose registers `edx` and `eax` in preparation for the `add` instruction. The `add` instruction takes in two parameters a source register which will be updated with the value stored in the second register. Thus in this case the value in `eax` is added with the value in `edx` and the computed sum stored back into `eax`. We then see the leave instruction is executed and the function terminates.
+
+It is at this point that we should recall the `x86` calling convention, wherein it is standard to return the results of function calls in the `eax` register. This should now make it obvious to us that the result of the addition operation is returned from the function directly rather than storing it in a result variable and then returning that. Thus we obtain the final recovered `C` snippet.
+
+```C
+int
+add()
+{
+	int var_c = 40;
+	int var_8 = 2;
+
+	return var_8 + var_c; 
+}
+```
+
+
 ### `sub.c`
+
+Now lets take a look at the inverse operation subtraction.
 
 ```C
 int
@@ -257,6 +416,40 @@ sub()
 
 void main() {sub();}
 ```
+
+As you might expect the disassembly is virtually identical to add so we wont spend much time here.
+
+```nasm
+sub:
+endbr32 
+push    ebp {__saved_ebp}
+mov     ebp, esp {__saved_ebp}
+sub     esp, 0x10
+call    __x86.get_pc_thunk.ax
+add     eax, 0x2e20  {_GLOBAL_OFFSET_TABLE_}
+mov     dword [ebp-0x8 {var_c}], 0x28
+mov     dword [ebp-0x4 {var_8}], 0x2
+mov     eax, dword [ebp-0x8 {var_c}]
+sub     eax, dword [ebp-0x4]  {0x26}
+leave    {__saved_ebp}
+retn     {__return_addr}
+
+```
+
+The only difference being that the `add` instruction is replaced with the `sub` instruction which works in the exact same fashion as `add` where the value in the first register parameter is reduced by the amount stored in the second register parameter and the result stored back into the first register. However, in this case the compiler just takes the value stored at the memory address of `var_8` as the second parameter rather than storing it in a general purpose register (like `edx`). Hence we have the following `C` snippet.
+
+```C
+int
+sub()
+{
+	int var_c = 40;
+	int var_8 = 2;
+
+	// order is important
+	return var_c - var_8; 
+}
+```
+
 
 ### `multiply.c`
 
