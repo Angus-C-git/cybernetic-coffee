@@ -633,7 +633,22 @@ main(int argc, char const *argv[])
 
 
 ```nasm
-
+modulo:
+endbr32 
+push    ebp {__saved_ebp}
+mov     ebp, esp {__saved_ebp}
+sub     esp, 0x10
+call    __x86.get_pc_thunk.ax
+add     eax, 0x2e20  {_GLOBAL_OFFSET_TABLE_}
+mov     dword [ebp-0xc {var_10}], 0x6
+mov     dword [ebp-0x8 {var_c}], 0x1
+mov     eax, dword [ebp-0xc {var_10}]
+cdq       {0x6}
+idiv    dword [ebp-0x8 {var_c}]
+mov     dword [ebp-0x4 {var_8}], edx
+mov     eax, dword [ebp-0x4 {var_8}]
+leave    {__saved_ebp}
+retn     {__return_addr}
 ```
 
 
@@ -655,27 +670,27 @@ main(int argc, char const *argv[])
 }
 ```
 
-{{< image ref="images/blog/for.jpeg" >}}
+{{< image ref="images/blog/for.png" >}}
 
 
 ### `for.c`
 
 
 ```C
-int 
-main(int argc, char const *argv[])
+void
+for_loop()
 {
-	/* for */
-	for (int x = 0; x < 10; x++){
+	for (int x = 0; x < 10; x++)
+	{
 		// spin
 	}
-
-	return 0;
 }
+
+void main() {for_loop();}
 ```
 
 
-{{< image ref="images/blog/for.jpeg" >}}
+{{< image ref="images/blog/50_bins/for.png" >}}
 
 
 ### `while.c`
@@ -695,7 +710,7 @@ void main() {while_loop();}
 ```
 
 
-{{< image ref="images/blog/while.jpeg" >}}
+{{< image ref="images/blog/50_bins/while.png" >}}
 
 
 ### `arrays.c` 
@@ -790,13 +805,33 @@ void main() {while_loop();}
 ### `switches.c`
 
 ```C
+#include <stdio.h>
 
+void
+_switch(int errno)
+{
+	switch (errno)
+	{
+		case 1:
+			printf("One got us in the end\n");
+			break;
+		case 2:
+			printf("Twosin't meant 2 be\n");
+			break;
+		case 3:
+			printf("Third time wasn't the charm\n");
+			break;
+		default:
+			printf("The front fell off\n");
+			break;
+	}
+}
+
+void main() {_switch(4);}
 ```
 
+{{< image ref="images/blog/50_bins/switch.png" >}}
 
-```nasm
-
-```
 
 ### `casting.c`
 
@@ -899,22 +934,22 @@ Lets put our new skills to the test and reverse some larger programs which combi
 ### `argmultiplexer`
 
 
-{{< image ref="images/blog/argmultiplexer.jpeg" >}}
+{{< image ref="images/blog/argmultiplexer.png" >}}
 
 
-### `calculator`
+### `quickmafs`
 
 
-{{< image ref="images/blog/calculator.jpeg" >}}
+{{< image ref="images/blog/quickmafs.png" >}}
 
 
 ### `rv_bind`
 
 
-{{< image ref="images/blog/rv_bind.jpeg" >}}
+{{< image ref="images/blog/rv_bind.png" >}}
 
 
-### `bitprotect`
+### `bitcastle`
 
 
-{{< image ref="images/blog/bitprotect.jpeg" >}}
+{{< image ref="images/blog/bitcastle.png" >}}
