@@ -670,7 +670,7 @@ main(int argc, char const *argv[])
 }
 ```
 
-{{< image ref="images/blog/for.png" >}}
+{{< image ref="images/blog/50_bins/conditionals.png" >}}
 
 
 ### `for.c`
