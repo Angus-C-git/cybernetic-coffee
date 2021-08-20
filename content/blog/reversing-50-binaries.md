@@ -9,7 +9,7 @@ keywords: "hacking reversing reverse engineering"
 toc: "true"
 ---
 
-> *"If you know the enemy and know yourself, you need not fear the ~~result~~ assembly of ~~a hundred battles~~ fifty binaries."*
+> *"If you know the enemy and know yourself, you need not fear the ~~result~~ disassembly of ~~a hundred battles~~ fifty binaries."*
 > 
 >   --  Sun Tzu, The Art of ~~War~~ Exploitation
 
@@ -24,7 +24,7 @@ Reverse engineering, or 'reversing', is the process of taking something whose in
 >
 > -- Mark Dowd
 
-In this post we'll take a look at reverse engineering in the context of ELF 32 bit binaries and the accompanying x86 instruction set. We will see how to use pattern recognition to our advantage, harness the power of disassemblers' and untangle assembler logic.
+In this post we'll take a look at reverse engineering in the context of ELF 32 bit binaries and the accompanying x86 instruction set. We will see how to use pattern recognition to our advantage, harness the power of dissembler's and untangle assembler logic.
 
 ## Tooling
 
@@ -121,7 +121,7 @@ main(int argc, char const *argv[])
 }
 ```
 
-Once again looking at the `x86` assembly in binja we obtain the following block.
+Once again looking at the `x86` disassembly in binja we obtain the following block.
 
 
 ```nasm
@@ -453,16 +453,130 @@ sub()
 
 ### `multiply.c`
 
-```C
+Now for disguised addition, lets check out multiplication. 
 
+```C
+int
+multiply ()
+{
+	int a = 7;
+	int b = 2;
+	int c = 3;
+
+	return a * b * c;
+}
+
+void main() {multiply();}
+```
+
+This is the compiled codes disassembly.
+
+```nasm
+multiply:
+endbr32 
+push    ebp {__saved_ebp}
+mov     ebp, esp {__saved_ebp}
+sub     esp, 0x10
+call    __x86.get_pc_thunk.ax
+add     eax, 0x2e20  {_GLOBAL_OFFSET_TABLE_}
+mov     dword [ebp-0xc {var_10}], 0x7
+mov     dword [ebp-0x8 {var_c}], 0x2
+mov     dword [ebp-0x4 {var_8}], 0x3
+mov     eax, dword [ebp-0xc {var_10}]
+imul    eax, dword [ebp-0x8]
+imul    eax, dword [ebp-0x4]  {0x2a}
+leave    {__saved_ebp}
+retn     {__return_addr}
+```
+
+Now that we know about register conventions we can already put together some assumptions about the program with just a quick passover the disassembly. We know that the result is being computed and returned directly via the `eax` register and that there are 3 variables involved. Additionally all the variables are of size `dword` so we can also attribute typing information to the variables. Simple conversion of the hexadecimal constants we have the following rough scaffold.
+
+```C
+int
+multiply ()
+{
+	int var_10 = 7;
+	int var_c = 2;
+	int var_8 = 3;
+
+	return /*todo*/;
+}
+```
+
+Now lets address the opcode in the room, `imul` or 'signed multiply'. According to a [website](https://www.felixcloutier.com/x86/imul) that hasn't discovered CSS which means it can be trusted completely:
+
+> *"imul Performs a signed multiplication of two operands. This instruction has three forms, depending on the number of operands."*
+
+Thus `imul` behaves differently depending on the number of operands, the cases are (approximately) as follows:
+
+**One operand**
+
+```nasm
+imul edi
+imul dword [ebp-0x42]
+```
+
+The value in the source operand, which can be either a memory location or a general purpose register, is multiplied with the value in the `eax` register (or its 8 bit equivalent `al` depending on the size of the value) and the result stored/returned in the `edx` or `eax` registers.
+
+**Two operands**
+
+```nasm
+imul eax, edi
+imul eax, 0x42
+imul eax, dword [ebp-0x42]
+```
+
+The value in the destination operand, which must be a general purpose register, is multiplied with the source operand, which may be either a general purpose register, constant value or a memory location, and the result stored/returned in the destination register/operand.
+
+
+**Three operands**
+
+```nasm
+imul eax, edi, 0x42
+imul eax, dword [ebp-0x42], 0x42
+```
+
+The second operand, which can either be a general purpose register or a memory location, is multiplied with the third operand, which must be a constant value, and the result is stored in the first operand, which must be a general purpose register.
+
+
+**Our Case**
+
+Here we deal with `imul's` of the second format with two operands the second being a location in memory. Thus we can follow the logic
+
+1. `mov     eax, dword [ebp-0xc {var_10}]` the value in `var_10` is stored into the `eax` register
+	
+	i. `eax = 7`
+
+2. `imul    eax, dword [ebp-0x8]` the value in eax is multiplied with the value in `var_c`
+
+	ii. `eax = 7 * 2 = 14`
+
+3. `imul    eax, dword [ebp-0x4]` the value in eax is multiplied with the value in `var_8`
+
+	iii. `eax = 14 * 3 = 42`
+
+Thus we obtain the final reconstructed `C` snippet.
+
+
+```C
+int
+multiply ()
+{
+	int var_10 = 7;
+	int var_c = 2;
+	int var_8 = 3;
+
+	return var_10 * var_c * var_8;
+}
 ```
 
 ### `division.c`
 
+Now lets take a look at a slightly different one, division.
 
 ```C
 int 
-main(int argc, char const *argv[])
+divide()
 {
 	int res;
 
@@ -471,9 +585,35 @@ main(int argc, char const *argv[])
 
 	res = a / b;
 
-	return 0;
+	return res;
 }
+
+void main() {divide();}
 ```
+
+
+Which has the following signature in `x86`.
+
+
+```nasm
+divide:
+endbr32 
+push    ebp {__saved_ebp}
+mov     ebp, esp {__saved_ebp}
+sub     esp, 0x10
+call    __x86.get_pc_thunk.ax
+add     eax, 0x2e20  {_GLOBAL_OFFSET_TABLE_}
+mov     dword [ebp-0xc {var_10}], 0x395f8
+mov     dword [ebp-0x8 {var_c}], 0x6947f
+mov     eax, dword [ebp-0xc {var_10}]
+cdq       {0x395f8}
+idiv    dword [ebp-0x8 {var_c}]
+mov     dword [ebp-0x4 {var_8}], eax
+mov     eax, dword [ebp-0x4 {var_8}]
+leave    {__saved_ebp}
+retn     {__return_addr}
+```
+
 
 ### `modulo.c`
 
@@ -490,6 +630,12 @@ main(int argc, char const *argv[])
 	return 0;
 }
 ```
+
+
+```nasm
+
+```
+
 
 ### `conditionals.c`
 
@@ -509,7 +655,10 @@ main(int argc, char const *argv[])
 }
 ```
 
-### `loops.c`
+{{< image ref="images/blog/for.jpeg" >}}
+
+
+### `for.c`
 
 
 ```C
@@ -526,19 +675,28 @@ main(int argc, char const *argv[])
 ```
 
 
+{{< image ref="images/blog/for.jpeg" >}}
+
+
+### `while.c`
+
 ```C
-int 
-main(int argc, char const *argv[])
+void
+while_loop()
 {
-	/* while */
 	while (1) 
 	{
 		//spin
 	}
-
-	return 0;
 }
+
+void main() {while_loop();}
+
 ```
+
+
+{{< image ref="images/blog/while.jpeg" >}}
+
 
 ### `arrays.c` 
 
@@ -546,9 +704,18 @@ main(int argc, char const *argv[])
 
 ```
 
+
+```nasm
+
+```
+
 ### `functions.c`
 
 ```C
+
+```
+
+```nasm
 
 ```
 
@@ -559,11 +726,20 @@ main(int argc, char const *argv[])
 ```
 
 
+```nasm
+
+```
+
 ## Scoping and Intermediate Structures
 
 ### `structs.c`
 
 ```C
+
+```
+
+
+```nasm
 
 ```
 
@@ -573,9 +749,19 @@ main(int argc, char const *argv[])
 
 ```
 
+
+```nasm
+
+```
+
 ### `globals.c`
 
 ```C
+
+```
+
+
+```nasm
 
 ```
 
@@ -585,9 +771,19 @@ main(int argc, char const *argv[])
 
 ```
 
+
+```nasm
+
+```
+
 ### `recursion.c`
 
 ```C
+
+```
+
+
+```nasm
 
 ```
 
@@ -597,9 +793,19 @@ main(int argc, char const *argv[])
 
 ```
 
+
+```nasm
+
+```
+
 ### `casting.c`
 
 ```C
+
+```
+
+
+```nasm
 
 ```
 
@@ -612,9 +818,19 @@ main(int argc, char const *argv[])
 
 ```
 
+
+```nasm
+
+```
+
 ### `sockets.c`
 
 ```C
+
+```
+
+
+```nasm
 
 ```
 
@@ -627,9 +843,19 @@ main(int argc, char const *argv[])
 
 ```
 
+
+```nasm
+
+```
+
 ### `queue.c`
 
 ```C
+
+```
+
+
+```nasm
 
 ```
 
@@ -639,18 +865,32 @@ main(int argc, char const *argv[])
 
 ```
 
+
+```nasm
+
+```
+
 ### `hashtable.c`
 
 ```C
 
 ```
 
-### `tees.c`
+
+```nasm
+
+```
+
+### `trees.c`
 
 ```C
 
 ```
 
+
+```nasm
+
+```
 
 ## 'Complete' Programs
 
