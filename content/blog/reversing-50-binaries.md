@@ -32,7 +32,7 @@ In the bellow assembler code you will notice some adornments to register names a
 
 *Note: The graph view that these tools provide are of particular importance to reversing.*
 
-## Basic Structures
+## Basic Structures and Operations
 
 In this segment we will look at reversing stripped back programs which show case one particular type of `C` *syntax*. In doing so we also highlight another powerful reversing technique, which I like to think of as being akin to 'chosen plaintext' attacks, creating and compiling snippets of `C` code to observe their assembly equivalents.
 
@@ -819,12 +819,12 @@ modulo()
 
 ### `conditionals.c`
 
+Now we turn to what makes programs 
 
 ```C
-int 
-main(int argc, char const *argv[])
+int
+conditional()
 {
-	
 	int a = 9;
 	int b = 10;
 
@@ -833,6 +833,9 @@ main(int argc, char const *argv[])
 	
 	return 0;
 }
+
+
+int main() {conditional();}
 ```
 
 {{< image ref="images/blog/50_bins/conditionals.png" >}}
@@ -912,7 +915,8 @@ void main() {while_loop();}
 
 ## Scoping and Intermediate Structures
 
-### `structs.c`
+
+### `arguments.c`
 
 ```C
 
@@ -922,6 +926,141 @@ void main() {while_loop();}
 ```nasm
 
 ```
+
+
+### `structs.c`
+
+Structs are a very important structure forming the basis for many data structures in `C`. Lets explore a simple one.
+
+
+```C
+struct Tome {
+	char category;
+	int volume;
+	char *title;
+};
+
+
+struct Tome
+_struct()
+{
+	struct Tome tome;
+
+	tome.category = 'A';
+	tome.volume = 42;
+	tome.title = "Computers are Evil";
+
+	return tome;
+}
+
+void main(){_struct();}
+```
+
+The accompanying disassembly. 
+
+```nasm
+_struct:
+endbr32 
+push    ebp {__saved_ebp}
+mov     ebp, esp {__saved_ebp}
+sub     esp, 0x10
+call    __x86.get_pc_thunk.ax
+add     eax, 0x2dfc
+mov     byte [ebp-0xc {var_10}], 0x41
+mov     dword [ebp-0x8 {var_c}], 0x2a
+lea     eax, [eax-0x1fd0]  {data_2008, "Computers are Evil"}
+mov     dword [ebp-0x4 {var_8}], eax  {data_2008, "Computers are Evil"}
+mov     eax, dword [ebp+0x8 {arg1}]
+mov     edx, dword [ebp-0xc]  {0x41}
+mov     dword [eax], edx  {0x41}
+mov     edx, dword [ebp-0x8 {var_c}]  {0x2a}
+mov     dword [eax+0x4], edx  {0x2a}
+mov     edx, dword [ebp-0x4 {var_8}]  {data_2008, "Computers are Evil"}
+mov     dword [eax+0x8], edx  {data_2008, "Computers are Evil"}
+mov     eax, dword [ebp+0x8 {arg1}]
+leave    {__saved_ebp}
+retn    0x4 {__return_addr}
+```
+
+Naively we may proceed by allocating variables according to their size ('type') and obtain a `C` snippet similar to the following. 
+
+
+```C
+char var_10 = 'A';
+int var_c = 42;
+char *var_8 = "Computers are Evil";
+```
+
+But then we become confused, whats with all these extra `mov` operations? The First hint at a struct or at the very least a global variable is the appearance of this line.
+
+```nasm
+mov     eax, dword [ebp+0x8 {arg1}]
+```
+
+Which features the access to a memory location `[ebp+0x8 {arg1}]`. That is some data before our base pointer. Since we know that no arguments are supplied to the function this must represent a global variable. Regardless of what the global variable is we now know that its memory location is being stored in `eax` so we can proceed keeping this in mind.
+
+
+```nasm
+mov     edx, dword [ebp-0xc]  {0x41}
+mov     dword [eax], edx  {0x41}
+mov     edx, dword [ebp-0x8 {var_c}]  {0x2a}
+mov     dword [eax+0x4], edx  {0x2a}
+mov     edx, dword [ebp-0x4 {var_8}]  {data_2008, "Computers are Evil"}
+mov     dword [eax+0x8], edx  {data_2008, "Computers are Evil"}
+mov     eax, dword [ebp+0x8 {arg1}]
+```
+
+Over the next few instructions we will observe the behavior that is critical to the operation of a struct. On the first line our `A` byte is loaded into `edx` and on the proceeding line moved into the memory location of `eax`, the location of the identified 'global variable'. On the next two lines the 'spice' occurs.
+
+```nasm
+mov     edx, dword [ebp-0x8 {var_c}]  {0x2a}
+mov     dword [eax+0x4], edx  {0x2a}
+```
+
+Firstly our integer `42` is stored into `edx` but then on the next line we store `42` into the memory location at `eax + 4` ??? 
+
+Structs like many structures in `C`, namely arrays, are simply just 'contiguous' regions in memory (we ignore [alignment](https://www.geeksforgeeks.org/data-structure-alignment/) /padding for this conversation). *Thus the first member of the struct is also the 'address' of the struct in memory*. In our case the first struct member is the char byte `A` and hence to access the second member of the struct we can simply take the 'address' of the first member and add the size of the data type we are trying to store. Hence since we store an integer value as our second member we 'index' `4` bytes further from the start of the structs base in memory, leading to the above operation.
+
+This logic follows for the next block.
+
+```nasm
+mov     edx, dword [ebp-0x4 {var_8}]  {data_2008, "Computers are Evil"}
+mov     dword [eax+0x8], edx  {data_2008, "Computers are Evil"}
+```
+
+Where we store the `char` pointer another `4` bytes further into the struct as the last member. Finally we have the lines.
+
+```nasm
+mov     eax, dword [ebp+0x8 {arg1}]
+leave    {__saved_ebp}
+retn    0x4 {__return_addr}
+```
+
+Where we see the base of the struct (the structs address in memory) being returned from the function. This gives us all the information we need to muddle a `C` snippet together which describes the program.
+
+```C
+// declare global struct
+struct Structure {
+	char member_1;
+	int member_2;
+	char *member_3;
+}
+
+// must declare the type we return in C
+struct Structure
+_struct()
+{
+	// need to create a instance of the struct
+	struct Structure structure;
+
+	structure.member_1 = 'A';
+	structure.member_2 = 42;
+	structure.member_3 = "Computers are Evil";
+	
+	return structure;
+}
+```
+
 
 ### `unions.c`
 
@@ -945,16 +1084,7 @@ void main() {while_loop();}
 
 ```
 
-### `arguments.c`
 
-```C
-
-```
-
-
-```nasm
-
-```
 
 ### `recursion.c`
 
@@ -968,6 +1098,9 @@ void main() {while_loop();}
 ```
 
 ### `switches.c`
+
+
+Switches are another classical decision making structure which see a lot of use in large programs and operating systems. When disassembled they generally resemble a set of nested `if/else` blocks. Lets look at this mock error handler as an example.
 
 ```C
 #include <stdio.h>
@@ -998,6 +1131,72 @@ void main() {_switch(4);}
 {{< image ref="images/blog/50_bins/switch.png" >}}
 
 
+Its probably a good idea to view the image in another tab since its microscopic. Now at this point we might guess we are dealing with a switch, or at least after looking at this, however it is also perfectly possible to represent this as a series of `if/else` blocks. So lets start by doing that.
+
+We begin by modeling out all the simple stuff and the rough scaffold. We also note that the first variable we see used `arg1` comes from `[ebp+0x8]` so we know that it is an argument supplied to the function.
+
+```C
+#include <stdio.h>
+
+void
+_switch(int arg1)
+{
+	if (arg1 == 3)
+	{
+		puts("Third time wasn't the charm");
+	}
+
+	else if (arg1 < 3)
+	{
+		if (arg1 == 1) {
+			puts("One got us in the end");
+		}
+
+		else if (arg1 == 2) {
+			puts("Twosin't meant 2 be");
+		}
+
+		else {
+			puts("The front fell off");
+		}
+	}
+
+	else {
+		puts("The front fell off");
+	}
+
+	// no return
+}
+```
+
+Now this is a disgusting mess of nested conditions but more importantly we see a couple of key things happening that hit towards the original source switch. Firstly we see that all the conditional `if/else` blocks check against the same variable `arg1`. Secondly we see repeated blocks. This could of course be dealt with by checking multiple conditions in the if statements but the structure of this particular program lends itself to simplification with a switch. *Another important aspect that I should mention also is that the `arg1` variable is of a type which is compatible with the switch.*
+
+Thus we can rewrite the above logic to utilise a switch, we can also reorder the cases because we are human beings and not computers and prefer to look at things in a human logical sequence where `1` comes before `3`.
+
+```C
+void
+_switch(int arg1)
+{
+	switch(arg1)
+	{
+		case 1:
+			puts("One got us in the end");
+			break;
+		case 2:
+			puts("Twosin't meant 2 be");
+			break;
+		case 3:
+			puts("Third time wasn't the charm");
+			break;
+		default:
+			puts("The front fell off");
+			break;
+	}
+}
+```
+
+
+
 ### `casting.c`
 
 ```C
@@ -1016,6 +1215,48 @@ void main() {_switch(4);}
 
 ```C
 
+```
+
+
+```nasm
+
+```
+
+### `cli.c`
+
+Getting command line arguments is another typical I/O operation. 
+
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
+int main(int argc, char const *argv[])
+{
+	/* code */
+
+	if (argc != 3) {
+		printf("Usage: %s <file> <mode>\n", argv[0]);
+		exit(0);
+	}
+
+	FILE *fp;
+
+	if (atoi(argv[2]))
+		fp = fopen(argv[1], "w");
+		
+	else 
+		fp = fopen(argv[1], "r");
+
+	if (!fp) {
+		printf("Could not open file\n");
+		exit(1);
+	}
+
+	fclose(fp);
+	return 0;
+}
 ```
 
 
