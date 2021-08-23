@@ -603,10 +603,10 @@ mov     ebp, esp {__saved_ebp}
 sub     esp, 0x10
 call    __x86.get_pc_thunk.ax
 add     eax, 0x2e20  {_GLOBAL_OFFSET_TABLE_}
-mov     dword [ebp-0xc {var_10}], 0x395f8
-mov     dword [ebp-0x8 {var_c}], 0x6947f
+mov     dword [ebp-0xc {var_10}], 0xe01d0c0
+mov     dword [ebp-0x8 {var_c}], 0x19b41018
 mov     eax, dword [ebp-0xc {var_10}]
-cdq       {0x395f8}
+cdq       {0xe01d0c0}
 idiv    dword [ebp-0x8 {var_c}]
 mov     dword [ebp-0x4 {var_8}], eax
 mov     eax, dword [ebp-0x4 {var_8}]
@@ -614,8 +614,64 @@ leave    {__saved_ebp}
 retn     {__return_addr}
 ```
 
+We see the typical stack frame setup stuff going on ra ra ra, ignore all that and go straight for our freebies, the variable setups.
+
+```C
+int var_10 = 235000000;
+int var_c = 431231000;
+```
+
+Then we encounter this series of events.
+
+```nasm
+mov     eax, dword [ebp-0xc {var_10}]
+cdq       {0xe01d0c0}
+idiv    dword [ebp-0x8 {var_c}]
+mov     dword [ebp-0x4 {var_8}], eax
+```
+
+We see our value in `var_10` being shoveled into the `eax` register which is a fair indicator that we are about to perform some operation or a function call. On the next line we have the `cdq` instruction which converts the value stored in `eax` to either a double word or a quadword depending on the values original 'type'. Thus in this case we convert a `dword` to a `qword` to facilitate the next instruction. The `idiv` instruction handles signed division of (smaller?) numbers in `x86`. It takes in one operand only as a divisor and divides the value stored in the `eax` register by that operands value storing the result back into `eax` (as all functions do conventionally). Finally we see `eax` saved into an intermediate variable `var_8`.
+
+```C
+int div_result;
+
+int var_10 = 235000000;
+int var_c = 431231000;
+
+// take note of order, eax value first
+div_result = var_10 / var_c;
+```
+
+In the last block we have,
+
+```nasm
+mov     eax, dword [ebp-0x4 {var_8}]
+leave    {__saved_ebp}
+retn     {__return_addr}
+```
+
+which we know means the result in `var_8` is being returned from the function. Thus we have the final `C` snippet.
+
+```C
+int
+divide()
+{
+	int div_result;
+	int var_10 = 235000000;
+	int var_c = 431231000;
+
+	// take note of order, eax value first
+	div_result = var_10 / var_c;
+
+	return div_result;
+}
+
+```
+
 
 ### `modulo.c`
+
+I find modulo to be one of the more interesting arithmetic operations to reverse since it highlights 'weird' compiler optimizations.
 
 ```C
 int 
@@ -623,13 +679,14 @@ main(int argc, char const *argv[])
 {
 	int res;
 	int a = 6;
-	int b = 1;
 	/* modulo*/
 
-	res = a % b;
+	res = a % 3;
 	return 0;
 }
 ```
+
+Bellow is the disassembly.
 
 
 ```nasm
@@ -640,16 +697,49 @@ mov     ebp, esp {__saved_ebp}
 sub     esp, 0x10
 call    __x86.get_pc_thunk.ax
 add     eax, 0x2e20  {_GLOBAL_OFFSET_TABLE_}
-mov     dword [ebp-0xc {var_10}], 0x6
-mov     dword [ebp-0x8 {var_c}], 0x1
-mov     eax, dword [ebp-0xc {var_10}]
-cdq       {0x6}
-idiv    dword [ebp-0x8 {var_c}]
+mov     dword [ebp-0x8 {var_c}], 0x6
+mov     ecx, dword [ebp-0x8 {var_c}]
+mov     edx, 0x55555556
+mov     eax, ecx
+imul    edx
+mov     eax, ecx
+sar     eax, 0x1f
+sub     edx, eax
+mov     eax, edx
+add     eax, eax
+add     eax, edx
+sub     ecx, eax
+mov     edx, ecx
 mov     dword [ebp-0x4 {var_8}], edx
 mov     eax, dword [ebp-0x4 {var_8}]
 leave    {__saved_ebp}
 retn     {__return_addr}
 ```
+
+
+I'll skip the usual variable setup here since its becoming a little beyond repetitive and get straight to the 'meat' of the function.
+
+```nasm
+mov     ecx, dword [ebp-0x8 {var_c}]
+mov     edx, 0x55555556
+mov     eax, ecx
+imul    edx
+mov     eax, ecx
+sar     eax, 0x1f
+sub     edx, eax
+mov     eax, edx
+add     eax, eax
+add     eax, edx
+sub     ecx, eax
+mov     edx, ecx
+```
+
+What in the fuck is happening here? Personally the most confusing elements when first presented with this is
+
+1. Where and why do we have the big fuck off number being moved into `edx`?
+2. Why do we have a `imul` instruction when we are dealing with modulo (ofc we don't know this normally)?
+
+My strategy when I first encountered it was to punch "big fuck off constant in disassembly" into a search bar. Which unsurprisingly did not yield particularly helpful results, eventually however I uncovered a [stack overflow]() post which is only 4 years old that lead to a bunch of helpful resources and other searches which eventually revealed [this]() excellent blog. 
 
 
 ### `conditionals.c`
