@@ -630,7 +630,7 @@ idiv    dword [ebp-0x8 {var_c}]
 mov     dword [ebp-0x4 {var_8}], eax
 ```
 
-We see our value in `var_10` being shoveled into the `eax` register which is a fair indicator that we are about to perform some operation or a function call. On the next line we have the `cdq` instruction which converts the value stored in `eax` to either a double word or a quadword depending on the values original 'type'. Thus in this case we convert a `dword` to a `qword` to facilitate the next instruction. The `idiv` instruction handles signed division of (smaller?) numbers in `x86`. It takes in one operand only as a divisor and divides the value stored in the `eax` register by that operands value storing the result back into `eax` (as all functions do conventionally). Finally we see `eax` saved into an intermediate variable `var_8`.
+We see our value in `var_10` being shoveled into the `eax` register which is a fair indicator that we are about to perform some operation or a function call. On the next line we have the `cdq` instruction which converts the value stored in `eax` to either a double word or a quadword depending on the values original 'type'. Thus in this case we convert a `dword` to a `qword` to facilitate the next instruction. The `idiv` instruction handles signed division of ([smaller](#moduloc)) numbers in `x86`. It takes in one operand only as a divisor and divides the value stored in the `eax` register by that operands value storing the result back into `eax` (as all functions do conventionally). Finally we see `eax` saved into an intermediate variable `var_8`.
 
 ```C
 int div_result;
@@ -675,15 +675,17 @@ I find modulo to be one of the more interesting arithmetic operations to reverse
 
 ```C
 int 
-main(int argc, char const *argv[])
+modulo ()
 {
 	int res;
 	int a = 6;
 	/* modulo*/
 
 	res = a % 3;
-	return 0;
+	return res;
 }
+
+void main() {modulo();}
 ```
 
 Bellow is the disassembly.
@@ -739,8 +741,81 @@ What in the fuck is happening here? Personally the most confusing elements when 
 1. Where and why do we have the big fuck off number being moved into `edx`?
 2. Why do we have a `imul` instruction when we are dealing with modulo (ofc we don't know this normally)?
 
-My strategy when I first encountered it was to punch "big fuck off constant in disassembly" into a search bar. Which unsurprisingly did not yield particularly helpful results, eventually however I uncovered a [stack overflow]() post which is only 4 years old that lead to a bunch of helpful resources and other searches which eventually revealed [this]() excellent blog. 
+My strategy when I first encountered it was to punch "big fuck off constant in disassembly" into a search bar. Which unsurprisingly did not yield particularly helpful results, eventually however I uncovered a [stack overflow](https://stackoverflow.com/questions/41183935/why-does-gcc-use-multiplication-by-a-strange-number-in-implementing-integer-divi) post which is only 4 years old that lead to a bunch of helpful resources including [this](https://ridiculousfish.com/blog/posts/labor-of-division-episode-i.html) excellent blog. 
 
+Basically, in short, the compiler uses this 'large fuck off' constant as a kind of magic number in order to optimise the modulo operation and indeed more generally division operations, which of course are required for modulo calculations, where the divisor is constant. This last distinction **where the divisor is constant** is important. We saw earlier in our [division](#divisionc) that no such large unexplained constant appears. This is because we divide two variables `a / b` and thus the compiler does not make the optimization. 
+
+If we instead had `a / 42` we would end up with a disassembly like,
+
+```nasm
+mov     edx, 0x30c30c31
+mov     eax, ecx
+imul    edx
+mov     eax, edx
+sar     eax, 0x3
+sar     ecx, 0x1f
+mov     edx, ecx
+sub     eax, edx
+```
+
+where the magic number for perform divisions with multiply and shifting is `0x30c30c31`. 
+
+Thus we have a similar output for our modulo operation where our magic number is `0x55555556`. But how does the compiler select this magic number? The aforementioned [blog](https://ridiculousfish.com/blog/posts/labor-of-division-episode-i.html) does a much better of explaining this so I would recommend reading that. I will, however, attempt a explanation of how we convert such logic back into `C`.
+
+The first step is to identify two key pieces of information:
+
+1. The shift constant
+2. The magic number
+
+To obtain the first we must first know what `x86` shift instructions look like. There are four main ones namely `sar`, `sal`, `shl` and `shr`. To read more about them have a look [here](https://www.felixcloutier.com/x86/sal:sar:shl:shr). For now it is enough to know of their existence and symbols. In our modulo disassembly we only have one such instruction.
+
+```nasm
+sar     eax, 0x1f
+```
+
+A 'shift arithmetic right' with operands `eax` and decimal constant `31`. Thus our shift constant (1) is `31`. The next step is equally as straight forward simply take the large hex number and convert it to its decimal form (or not up to you) `0x55555556 = 1431655766`.
+
+We now do the following:
+
+1. Take the shift constant and add `1` to it
+2. Take the adjusted shift constant and calculate `2` to the power of that number
+3. Take that value and divide by `x` setting the RHS to the value of the magic number
+4. Solve for `x`
+
+Thus for our case we would perform the following arithmetic:
+
+```
+shift_constant = 31 + 1
+exp_shift = 2**shift_constant
+
+exp_shift / x = 1431655766
+x = exp_shift / 1431655766
+x = 2**32 / 1431655766
+  = 2.99999 ...
+  = 3
+```
+
+We now have to note that this method of 'fast' division / mod is not perfectly accurate it comes with an associated degree of error. This is why we end up with a modulo constant `2.9999` repeater which we must then round to the nearest whole number `3` to obtain the original constant used for the modulo operation. We can now simplify this whole operation into a simple python function like the bellow.
+
+
+```python
+def resolve_constant(magic, shift):
+	return round(2 ** (shift + 1) / magic)
+```
+
+Putting this all together we can now build out our recovered `C` snippet.
+
+```C
+int
+modulo()
+{
+	int mod_result;
+	int var_c = 6;
+
+	mod_result = var_c % 3;
+	return mod_result;
+}
+```
 
 ### `conditionals.c`
 
