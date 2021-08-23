@@ -819,7 +819,7 @@ modulo()
 
 ### `conditionals.c`
 
-Now we turn to what makes programs 
+Now we turn to what makes programs interesting, making decisions.
 
 ```C
 int
@@ -881,15 +881,190 @@ void main() {while_loop();}
 {{< image ref="images/blog/50_bins/while.png" >}}
 
 
-### `arrays.c` 
+
+### `goto.c`
 
 ```C
+void
+_goto ()
+{
+	int evil = 0;
 
+	HELL:do
+	{
+		evil++;
+		if (evil > 12)
+			goto HELL;
+
+	} while (1);
+
+}
+
+void main() {_goto();}
 ```
 
 
-```nasm
+{{< image ref="images/blog/50_bins/goto.png" >}}
 
+
+### `arrays.c` 
+
+A wise man once said,
+
+> *"Everything in C is an array"*
+
+lets take a look at a simple program working with arrays.
+
+```C
+void
+array()
+{
+	int fib[] = {0, 1, 1, 2};
+	char some_vowels[] = {'e', 'i', 'o', 'u'};
+	char brackets[4][2] = { ")", "(", "}", "{" };
+
+	for (int x = 0; x < 4; x++){
+		printf("%d\n", fib[x]);
+		printf("%c\n", some_vowels[x]);
+		printf("%s\n", brackets[x]);
+	}
+}
+
+void main() {array();}
+```
+
+{{< image ref="images/blog/50_bins/array.png" >}}
+
+
+Probably gonna have to crack a new tab for this one (n.t.s might need to write a better image display shortcode ...). 
+
+At this point the compiler decided to introduce some protections on the binary in the form of a stack canary and I can't be bothered to rewrite the Makefile so we are going to ignore this and address it later. Look fine, tldr is: takes a 'random value' from this store `gs` and places it on the stack before the return pointer, if we overflow we damage the value in that 'variable' causing `__stack_chk_fail_local` to be called, exiting the program before the attacker can redirect code execution. You can read more about how the memory protection works [here](https://github.com/Angus-C-git/SecSheets/blob/master/Binary%20Exploitation/Theory/MemoryProtections.md#stack-canaries).  
+
+But now the program. We begin our analysis on the following part of the first block (blissfully unaware of the stack canary setup along with the frame).
+
+```nasm
+mov     dword [ebp-0x20 {var_24}], 0x0
+mov     dword [ebp-0x1c {var_20}], 0x1
+mov     dword [ebp-0x18 {var_1c}], 0x1
+mov     dword [ebp-0x14 {var_18}], 0x2
+mov     dword [ebp-0x10 {var_14}], 0x756f6965
+mov     word [ebp-0x28 {var_2c}], 0x29
+mov     word [ebp-0x26 {var_2a}], 0x28
+mov     word [ebp-0x24 {var_28}], 0x7d
+mov     word [ebp-0x22 {var_26}], 0x7b
+```
+
+Where we basically see what looks like a bunch of variables being initialized. In the future you may find yourself looking ahead after seeing such a block for a pattern we will take a look at next. First lets recall how arrays are layed out in memory. For an array to work as we expect as programmers each 'element' of the array must appear in memory in order, otherwise how could we reliably loop through them or select specific elements? In reality when we iterate over an array we actually just perform simple arithmetic based on the data type we are working with. For example if we have an array of integers we know that each integer 'element' of the array must be `4` bytes in size (a `dword`) and thus each element of the array must have `4` bytes of space between them. This means that from an arbitrary point in the array we can predict were the next element would be by just going another `4` bytes along in memory from were we are currently. 
+
+Similarly if we want the third element in an integer array and we know where that array starts in memory (aka the first element) we can simply take the desired index `2` (arrays start at `0` mate) and multiply it by the size `4` and add the result to the memory address where the array starts to get the address of the third element. To see a diagram and the MIPS version of this logic take a look [here](https://devsheets.cybernetic.coffee/programming-languages/mips/#1d-arrays).
+
+Thus in the above block when we see integers begin assigned continuously at `4` byte increments away from each other we should become suspicious that array may be involved. 
+
+Similar logic can be followed for the brackets array where the two byte strings are allocated at `2` byte increments in sequence.
+
+Some what interestingly for the character array (`some_vowels`) the compiler simply allocates the `4` bytes in a single move via.
+
+```nasm
+mov     dword [ebp-0x10 {var_14}], 0x756f6965
+```
+
+If we decode `0x756f6965` from hex to text we get `uoie` which reversed is our characters `eiou`. This makes sense when we consider that each char is `1` byte and we store exactly `4`.
+
+If we weren't sure that we were working with some arrays at this point the following lines after the loop header are a dead giveaway.
+
+```C
+mov     eax, dword [ebp-0x2c {var_30}]
+mov     eax, dword [ebp+eax*4-0x20 {var_24}]
+```
+
+Firstly we see that the variable which the loop checks against, the counter variable, is loaded into `eax`. Then in the next line we see the implementation of our discussion about accessing array elements.
+
+First we see that the memory location of our counter variable `var_30` is added to the base pointer `ebp+eax` which gives access to the value stored in the counter. This value is then multiplied by `4` in accordance with the integer type we are working with `ebp+eax*4` and then the offset to the start of the array is subtracted `ebp+eax*4-0x20` to expose the index in the integers array which corresponds to the value of the counter. We then push this value as the last argument to `printf` and continue. 
+
+```C
+void
+array()
+{
+	int numbers[] = {0, 1, 1, 2};
+	char characters = {'e', 'i', 'o', 'u'};
+	char strings[4][2] = {")", "(", "}", "{"};
+
+	for (int count = 0; count < 0x3; count++)
+	{
+		printf("%d\n", numbers[count]);
+	}
+}
+```
+
+The next block deals with the 'unusual' case of printing out each of the `4` characters in the `some_vowels` array.
+
+```nasm
+lea     edx, [ebp-0x10 {var_14}]
+mov     eax, dword [ebp-0x2c {var_30}]
+add     eax, edx {var_14}
+movzx   eax, byte [eax]
+movsx   eax, al
+sub     esp, 0x8
+push    eax {var_48_2}
+lea     eax, [ebx-0x1fc4]  {data_200c}
+push    eax {var_4c}  {data_200c}
+call    printf
+```
+
+We similarly load the location of the start of the 'array' into `edx` and the value of the counter into `eax`. Then, however, to resolve each of the characters as single bytes we use the `movzx` and `movsx` instructions which (essentially) places the byte into the lowest byte of the `eax` register which we then push to `printf` as the last argument to print. This is a bit vague but the main thing to take away here is that the **base** of the array is being coupled with the counter to access the arrays elements.
+
+```C
+void
+array()
+{
+	int numbers[] = {0, 1, 1, 2};
+	char characters = {'e', 'i', 'o', 'u'};
+	char strings[4][2] = {")", "(", "}", "{"};
+
+	for (int count = 0; count < 0x3; count++)
+	{
+		printf("%d\n", numbers[count]);
+		printf("%c\n", characters[count]);
+	}
+}
+```
+
+That brings us to our last block.
+
+```nasm
+lea     edx, [ebp-0x28 {var_2c}]
+mov     eax, dword [ebp-0x2c {var_30}]
+add     eax, eax
+add     eax, edx {var_2c}
+sub     esp, 0xc
+push    eax {var_4c_1}
+call    puts
+```
+
+We start by loading the memory location of the start of the array into `edx`, as has become a pattern. We then stuff the memory location of the counter `var_30` into `eax`. Things get a little weird here but we wield the power of understanding types and sizes so we `push()` on.
+
+```nasm
+add     eax, eax
+add     eax, edx {var_2c}
+```
+
+Why on earth do we add the value of the counter to itself? Is probably the first question. To answer that we recall the type we are working with, we know that each of the 'elements' in the array of strings are `2` bytes in size. However the **value** of the counter only increases by `1` each time. Thus to access the next element in the array based off the arrays address in memory and the counter we would need to add `1` to whatever the counters value is each time in order to access the start of the next strings address. *Note we are concerned with the address of the element rather than the value of the element itself here since print functions expect pointers to character arrays (AKA strings)*. Thus we can simply add the counter to itself to achieve this 'indexing by two' effect. Finally we push the address of the element to `puts` add one to our `counter`.
+
+```C
+void
+array()
+{
+	int numbers[] = {0, 1, 1, 2};
+	char characters = {'e', 'i', 'o', 'u'};
+	char strings[4][2] = {")", "(", "}", "{"};
+
+	for (int count = 0; count < 0x3; count++)
+	{
+		printf("%d\n", numbers[count]);
+		printf("%c\n", characters[count]);
+		puts(strings[count]);
+	}
+}
 ```
 
 ### `functions.c`
