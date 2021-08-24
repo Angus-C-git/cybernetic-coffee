@@ -1,5 +1,4 @@
-
-#!/bin/sh
+#!/bin/bash
 
 if [ "`git status -s`" ]
 then
