@@ -40,7 +40,7 @@ alphabet = &amp;#39;bcdefhijklmnopqrstuvwyz&amp;#39; # cleansed alphabet payload
 General flat payload = flat({ # pad with garbage to this offset cyclic_find(&#39;amia&#39;): rop.chain() }) custom filler
 alphabet = &#39;bcdefhijklmnopqrstuvwyz&#39; # cleansed alphabet payload = fit({ cyclic_find(&#39;nbbb&#39;, alphabet=bet): rop."><meta itemprop="datePublished" content="2021-08-24T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-08-24T00:00:00+00:00" />
-<meta itemprop="wordCount" content="184">
+<meta itemprop="wordCount" content="151">
 <meta itemprop="keywords" content="hacking,pentesting,Exploit Development," />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Forgotten pwntools"/>
@@ -254,7 +254,7 @@ alphabet = &#39;bcdefhijklmnopqrstuvwyz&#39; # cleansed alphabet payload = fit({
         <li><a href="#logging"><code>logging</code></a></li>
         <li><a href="#sections"><code>sections</code></a></li>
         <li><a href="#rebase"><code>rebase</code></a></li>
-        <li><a href="#unpacking"><code>unpacking</code></a></li>
+        <li><a href="#unhex"><code>unhex</code></a></li>
       </ul>
     </li>
     <li><a href="#rop">ROP</a>
@@ -263,11 +263,6 @@ alphabet = &#39;bcdefhijklmnopqrstuvwyz&#39; # cleansed alphabet payload = fit({
         <li><a href="#libcsearch"><code>libc.search</code></a></li>
         <li><a href="#call"><code>call</code></a></li>
         <li><a href="#function"><code>function</code></a></li>
-      </ul>
-    </li>
-    <li><a href="#format-strings">Format Strings</a>
-      <ul>
-        <li><a href="#fmtstr_payload"><code>fmtstr_payload</code></a></li>
       </ul>
     </li>
   </ul>
@@ -302,8 +297,8 @@ log<span style="color:#f92672">.</span>success(<span style="color:#e6db74">f</sp
 elf<span style="color:#f92672">.</span>address <span style="color:#f92672">=</span> leaked_menu_address <span style="color:#f92672">-</span> elf<span style="color:#f92672">.</span>symbols[<span style="color:#e6db74">&#39;menu&#39;</span>]
 
 <span style="color:#75715e"># now we have defeated PIE/ASLR globally</span>
-</code></pre></div><h3 id="unpacking"><code>unpacking</code></h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">leak_addr <span style="color:#f92672">=</span> u32(proc<span style="color:#f92672">.</span>recvline(keepends<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)[:<span style="color:#ae81ff">4</span>])
+</code></pre></div><h3 id="unhex"><code>unhex</code></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">txt_bytes <span style="color:#f92672">=</span> unhex(<span style="color:#e6db74">&#39;75736566756c&#39;</span>)
 </code></pre></div><h2 id="rop">ROP</h2>
 <h3 id="raw"><code>raw</code></h3>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">rop <span style="color:#f92672">=</span> ROP(binary)
@@ -328,10 +323,6 @@ rop<span style="color:#f92672">.</span>call(libc<span style="color:#f92672">.</s
 
 <span style="color:#75715e"># call function in symbols table with args</span>
 rop<span style="color:#f92672">.</span>some_function(arg1, arg2)
-</code></pre></div><h2 id="format-strings">Format Strings</h2>
-<h3 id="fmtstr_payload"><code>fmtstr_payload</code></h3>
-<p><em>Note: this function often writes too much data corrupting the stack, stay tuned for a post on writing your own more reliable function.</em></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">payload <span style="color:#f92672">=</span> fmtstr_payload(bytes_offset, {target_addr: addr_val}, numbwritten<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, write_size<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;byte&#39;</span>)
 </code></pre></div>
             </div>
         </article>
@@ -360,7 +351,7 @@ rop<span style="color:#f92672">.</span>some_function(arg1, arg2)
                     <line x1="16" y1="17" x2="8" y2="17"></line>
                     <polyline points="10 9 9 9 8 9"></polyline>
                 </svg>
-                184 Words
+                151 Words
             </p>
   		</div>
         
