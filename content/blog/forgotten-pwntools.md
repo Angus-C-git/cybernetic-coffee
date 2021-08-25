@@ -57,6 +57,13 @@ elf.address = leaked_menu_address - elf.symbols['menu']
 ```
 
 
+### `unpacking`
+
+```python
+leak_addr = u32(proc.recvline(keepends=False)[:4])
+```
+
+
 ## ROP
 
 ### `raw`
