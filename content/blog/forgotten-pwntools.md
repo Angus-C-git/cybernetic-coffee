@@ -57,10 +57,10 @@ elf.address = leaked_menu_address - elf.symbols['menu']
 ```
 
 
-### `unpacking`
+### `unhex`
 
 ```python
-leak_addr = u32(proc.recvline(keepends=False)[:4])
+txt_bytes = unhex('75736566756c')
 ```
 
 
@@ -105,15 +105,4 @@ rop = ROP(binary)
 
 # call function in symbols table with args
 rop.some_function(arg1, arg2)
-```
-
-
-## Format Strings
-
-### `fmtstr_payload`
-
-*Note: this function often writes too much data corrupting the stack, stay tuned for a post on writing your own more reliable function.*
-
-```python
-payload = fmtstr_payload(bytes_offset, {target_addr: addr_val}, numbwritten=1, write_size='byte')
 ```
