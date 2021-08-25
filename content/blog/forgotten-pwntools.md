@@ -57,6 +57,13 @@ elf.address = leaked_menu_address - elf.symbols['menu']
 ```
 
 
+### `unhex`
+
+```python
+txt_bytes = unhex('75736566756c')
+```
+
+
 ## ROP
 
 ### `raw`
