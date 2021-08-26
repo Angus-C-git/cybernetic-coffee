@@ -1,5 +1,5 @@
 ---
-title: "Reversing 50 Binaries for Fun and Regret"
+title: "Reversing 34 Binaries for No Fun and Regret"
 categories: ["Hacking", "Reversing", "Binary Exploitation"]
 tags: ["reversing", "hacking", "pentesting", "x86", "Exploit Development"]
 date: "2021-07-27"
@@ -9,7 +9,7 @@ keywords: "hacking reversing reverse engineering"
 toc: "true"
 ---
 
-> *"If you know the enemy and know yourself, you need not fear the ~~result~~ disassembly of ~~a hundred battles~~ fifty binaries."*
+> *"If you know the enemy and know yourself, you need not fear the ~~result~~ disassembly of ~~a hundred battles~~ 34 binaries."*
 > 
 >   --  Sun Tzu, The Art of ~~War~~ Exploitation
 
@@ -25,6 +25,9 @@ Reverse engineering, or 'reversing', is the process of taking something whose in
 > -- Mark Dowd
 
 In this post we'll take a look at reverse engineering in the context of ELF 32 bit binaries and the accompanying x86 instruction set. We will see how to use pattern recognition to our advantage, harness the power of dissembler's and untangle assembler logic.
+
+
+**W.I.P**
 
 ## Tooling
 
@@ -1070,11 +1073,51 @@ array()
 ### `functions.c`
 
 ```C
+#include <stdio.h>
 
+
+void
+some_other_function()
+{
+	// ops
+}
+
+
+void
+function_calls()
+{
+	char *string = "Hello there";
+
+	printf("%s\n", string);
+	some_other_function();
+
+}
+
+
+void main(){function_calls();}
 ```
 
 ```nasm
-
+function_calls:
+endbr32 
+push    ebp {__saved_ebp}
+mov     ebp, esp {__saved_ebp}
+push    ebx {__saved_ebx}  {_GLOBAL_OFFSET_TABLE_}
+sub     esp, 0x14
+call    __x86.get_pc_thunk.ax
+add     eax, 0x2de7
+lea     edx, [eax-0x1fd0]  {data_2008, "Hello there"}
+mov     dword [ebp-0xc {var_10}], edx  {data_2008, "Hello there"}
+sub     esp, 0xc
+push    dword [ebp-0xc {var_10}] {var_2c}  {data_2008, "Hello there"}
+mov     ebx, eax  {_GLOBAL_OFFSET_TABLE_}
+call    puts
+add     esp, 0x10
+call    some_other_function
+nop     
+mov     ebx, dword [ebp-0x4 {__saved_ebx}]  {_GLOBAL_OFFSET_TABLE_}
+leave    {__saved_ebp}
+retn     {__return_addr}
 ```
 
 ### `bitshifts.c`
@@ -1094,12 +1137,87 @@ array()
 ### `arguments.c`
 
 ```C
+void
+some_function_with_args(int arg0, char arg1, char *arg2)
+{
+	printf("%d\n", arg0);
+	printf("%c\n", arg1);
+	printf("%s\n", ar2);
+}
 
+
+void
+function_call()
+{
+	char *string = "Hello there";
+	char character = 'A';
+
+	some_function_with_args(42, character, string);
+}
+
+
+void main(){function_call();}
 ```
 
 
 ```nasm
+function_call:
+endbr32 
+push    ebp {__saved_ebp}
+mov     ebp, esp {__saved_ebp}
+sub     esp, 0x18
+call    __x86.get_pc_thunk.ax
+add     eax, 0x2d7c
+lea     eax, [eax-0x1fc4]  {data_2010, "Hello there"}
+mov     dword [ebp-0xc {var_10}], eax  {data_2010, "Hello there"}
+mov     byte [ebp-0xd {var_11}], 0x41
+movsx   eax, byte [ebp-0xd]  {0x41}
+sub     esp, 0x4
+push    dword [ebp-0xc {var_10}] {var_24}  {data_2010, "Hello there"}
+push    eax {var_28}  {0x41}
+push    0x2a {var_2c}
+call    some_function_with_args
+add     esp, 0x10
+nop     
+leave    {__saved_ebp}
+retn     {__return_addr}
+```
 
+
+The called functions assembler looks like.
+
+```nasm
+some_function_with_args:
+endbr32 
+push    ebp {__saved_ebp}
+mov     ebp, esp {__saved_ebp}
+push    ebx {__saved_ebx}  {_GLOBAL_OFFSET_TABLE_}
+sub     esp, 0x14
+call    __x86.get_pc_thunk.bx
+add     ebx, 0x2dd7
+mov     eax, dword [ebp+0xc {arg2}]
+mov     byte [ebp-0xc {var_10}], al
+sub     esp, 0x8
+push    dword [ebp+0x8 {arg1}] {var_28}
+lea     eax, [ebx-0x1fcc]  {data_2008}
+push    eax  {data_2008}
+call    printf
+add     esp, 0x10
+movsx   eax, byte [ebp-0xc {var_10}]
+sub     esp, 0x8
+push    eax {var_28_1}
+lea     eax, [ebx-0x1fc8]  {data_200c}
+push    eax  {data_200c}
+call    printf
+add     esp, 0x10
+sub     esp, 0xc
+push    dword [ebp+0x10 {arg3}] {var_2c}
+call    puts
+add     esp, 0x10
+nop     
+mov     ebx, dword [ebp-0x4 {__saved_ebx}]  {_GLOBAL_OFFSET_TABLE_}
+leave    {__saved_ebp}
+retn     {__return_addr}
 ```
 
 
@@ -1240,7 +1358,7 @@ _struct()
 ### `unions.c`
 
 ```C
-
+//todo
 ```
 
 
@@ -1251,12 +1369,34 @@ _struct()
 ### `globals.c`
 
 ```C
+int global_int;
+char global_char;
 
+
+void
+get_globals()
+{
+	global_int = 1;
+	global_char = 'A';
+}
+
+
+void main(){get_globals();}
 ```
 
 
 ```nasm
-
+get_globals:
+endbr32 
+push    ebp {__saved_ebp}
+mov     ebp, esp {__saved_ebp}
+call    __x86.get_pc_thunk.ax
+add     eax, 0x2e23
+mov     dword [eax+0x30], 0x1  {global_int}
+mov     byte [eax+0x34], 0x41  {global_char}
+nop     
+pop     ebp {__saved_ebp}
+retn     {__return_addr}
 ```
 
 
@@ -1264,7 +1404,7 @@ _struct()
 ### `recursion.c`
 
 ```C
-
+//todo
 ```
 
 
@@ -1515,11 +1655,190 @@ Lets put our new skills to the test and reverse some larger programs which combi
 ### `argmultiplexer`
 
 
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+/*
+Argument struct:
+
+    - Example argument foramt:
+        -arg, --argument
+
+    @arg_count:
+        + The number of arguments
+          the argument expects.
+    @quick_tack:
+        + argument short form
+    @full_tack:
+        + argument long form
+    @help
+        + argument help info
+*/
+struct arg {
+    int arg_count;
+    char * quick_tack;
+    char * full_tack;
+    char * help;
+};
+
+
+/* parse arguments into struct */
+struct arg new_arg() {
+
+    struct arg new_argument;
+
+    int arg_count;
+    char short_form[6];
+    char long_form[15];
+    char help[42];
+
+    char quick_tack[10] = "-";
+    char full_tack[15] = "--";
+
+
+    printf("Enter expected argument no: ");
+    scanf("%d", &arg_count);
+    getchar();
+
+    if (arg_count <= 0 || arg_count > 3) {
+        printf("Invalid argument count.\n");
+        exit(1);
+    }
+
+    printf("Enter argument short form: ");
+    fgets(short_form, 6, stdin);
+    printf("Enter argument long form: ");
+    fgets(long_form, 15, stdin);
+    printf("Enter argument help info: ");
+    fgets(help, 42, stdin);
+
+    short_form[strlen(short_form) - 1] = '\0';
+    long_form[strlen(long_form) - 1] = '\0';
+    help[strlen(help) - 1] = '\0';  
+
+    strcat(quick_tack, short_form);
+    strcat(full_tack, long_form);
+
+    new_argument.arg_count = arg_count;
+    new_argument.quick_tack = quick_tack;
+    new_argument.full_tack = full_tack;
+    new_argument.help = help;
+    
+    printf("\nGenerated new argument:\n\n");
+    printf("    %s, %s, [%d]        %s", new_argument.quick_tack, 
+                                    new_argument.full_tack, 
+                                    new_argument.arg_count, 
+                                    new_argument.help
+    );
+    printf("\n");
+
+
+    return new_argument;
+}
+
+int 
+main(int argc, char const *argv[])
+{
+    /* parse arguments */
+    struct arg argument = new_arg();
+
+    return 0;
+}
+```
+
 {{< image ref="images/blog/argmultiplexer.png" >}}
 
 
 ### `quickmafs`
 
+```C
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+
+/*
++ A poor mans calculator in C
+
++ BODMAS is not here
+*/
+
+
+void
+quickmafs()
+{
+    const char operators[4][2] = {
+        "*",
+        "+",
+        "-",
+        "/"
+    };
+
+	char expression[20];
+	char * savepoint;
+
+	int res;
+	int left_operand;
+	int right_operand;
+	char *operator;
+
+
+	char *token;
+	while (1) {
+        printf("<<< ");
+		fgets(expression, 20, stdin);
+        expression[strlen(expression) - 1] = '\0';
+        savepoint = strdup(expression);
+
+		for(int opchar = 0; opchar <= 3; opchar++)
+		{
+
+			token = strtok(expression, operators[opchar]);
+
+			if (strlen(token) == strlen(savepoint))
+				continue;		
+		
+			operator = strdup(operators[opchar]);
+			left_operand = atoi(token);
+			break;
+		}
+
+		token = strtok(NULL, operator);
+		right_operand = atoi(token);
+
+		switch(operator[0])
+		{
+	        case '*':
+	            res = left_operand * right_operand;
+	            break;
+	        case '+':
+	            res = left_operand + right_operand;
+	            break;
+	        case '-':
+	           	res = left_operand - right_operand;
+	            break;
+	        case '/':
+	    	    res = left_operand / right_operand;
+	            break;
+	        default:
+	            printf("Computer says 'no' \n");
+	            res = 0;
+	            break;
+		}
+
+		printf(">>> %d\n", res);
+	}
+}
+
+
+void
+main(void)
+{
+    quickmafs();
+}
+```
 
 {{< image ref="images/blog/quickmafs.png" >}}
 
