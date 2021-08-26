@@ -1596,18 +1596,72 @@ int main(int argc, char const *argv[])
 ### `linkedlist.c`
 
 ```C
+#include <stdlib.h>
+#include <stdint.h>
 
+// Linked list DS
+struct items
+{
+	uint8_t tag;
+	struct st * next;		
+};
+
+
+struct items * 
+new()
+{
+	struct st * struct_1;
+
+	/*
+		mov struct_2, 0x0;
+		mov count, 0x0;
+	*/
+	struct st * struct_2 = NULL;
+	int count = 0;
+
+	while (count <= 9) 
+	{
+		struct_1 = (struct st *) malloc(8);
+		
+		// malloc failed
+		if (struct_1 == NULL) exit(1);
+
+
+		if (struct_2 == NULL)
+		{
+			struct_2 = struct_1;
+		}
+
+		else 
+		{
+			struct_1->next = struct_2;
+			struct_2 = struct_1;
+		}
+
+		struct_1->next = NULL; 
+		struct_1->tag = 'A' + count;
+		count++; 
+	}
+
+	return struct_2;
+}
+
+
+void 
+main()
+{	
+	// __Compile__
+	return 0;
+}
 ```
 
+{{< image ref="images/blog/50_bins/linkedlist.png" >}}
 
-```nasm
-
-```
 
 ### `queue.c`
 
 ```C
-
+//todo
 ```
 
 
@@ -1618,7 +1672,7 @@ int main(int argc, char const *argv[])
 ### `stack.c`
 
 ```C
-
+//todo
 ```
 
 
@@ -1629,7 +1683,7 @@ int main(int argc, char const *argv[])
 ### `hashtable.c`
 
 ```C
-
+//todo
 ```
 
 
@@ -1640,7 +1694,7 @@ int main(int argc, char const *argv[])
 ### `trees.c`
 
 ```C
-
+//todo
 ```
 
 
