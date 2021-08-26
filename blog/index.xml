@@ -19,6 +19,18 @@ alphabet = &amp;#39;bcdefhijklmnopqrstuvwyz&amp;#39; # cleansed alphabet payload
     </item>
     
     <item>
+      <title>Reversing 34 Binaries for No Fun and Regret</title>
+      <link>https://cybernetic.coffee/blog/reversing-34-binaries/</link>
+      <pubDate>Tue, 27 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/blog/reversing-34-binaries/</guid>
+      <description>&amp;ldquo;If you know the enemy and know yourself, you need not fear the result disassembly of a hundred battles 34 binaries.&amp;quot;
+&amp;ndash; Sun Tzu, The Art of War Exploitation
+ Overview So you want to hack a program? Go to nsogroup.com &amp;hellip;
+Reverse engineering, or &amp;lsquo;reversing&amp;rsquo;, is the process of taking something whose inner workings are not immediately clear or incredibly complex and making sense of them. Thus we see that reversing is not just a skill for security engineers but for all engineers, programmers and problem solvers.</description>
+    </item>
+    
+    <item>
       <title>Basic Stack Based Overflows</title>
       <link>https://cybernetic.coffee/blog/basic-stack-based-overflows/</link>
       <pubDate>Thu, 01 Jul 2021 00:00:00 +0000</pubDate>

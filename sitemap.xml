@@ -5,6 +5,9 @@
     <loc>https://cybernetic.coffee/blog/forgotten-pwntools/</loc>
     <lastmod>2021-08-24T00:00:00+00:00</lastmod>
   </url><url>
+    <loc>https://cybernetic.coffee/blog/reversing-34-binaries/</loc>
+    <lastmod>2021-07-27T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://cybernetic.coffee/blog/basic-stack-based-overflows/</loc>
     <lastmod>2021-07-01T00:00:00+00:00</lastmod>
   </url><url>
@@ -62,6 +65,15 @@
   </url><url>
     <loc>https://cybernetic.coffee/tags/</loc>
     <lastmod>2021-08-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://cybernetic.coffee/categories/reversing/</loc>
+    <lastmod>2021-07-27T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://cybernetic.coffee/tags/reversing/</loc>
+    <lastmod>2021-07-27T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://cybernetic.coffee/tags/x86/</loc>
+    <lastmod>2021-07-27T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/tags/buffer-overflows/</loc>
     <lastmod>2021-07-01T00:00:00+00:00</lastmod>
