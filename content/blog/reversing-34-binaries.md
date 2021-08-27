@@ -1,15 +1,15 @@
 ---
-title: "Reversing 34 Binaries for No Fun and Regret"
+title: "Reversing 31 Binaries for No Fun and Regret"
 categories: ["Hacking", "Reversing", "Binary Exploitation"]
 tags: ["reversing", "hacking", "pentesting", "x86", "Exploit Development"]
-date: "2021-07-27"
+date: "2021-08-15"
 type: "post"
 weight: 400
 keywords: "hacking reversing reverse engineering"
 toc: "true"
 ---
 
-> *"If you know the enemy and know yourself, you need not fear the ~~result~~ disassembly of ~~a hundred battles~~ 34 binaries."*
+> *"If you know the enemy and know yourself, you need not fear the ~~result~~ disassembly of ~~a hundred battles~~ 31 binaries."*
 > 
 >   --  Sun Tzu, The Art of ~~War~~ Exploitation
 
@@ -27,7 +27,8 @@ Reverse engineering, or 'reversing', is the process of taking something whose in
 In this post we'll take a look at reverse engineering in the context of ELF 32 bit binaries and the accompanying x86 instruction set. We will see how to use pattern recognition to our advantage, harness the power of dissembler's and untangle assembler logic.
 
 
-**W.I.P**
+*This 'blog' was originally called 'reversing 100 binaries for Fun and Regret', the name change reflects the events that followed. Some explanations are incomplete.*
+
 
 ## Tooling
 
@@ -1355,17 +1356,6 @@ _struct()
 ```
 
 
-### `unions.c`
-
-```C
-//todo
-```
-
-
-```nasm
-
-```
-
 ### `globals.c`
 
 ```C
@@ -1404,13 +1394,21 @@ retn     {__return_addr}
 ### `recursion.c`
 
 ```C
-//todo
+int
+fib(int n)
+{
+	if(n <= 0)
+		return 0;
+
+	else if (n == 1 || n == 2)
+		return 1;
+
+	return fib(n - 1) + fib(n - 2);
+}
 ```
 
+{{< image ref="images/blog/50_bins/recursion.png" >}}
 
-```nasm
-
-```
 
 ### `switches.c`
 
@@ -1801,8 +1799,9 @@ main(int argc, char const *argv[])
     return 0;
 }
 ```
+*This horrible image brought to you by overlaying screenshots in draw.io, no I will not use GIMP.*
 
-{{< image ref="images/blog/argmultiplexer.png" >}}
+{{< image ref="images/blog/50_bins/argmultiplexer.png" >}}
 
 
 ### `quickmafs`
@@ -1894,16 +1893,7 @@ main(void)
 }
 ```
 
-{{< image ref="images/blog/quickmafs.png" >}}
+*This horrible image brought to you by overlaying screenshots in draw.io, no I will not use GIMP.*
 
+{{< image ref="images/blog/50_bins/quickmafs.png" >}}
 
-### `rv_bind`
-
-
-{{< image ref="images/blog/rv_bind.png" >}}
-
-
-### `bitcastle`
-
-
-{{< image ref="images/blog/bitcastle.png" >}}
