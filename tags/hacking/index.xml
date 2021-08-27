@@ -6,7 +6,18 @@
     <description>Recent content in hacking on Cybernetic Coffee</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 24 Aug 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://cybernetic.coffee/tags/hacking/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 26 Aug 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://cybernetic.coffee/tags/hacking/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>C Sauce Audits</title>
+      <link>https://cybernetic.coffee/blog/c-sauce-audits/</link>
+      <pubDate>Thu, 26 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/blog/c-sauce-audits/</guid>
+      <description>Everything is open source if you can afford a binaryninja licence
+ Very basic an incomplete overview of C focused source code auditing.
+Heap Vulnerabilities Use After Free (UAF)  Look at the order in which functions are called or can be called and trace the execution Is memory free&amp;rsquo;d and then reused later? If so it may be possible for an attacker to edit a freed chunk if they can control data which reaches the part of the code which reuses the freed pointer Being able to edit a freed chunk forms the basis for most heap exploits  char* ptr = (char*)malloc (SIZE); .</description>
+    </item>
+    
     <item>
       <title>Forgotten pwntools</title>
       <link>https://cybernetic.coffee/blog/forgotten-pwntools/</link>
@@ -19,12 +30,12 @@ alphabet = &amp;#39;bcdefhijklmnopqrstuvwyz&amp;#39; # cleansed alphabet payload
     </item>
     
     <item>
-      <title>Reversing 34 Binaries for No Fun and Regret</title>
+      <title>Reversing 31 Binaries for No Fun and Regret</title>
       <link>https://cybernetic.coffee/blog/reversing-34-binaries/</link>
-      <pubDate>Tue, 27 Jul 2021 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 15 Aug 2021 00:00:00 +0000</pubDate>
       
       <guid>https://cybernetic.coffee/blog/reversing-34-binaries/</guid>
-      <description>&amp;ldquo;If you know the enemy and know yourself, you need not fear the result disassembly of a hundred battles 34 binaries.&amp;quot;
+      <description>&amp;ldquo;If you know the enemy and know yourself, you need not fear the result disassembly of a hundred battles 31 binaries.&amp;quot;
 &amp;ndash; Sun Tzu, The Art of War Exploitation
  Overview So you want to hack a program? Go to nsogroup.com &amp;hellip;
 Reverse engineering, or &amp;lsquo;reversing&amp;rsquo;, is the process of taking something whose inner workings are not immediately clear or incredibly complex and making sense of them. Thus we see that reversing is not just a skill for security engineers but for all engineers, programmers and problem solvers.</description>

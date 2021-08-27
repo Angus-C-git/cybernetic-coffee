@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="">
+<meta name="description" content="Everything is open source if you can afford a binaryninja licence
+ Very basic an incomplete overview of C focused source code auditing.
+Heap Vulnerabilities Use After Free (UAF)  Look at the order in which functions are called or can be called and trace the execution Is memory free&amp;rsquo;d and then reused later? If so it may be possible for an attacker to edit a freed chunk if they can control data which reaches the part of the code which reuses the freed pointer Being able to edit a freed chunk forms the basis for most heap exploits  char* ptr = (char*)malloc (SIZE); ." />
+<meta name="keywords" content=", reversing, hacking, pentesting, source audits, Exploit Development, static analysis" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="#252627" />
+<link rel="canonical" href="https://cybernetic.coffee/blog/c-sauce-audits/" />
+
+
+    <title>
+        
+            C Sauce Audits :: Cybernetic Coffee 
+        
+    </title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.64cc374c419669695f00d5c55727fea41e0fdc86b9beb1b4d1d1bcf24284f422.css">
+
+
+
+
+<link rel="shortcut icon" href="https://cybernetic.coffee/images/favicon.ico" />
+
+
+<meta itemprop="name" content="C Sauce Audits">
+<meta itemprop="description" content="Everything is open source if you can afford a binaryninja licence
+ Very basic an incomplete overview of C focused source code auditing.
+Heap Vulnerabilities Use After Free (UAF)  Look at the order in which functions are called or can be called and trace the execution Is memory free&rsquo;d and then reused later? If so it may be possible for an attacker to edit a freed chunk if they can control data which reaches the part of the code which reuses the freed pointer Being able to edit a freed chunk forms the basis for most heap exploits  char* ptr = (char*)malloc (SIZE); ."><meta itemprop="datePublished" content="2021-08-26T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2021-08-26T00:00:00+00:00" />
+<meta itemprop="wordCount" content="1858">
+<meta itemprop="keywords" content="reversing,hacking,pentesting,source audits,Exploit Development,static analysis," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="C Sauce Audits"/>
+<meta name="twitter:description" content="Everything is open source if you can afford a binaryninja licence
+ Very basic an incomplete overview of C focused source code auditing.
+Heap Vulnerabilities Use After Free (UAF)  Look at the order in which functions are called or can be called and trace the execution Is memory free&rsquo;d and then reused later? If so it may be possible for an attacker to edit a freed chunk if they can control data which reaches the part of the code which reuses the freed pointer Being able to edit a freed chunk forms the basis for most heap exploits  char* ptr = (char*)malloc (SIZE); ."/>
+
+
+
+
+
+    <meta property="article:section" content="Hacking" />
+
+    <meta property="article:section" content="Source Code Auditing" />
+
+    <meta property="article:section" content="Binary Exploitation" />
+
+
+
+    <meta property="article:published_time" content="2021-08-26 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <script src="https://kit.fontawesome.com/5eb4842dc5.js" crossorigin="anonymous"></script>
+
+<a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__text">Cybernetic <i class="fas fa-mug-hot"> </i> </span>
+            <span class="logo__mark"><i class="fas fa-terminal"></i></span>
+            <span class="logo__cursor" style=
+                  "
+                   background-color:#00ba68;
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://cybernetic.coffee/feed/">Activity Feed</a></li><li><a href="https://cybernetic.coffee/projects/">Projects</a></li><li><a href="https://cybernetic.coffee/blog">Blog</a></li><li><a href="https://cybernetic.coffee/ctf">CTF</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+        
+        <div class="post-info">
+            <p>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                
+                    2021-08-26 10:00
+                
+
+                
+            </p>
+        </div>
+        
+
+        <article>
+            <h2 class="post-title"><a href="https://cybernetic.coffee/blog/c-sauce-audits/">C Sauce Audits</a></h2>
+
+            
+
+            
+            <div class="post-info">
+
+                <div class="sharing-buttons">
+                    
+
+
+
+
+
+
+
+
+<a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?url=https%3a%2f%2fcybernetic.coffee%2fblog%2fc-sauce-audits%2f" target="_blank" rel="noopener" aria-label="" title="Share on twitter">
+  <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small">
+      <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a class="resp-sharing-button__link" href="https://reddit.com/submit/?url=https%3a%2f%2fcybernetic.coffee%2fblog%2fc-sauce-audits%2f&amp;resubmit=true&amp;title=C%20Sauce%20Audits" target="_blank" rel="noopener" aria-label="" title="Share on reddit">
+  <div class="resp-sharing-button resp-sharing-button--reddit resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a class="resp-sharing-button__link" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fcybernetic.coffee%2fblog%2fc-sauce-audits%2f&amp;t=C%20Sauce%20Audits" target="_blank" rel="noopener" aria-label="" title="Share on hacker news">
+  <div class="resp-sharing-button resp-sharing-button--hackernews resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M0 24V0h24v24H0zM6.951 5.896l4.112 7.708v5.064h1.583v-4.972l4.148-7.799h-1.749l-2.457 4.875c-.372.745-.688 1.434-.688 1.434s-.297-.708-.651-1.434L8.831 5.896h-1.88z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+
+
+
+
+
+
+
+                </div>
+            </div>
+            
+
+            <hr />
+
+            
+
+            
+
+            <div class="post-content">
+                <blockquote>
+<p>Everything is open source if you can afford a <a href="https://binary.ninja/">binaryninja</a> licence</p>
+</blockquote>
+<p>Very basic an incomplete overview of <code>C</code> focused source code auditing.</p>
+<h2 id="heap-vulnerabilities">Heap Vulnerabilities</h2>
+<h3 id="use-after-free-uaf">Use After Free (UAF)</h3>
+<ul>
+<li>Look at the order in which functions are called or can be called and trace the execution</li>
+<li>Is memory free&rsquo;d and then reused later?</li>
+<li>If so it may be possible for an attacker to edit a freed chunk if they can control data which reaches the part of the code which reuses the freed pointer</li>
+<li>Being able to edit a freed chunk forms the basis for most heap exploits</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">char</span><span style="color:#f92672">*</span> ptr <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span><span style="color:#f92672">*</span>)malloc (SIZE);
+...
+<span style="color:#66d9ef">if</span> (err) {
+    abrt <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+    free(ptr);
+}
+...
+<span style="color:#66d9ef">if</span> (abrt) {
+    logError(<span style="color:#e6db74">&#34;operation aborted before commit&#34;</span>, ptr);
+    }
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;unistd.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">#define BUFSIZER1   512
+</span><span style="color:#75715e">#define BUFSIZER2   ((BUFSIZER1/2) - 8)
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">int</span> argc, <span style="color:#66d9ef">char</span> <span style="color:#f92672">**</span>argv) {
+    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>buf1R1;
+    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>buf2R1;
+    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>buf2R2;
+    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>buf3R2;
+
+    buf1R1 <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>) malloc(BUFSIZER1);
+    buf2R1 <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>) malloc(BUFSIZER1);
+
+    free(buf2R1);
+
+    buf2R2 <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>) malloc(BUFSIZER2);
+    buf3R2 <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>) malloc(BUFSIZER2);
+
+    strncpy(buf2R1, argv[<span style="color:#ae81ff">1</span>], BUFSIZER1<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>);
+    free(buf1R1);
+    free(buf2R2);
+    free(buf3R2);
+}
+</code></pre></div><h4 id="consequences">Consequences</h4>
+<p><strong>Integrity</strong>: The use of previously freed memory may corrupt valid data, if the memory area in question has been allocated and used properly elsewhere.</p>
+<p><strong>Availability</strong>: If chunk consolidation occurs after the use of previously freed data, the process may crash when invalid data is used as chunk information.</p>
+<p><strong>Access Control (instruction processing)</strong>: If malicious data is entered before chunk consolidation can take place, it may be possible to take advantage of a write-what-where primitive to execute arbitrary code.</p>
+<h3 id="heap-overflows">Heap Overflows</h3>
+<ul>
+<li>A heap overflow occurs when a write function does not consider or limit the size of the incoming data to be written to heap memory</li>
+<li>If an attacker can controls this input they can overflow from the chunk written to into other chunks on the heap altering their data (meta data, contents) as they go</li>
+<li>A common scenario is <code>strcpy</code>ing more data then there is remaining space in the destination heap chunk</li>
+<li><code>strcat</code> is also a typical case</li>
+</ul>
+<p><strong>Protostar Level 1</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">undefined4 <span style="color:#f92672">*</span>chunk0;
+<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>ptr0;
+undefined4 <span style="color:#f92672">*</span>chunk1;
+<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>ptr1;
+
+chunk0 <span style="color:#f92672">=</span> (undefined4 <span style="color:#f92672">*</span>) malloc(<span style="color:#ae81ff">8</span>);
+<span style="color:#f92672">*</span>chunk0 <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+
+ptr0 <span style="color:#f92672">=</span> malloc(<span style="color:#ae81ff">8</span>);
+<span style="color:#f92672">*</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">**</span>)(chunk0 <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">=</span> ptr0;
+
+chunk1 <span style="color:#f92672">=</span> (undefined4 <span style="color:#f92672">*</span>)malloc(<span style="color:#ae81ff">8</span>);
+<span style="color:#f92672">*</span>chunk1 <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>;
+
+ptr1 <span style="color:#f92672">=</span> malloc(<span style="color:#ae81ff">8</span>);
+<span style="color:#f92672">*</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">**</span>)(chunk1 <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">=</span> ptr1;
+strcpy((<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)chunk0[<span style="color:#ae81ff">1</span>],<span style="color:#f92672">*</span>(<span style="color:#66d9ef">char</span> <span style="color:#f92672">**</span>)(argv <span style="color:#f92672">+</span> <span style="color:#ae81ff">4</span>));
+strcpy((<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)chunk1[<span style="color:#ae81ff">1</span>],<span style="color:#f92672">*</span>(<span style="color:#66d9ef">char</span> <span style="color:#f92672">**</span>)(argv <span style="color:#f92672">+</span> <span style="color:#ae81ff">8</span>));
+</code></pre></div><h3 id="double-free">Double Free</h3>
+<ul>
+<li>The same heap chunk is freed twice potentially allowing an attacker to edit a freed chunk</li>
+<li>If an attacker can edit the freed chunks metadata they have a foothold for many heap exploits</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>chunk <span style="color:#f92672">=</span> malloc(<span style="color:#ae81ff">100</span>);
+free(chunk);
+<span style="color:#75715e">// ... 1000 lines
+</span><span style="color:#75715e"></span>free(chunk);
+</code></pre></div><h3 id="custom-malloc-implementations">Custom malloc implementations</h3>
+<ul>
+<li><code>__malloc_hook()</code>
+<ul>
+<li>Bad implementations</li>
+</ul>
+</li>
+</ul>
+<h2 id="bad-api-usage--bad-practice">Bad API Usage / Bad Practice</h2>
+<p><em>Use <del>your man</del> the man page and check description.</em> <code>man &lt;function&gt; 2</code>. The <code>C</code> language extensions for VSCode also give you a nice ability to hover over each funtion to get the correct paramters and a short description. Theres also the <code>whatis</code> command to get a quick summary of a unfamiliar function that you doubt is vulnerable.</p>
+<h3 id="fmt"><code>fmt</code></h3>
+<ul>
+<li>Supplying user controlled data directly to format string functions leading to attacker arbitary read/write</li>
+<li>Look out for vulnerable function calls like the following:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">/*
+</span><span style="color:#75715e">Database of vulnerable usage of 
+</span><span style="color:#75715e">format functions
+</span><span style="color:#75715e">
+</span><span style="color:#75715e">    + printf        [X]
+</span><span style="color:#75715e">    + fprintf       [X]
+</span><span style="color:#75715e">    + sprintf       [X]
+</span><span style="color:#75715e">    + snprintf      [X]
+</span><span style="color:#75715e">    + vsnprintf     [X]
+</span><span style="color:#75715e">    + vsprintf      [X]
+</span><span style="color:#75715e">    + vfprintf      [X]
+</span><span style="color:#75715e">    + vprintf       [X]
+</span><span style="color:#75715e">
+</span><span style="color:#75715e">    + dprintf       [X]
+</span><span style="color:#75715e">    + syslog        [X]
+</span><span style="color:#75715e">
+</span><span style="color:#75715e">    + vscanf        [X]
+</span><span style="color:#75715e">    + vsscanf       [X]
+</span><span style="color:#75715e">    + fscanf        [X]
+</span><span style="color:#75715e">    + scanf         [X]
+</span><span style="color:#75715e">*/</span>
+
+
+<span style="color:#75715e">/* take in argv[1] directly */</span>
+<span style="color:#66d9ef">int</span> 
+<span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">int</span> argc, <span style="color:#66d9ef">char</span> <span style="color:#66d9ef">const</span> <span style="color:#f92672">*</span>argv[])
+{   
+    <span style="color:#75715e">// suppress compiler warning
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>tmp <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;empty&#34;</span>;
+    
+    <span style="color:#75715e">/* printf family */</span>
+    printf(argv[<span style="color:#ae81ff">1</span>]);
+    fprintf(stdout, argv[<span style="color:#ae81ff">1</span>]);
+    sprintf(tmp, argv[<span style="color:#ae81ff">1</span>]);
+    snprintf(tmp, <span style="color:#ae81ff">0x100</span>, argv[<span style="color:#ae81ff">1</span>]);
+    vsnprintf(tmp, <span style="color:#ae81ff">0x100</span>, argv[<span style="color:#ae81ff">1</span>], NULL);
+    vsprintf(tmp, argv[<span style="color:#ae81ff">1</span>], NULL);
+    vfprintf(stdout, argv[<span style="color:#ae81ff">1</span>], NULL);
+    vprintf(argv[<span style="color:#ae81ff">1</span>], NULL);
+    
+    <span style="color:#75715e">/* logging */</span>
+    dprintf(LOG_ERR, argv[<span style="color:#ae81ff">1</span>]);
+    syslog(LOG_INFO, argv[<span style="color:#ae81ff">1</span>]);
+    
+    <span style="color:#75715e">/* scan */</span>
+    vscanf(argv[<span style="color:#ae81ff">1</span>], NULL);
+    vsscanf(tmp, argv[<span style="color:#ae81ff">1</span>], NULL);
+    fscanf(stdin, argv[<span style="color:#ae81ff">1</span>]);
+    scanf(argv[<span style="color:#ae81ff">1</span>]);
+    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+}
+
+</code></pre></div><h3 id="memset"><code>memset</code></h3>
+<ul>
+<li>incorrect usage
+<ul>
+<li><code>memset(s, 100, 0)</code> &lt;&ndash; fills 0 bytes of memory with at s with 100</li>
+</ul>
+</li>
+<li>correct usage
+<ul>
+<li><code>memset(s, 0, 100)</code> &lt;&ndash; fills 100 bytes of memory at s with 0&rsquo;s</li>
+</ul>
+</li>
+</ul>
+<h3 id="gets"><code>gets</code></h3>
+<ul>
+<li><code>gets()</code> - just keeps reading into buffer
+<ul>
+<li>Always bad</li>
+</ul>
+</li>
+</ul>
+<h3 id="fgets"><code>fgets</code></h3>
+<ul>
+<li><code>fgets(char *s, int size, FILE *input)</code>
+<ul>
+<li>Reads one byte less than size and appends newline</li>
+<li><strong>Dangerous</strong> when <code>buffer &lt; size + 1</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="read"><code>read</code></h3>
+<ul>
+<li><code>read(int fd, void *buf, size_t count)</code>
+<ul>
+<li>reads up to count bytes into buffer from fd</li>
+<li><strong>Danger</strong> if <code>fd = 0</code> or <code>buffer &lt; size</code>
+<ul>
+<li><code>fd = 0</code> stdin</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="strncpy"><code>strncpy</code></h3>
+<ul>
+<li><code>strncpy(char *dest, const char *src, size_t n)</code>
+<ul>
+<li><strong>Danger</strong> when the size of <code>dest</code> is the same size as the data being copied in, in this situation <code>strncpy</code> will not copy the NULL byte</li>
+<li>This leads to out of bounds reads where the data is used in say a print function which reads until a null byte is encounted</li>
+</ul>
+</li>
+<li><code>strcpy(char *dest, const char *src)</code>
+<ul>
+<li>Same as <code>strncpy</code> but no max size, more risk of buffer overflows since no max size</li>
+<li>Copies terminating nullbyte</li>
+<li>Strings cannot overlap in memory</li>
+<li><code>dest</code> must be large enough to hold <code>src</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="strcat"><code>strcat</code></h3>
+<ul>
+<li><code>strcat(char *dest, const char *src)</code>
+<ul>
+<li><strong>Danger</strong> when the size of src is not limited or not limited enough for the size of the <code>dest</code> buffer being written to, leading to BOF</li>
+</ul>
+</li>
+<li><code>strncat(char *dest, const char *src, size_t n)</code>
+<ul>
+<li><strong>Danger</strong> when supplied max size<code>n</code> is not appropriate for the <code>dest</code> buffer</li>
+</ul>
+</li>
+</ul>
+<h2 id="logic-bugs">Logic Bugs</h2>
+<ul>
+<li>Conditionals around the wrong way</li>
+<li>Double <code>||</code> instead of <code>&amp;&amp;</code></li>
+<li>defaulting conditions to true and having a vulnerable check e.g. <code>admin = true</code>, some check sets to false but can be bypassed</li>
+<li>No breaks in switch cases</li>
+<li>No <code>exits</code> on critical error</li>
+<li>Not checking if <code>malloc</code> and other functions that deal with memory allocation (that can fail), leads to potential negation of null byte exception handling (last page address <code>0x0</code> gets corrupted) which can be exploitable</li>
+</ul>
+<h3 id="array-out-of-bounds-access">Array out of Bounds Access</h3>
+<ul>
+<li>Using unsanitised or unchecked user input directly as the index to an array read/write operation</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">char</span> element <span style="color:#f92672">=</span> elements[atoi(buffer)];
+</code></pre></div><h2 id="type-confusions--overflows">Type Confusions / Overflows</h2>
+<ul>
+<li>
+<p><code>x86</code> sizes</p>
+<ul>
+<li><code>byte</code> -  This is a <code>8 bit (1 byte)</code> quantity
+<ul>
+<li><code>0 - 255</code> unsigned range</li>
+</ul>
+</li>
+<li><code>word</code> - A word is two bytes giving us a <code>16 bit (2 byte)</code> quantity
+<ul>
+<li><code>0 - 65535</code> unsigned range</li>
+</ul>
+</li>
+<li><code>dword</code> - A double word is a <code>32 bit (4 byte)</code> quantity
+<ul>
+<li><code>0 - 4294967295</code> unsigned range</li>
+</ul>
+</li>
+<li><code>qword</code> - A quad word, a <code>64 bit (8 byte)</code> quantity
+<ul>
+<li><code>0 - 18446744073709551615</code> unsigned range</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><code>C</code> <a href="https://www.tutorialspoint.com/cprogramming/c_data_types.htm">sizes</a></p>
+<ul>
+<li>Size is in bytes</li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Size</th>
+<th>Max</th>
+<th>Range (unsigned)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>char</code></td>
+<td><code>1</code></td>
+<td><code>255</code></td>
+<td><code>-128 - 127</code></td>
+</tr>
+<tr>
+<td><code>short</code></td>
+<td><code>2</code></td>
+<td><code>65,535</code></td>
+<td><code>-32,768 - 32,767</code></td>
+</tr>
+<tr>
+<td><code>int</code></td>
+<td><code>4</code></td>
+<td><code>65,535</code></td>
+<td><code>-2,147,483,648 to 2,147,483,647</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Classic Type Overflows (should be caught by gcc)</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">char</span> input <span style="color:#f92672">=</span> atoi(buffer);
+uint_8 port;
+scanf(<span style="color:#e6db74">&#34;%d&#34;</span>, <span style="color:#f92672">&amp;</span>port);
+</code></pre></div><p><strong>Type Overflow Debugger</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">void</span>);
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">menu</span>(<span style="color:#66d9ef">void</span>);
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">sandbox</span>(<span style="color:#66d9ef">int</span> choice);
+
+<span style="color:#75715e">/*
+</span><span style="color:#75715e">    A poor mans type confusion sandbox for
+</span><span style="color:#75715e">    dynamic debugging of type overflows.
+</span><span style="color:#75715e">*/</span>
+
+<span style="color:#66d9ef">void</span>
+<span style="color:#a6e22e">menu</span>(<span style="color:#66d9ef">void</span>)
+{
+    puts(<span style="color:#e6db74">&#34;&#34;</span>);
+
+    puts(<span style="color:#e6db74">&#34;(1) char&#34;</span>);
+    puts(<span style="color:#e6db74">&#34;(2) short&#34;</span>);
+    puts(<span style="color:#e6db74">&#34;(3) integer&#34;</span>);
+    puts(<span style="color:#e6db74">&#34;(4) float&#34;</span>);
+    puts(<span style="color:#e6db74">&#34;(5) unsigned&#34;</span>);
+
+    puts(<span style="color:#e6db74">&#34;&#34;</span>);
+}
+
+
+
+<span style="color:#66d9ef">void</span>
+<span style="color:#a6e22e">sandbox</span>(<span style="color:#66d9ef">int</span> choice)
+{
+    <span style="color:#66d9ef">char</span> character;
+    <span style="color:#66d9ef">short</span> short_integer;
+    <span style="color:#66d9ef">int</span> integer;
+    <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> long_integer;
+    <span style="color:#66d9ef">float</span> float_number;
+
+    printf(<span style="color:#e6db74">&#34;&gt;&gt;&gt; &#34;</span>);
+
+    <span style="color:#66d9ef">switch</span> (choice) 
+    {
+        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span>
+            scanf(<span style="color:#e6db74">&#34;%d&#34;</span>, <span style="color:#f92672">&amp;</span>character);
+            printf(<span style="color:#e6db74">&#34;%d</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, character);
+            <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">2</span><span style="color:#f92672">:</span>
+            scanf(<span style="color:#e6db74">&#34;%d&#34;</span>, <span style="color:#f92672">&amp;</span>short_integer);
+            printf(<span style="color:#e6db74">&#34;%d</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, short_integer);
+            <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">3</span><span style="color:#f92672">:</span>
+            scanf(<span style="color:#e6db74">&#34;%lu&#34;</span>, <span style="color:#f92672">&amp;</span>integer);
+            printf(<span style="color:#e6db74">&#34;%lu</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, integer);
+            <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">4</span><span style="color:#f92672">:</span>
+            scanf(<span style="color:#e6db74">&#34;%lf&#34;</span>, <span style="color:#f92672">&amp;</span>float_number);
+            printf(<span style="color:#e6db74">&#34;%lf</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, float_number);
+            <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">5</span><span style="color:#f92672">:</span>
+            scanf(<span style="color:#e6db74">&#34;%llu&#34;</span>, <span style="color:#f92672">&amp;</span>long_integer);
+            printf(<span style="color:#e6db74">&#34;%llu</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, long_integer);
+        <span style="color:#66d9ef">default</span><span style="color:#f92672">:</span>
+            puts(<span style="color:#e6db74">&#34;Invalid choice&#34;</span>);
+            main();
+            <span style="color:#66d9ef">break</span>;
+    }
+
+    getchar();
+}
+
+
+<span style="color:#66d9ef">void</span>
+<span style="color:#a6e22e">main</span>()
+{
+    menu();
+    <span style="color:#66d9ef">int</span> choice;
+
+    printf(<span style="color:#e6db74">&#34;Choice (1-5): &#34;</span>);
+    scanf(<span style="color:#e6db74">&#34;%d&#34;</span>, <span style="color:#f92672">&amp;</span>choice);      
+
+    <span style="color:#66d9ef">while</span> (<span style="color:#ae81ff">1</span>) 
+    {
+        sandbox(choice);
+    }
+}
+</code></pre></div><h2 id="system-vulnerabilities">System Vulnerabilities</h2>
+<ul>
+<li>This category refers to vulnerabilities which expose access to the underlying host or could compromise or cause the host system to react in an unsual way</li>
+</ul>
+<h3 id="arbitary-file-readwrite">Arbitary File Read/Write</h3>
+<ul>
+<li>Reading a &lsquo;filename&rsquo; into a buffer but not ensuring that a relative path cannot be supplied / blindly accepting the buffer directly int a filename</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">read_file</span>(<span style="color:#66d9ef">int</span> socket, <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>action) {
+  FILE <span style="color:#f92672">*</span>file;
+  <span style="color:#66d9ef">char</span> buf[MAX_LEN];
+
+  <span style="color:#66d9ef">int</span> x, y;
+  <span style="color:#66d9ef">int</span> complete <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+
+  snprintf(buf, MAX_LEN, <span style="color:#e6db74">&#34;./webpath/%s&#34;</span>, action);
+  file <span style="color:#f92672">=</span> fopen(buf, <span style="color:#e6db74">&#34;r&#34;</span>);
+
+  <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>file) {
+    write_socket(socket, FILENOTAVAIL, <span style="color:#66d9ef">sizeof</span>(FILENOTAVAIL));
+    <span style="color:#66d9ef">return</span>;
+  }
+
+  <span style="color:#66d9ef">while</span> (fgets(buf, MAX_LEN, file)) {
+    write_socket(socket, buf, strlen(buf));
+  }
+  fclose(file);
+}
+
+</code></pre></div><ul>
+<li>In the <code>read_file</code> function we see a <code>snprintf(buf, MAX_LEN, &quot;./webpath/%s&quot;, action)</code> which takes in input from the client controlled <code>action</code> buffer. The function call is vulnerable because of the way the functions &lsquo;output&rsquo; is used to read the filesystem, via <code> file = fopen(buf, &quot;r&quot;)</code>, without performing any validation or truncation of the user supplied input. Dependant on the file system context where the binary executes, an attacker may exploit the vulnerability by performing a path traversal, with some number of <code>../</code>, to reach the root of the file system from where they could read known files like <code>/etc/shadow</code> (if the binary runs as root, which is likely give it wields sockets) or the users file <code>/etc/passwd</code>.</li>
+<li>Indeed the attacker as a similar capacity to write by exploiting the identically vulnerable <code>write_file</code>, with the difference being that the read in file is opened in write mode, <code>  file = fopen(buf, &quot;w&quot;)</code>.</li>
+</ul>
+<p><strong>$PATH and file naming</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">char</span><span style="color:#f92672">*</span> <span style="color:#a6e22e">get_username</span>(<span style="color:#66d9ef">void</span>) {
+	<span style="color:#66d9ef">static</span> <span style="color:#66d9ef">char</span> username[<span style="color:#ae81ff">512</span>];
+	system(<span style="color:#e6db74">&#34;logname &gt; /tmp/better_sudo.tmp&#34;</span>);
+	FILE<span style="color:#f92672">*</span> f <span style="color:#f92672">=</span> fopen(<span style="color:#e6db74">&#34;/tmp/better_sudo.tmp&#34;</span>,<span style="color:#e6db74">&#34;r&#34;</span>);
+	fgets(username,<span style="color:#66d9ef">sizeof</span> username,f);
+	<span style="color:#75715e">/* bug: if there&#39;s no newline in better_sudo.tmp; will attempt to write to 0x0 */</span>
+	<span style="color:#f92672">*</span>strchr(username,<span style="color:#e6db74">&#39;\n&#39;</span>) <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;\0&#39;</span>;
+	<span style="color:#66d9ef">return</span> username;
+}
+</code></pre></div><ul>
+<li><code>logname</code> is relative to <code>PATH;</code> which the user controls. Any program named <code>logname</code> in the path will be executed as root. <code>PATH=/tmp:$PATH; cp /bin/sh /tmp/logname</code></li>
+<li><code>/tmp/better_sudo.tmp</code> is owned by the first user to use <code>better_sudo;</code> and they can overwrite it to whatever they wish between the system; command and reading the file</li>
+<li><code>logname</code> also isn&rsquo;t the right command to use for this (<code>getpw</code> is better)</li>
+</ul>
+<h2 id="race-conditions">Race Conditions</h2>
+<p>//TODO</p>
+<ul>
+<li>Multiple threads accessing / editing same data</li>
+</ul>
+<p><strong>Typical I/O Race Condition</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#define DELAY 10000
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">void</span>)
+{
+    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>fn <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;/tmp/XYZ&#34;</span>;
+    <span style="color:#66d9ef">char</span> buffer[<span style="color:#ae81ff">60</span>];
+    FILE <span style="color:#f92672">*</span>fp;
+    
+    <span style="color:#66d9ef">long</span> nt i;
+    <span style="color:#75715e">/* get user input */</span>
+    scanf(<span style="color:#e6db74">&#34;%50s&#34;</span>, buffer);
+    <span style="color:#66d9ef">if</span>(<span style="color:#f92672">!</span>access(fn, W_OK)) {
+        <span style="color:#75715e">// spin
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">for</span> (i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> DELAY; i<span style="color:#f92672">++</span>) {
+            <span style="color:#75715e">// computational expense
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">int</span> a <span style="color:#f92672">=</span> i<span style="color:#f92672">^</span><span style="color:#ae81ff">2</span>; 
+        }
+        fp <span style="color:#f92672">=</span> fopen(fn, <span style="color:#e6db74">&#34;a+&#34;</span>);
+        fwrite(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, <span style="color:#66d9ef">sizeof</span>(<span style="color:#66d9ef">char</span>), <span style="color:#ae81ff">1</span>, fp);
+        fwrite(buffer, <span style="color:#66d9ef">sizeof</span>(<span style="color:#66d9ef">char</span>), strlen(buffer), fp);
+        fclose(fp);
+    }
+    
+    <span style="color:#66d9ef">else</span> {
+        printf(<span style="color:#e6db74">&#34;No perms </span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+    }
+    
+</code></pre></div><ul>
+<li>If the file <code>/tmp/xyz</code> does not exist the program will begin a computationally expensive operation that will delay the opening and writing of the file</li>
+<li>In this processing time the attacker can potentially <code>symlink</code> &ldquo;/tmp/xyz&rdquo; to a file of intrest on the host say <code>/etc/shadow</code></li>
+<li>Resulting in the data being scanned</li>
+</ul>
+<p><strong>Thread Race Condition</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span><span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style="color:#75715e">&lt;sys/types.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span><span style="color:#75715e">&lt;unistd.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">charatatime</span>(<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>);
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">void</span>)
+{
+    pid_t pid;
+    <span style="color:#66d9ef">if</span> ((pid <span style="color:#f92672">=</span> fork()) <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>) {
+        printf(<span style="color:#e6db74">&#34;fork error&#34;</span>);
+    }
+    
+    <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> (pid <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) {
+        charatatime(<span style="color:#e6db74">&#34;output from child</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+    }
+    
+    <span style="color:#66d9ef">else</span> {
+        charatatime(<span style="color:#e6db74">&#34;output from parent</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+    }
+    
+    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+}
+
+<span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">charatatime</span>(<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>str)
+{
+    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>ptr;
+    <span style="color:#66d9ef">int</span> c;
+    setbuf(stdout, NULL); <span style="color:#75715e">/* set unbuffered */</span>
+    <span style="color:#66d9ef">for</span> (ptr <span style="color:#f92672">=</span> str; (c <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>ptr<span style="color:#f92672">++</span>) <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>; )
+        putc(c, stdout);
+}
+</code></pre></div><h2 id="tooling">Tooling</h2>
+<ul>
+<li><a href="https://github.com/wireghoul/graudit">graudit</a>
+<ul>
+<li>Grep for source auditing</li>
+</ul>
+</li>
+<li><a href="https://clang-analyzer.llvm.org/">clang static analyser</a></li>
+<li>If you can run <code>gcc</code> outright or patch out the code until you can you can use
+<ul>
+<li><code>gcc -Wall &lt;src&gt;.c -o src</code> which will report trivial errors such as type overflows/underflows and buffer overflows</li>
+</ul>
+</li>
+</ul>
+<h2 id="misc--tricks">Misc / Tricks</h2>
+<ul>
+<li>Sandbox stuff in another <code>C</code> file if you are not sure especially with type conversions and null byte overflows</li>
+<li>Convert static to dynamic analysis where possible, humans are better at it</li>
+</ul>
+
+            </div>
+        </article>
+
+        <hr />
+
+        
+        <div class="post-info">
+            
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://cybernetic.coffee/tags/reversing/">reversing</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/hacking/">hacking</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/pentesting/">pentesting</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/source-audits/">source audits</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/exploit-development/">Exploit Development</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/static-analysis/">static analysis</a></span>
+        
+    </p>
+
+
+
+            <p>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                1858 Words
+            </p>
+  		</div>
+        
+
+
+        
+            
+                <div class="pagination">
+                    <div class="pagination__title">
+                        <span class="pagination__title-h"></span>
+
+                    </div>
+
+                    <div class="pagination__buttons">
+                        
+
+                        
+                            <span class="button next">
+                              <a href="https://cybernetic.coffee/blog/forgotten-pwntools/">
+                                <span class="button__text">Forgotten pwntools</span>
+                                <span class="button__icon">→</span>
+                              </a>
+                            </span>
+                        
+                    </div>
+                </div>
+            
+        
+
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Hacked together with &#10084; by <a href="https://github.com/Angus-C-git">Angus C</a> <i class='fas fa-ghost'></i> </span>
+          </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.549d9d8402283235466245c699b04a81b6fb2c75fc03669ba95af9f5e8ad22ab134f177abab9e431efc3441fe5921fd3fb3f8bf50f66dffbdce9eb7994ef69dc.js" integrity="sha512-VJ2dhAIoMjVGYkXGmbBKgbb7LHX8A2abqVr59eitIqsTTxd6urnkMe/DRB/lkh/T&#43;z&#43;L9Q9m3/vc6et5lO9p3A=="></script>
+
+
+
+    </body>
+</html>

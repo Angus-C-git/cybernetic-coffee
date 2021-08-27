@@ -2,11 +2,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://cybernetic.coffee/blog/c-sauce-audits/</loc>
+    <lastmod>2021-08-26T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://cybernetic.coffee/blog/forgotten-pwntools/</loc>
     <lastmod>2021-08-24T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/blog/reversing-34-binaries/</loc>
-    <lastmod>2021-07-27T00:00:00+00:00</lastmod>
+    <lastmod>2021-08-15T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/blog/basic-stack-based-overflows/</loc>
     <lastmod>2021-07-01T00:00:00+00:00</lastmod>
@@ -40,40 +43,49 @@
     <loc>https://cybernetic.coffee/all-projects/verto/</loc>
   </url><url>
     <loc>https://cybernetic.coffee/categories/binary-exploitation/</loc>
-    <lastmod>2021-08-24T00:00:00+00:00</lastmod>
+    <lastmod>2021-08-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/blog/</loc>
-    <lastmod>2021-08-24T00:00:00+00:00</lastmod>
+    <lastmod>2021-08-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/categories/</loc>
-    <lastmod>2021-08-24T00:00:00+00:00</lastmod>
+    <lastmod>2021-08-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/</loc>
-    <lastmod>2021-08-24T00:00:00+00:00</lastmod>
+    <lastmod>2021-08-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/tags/exploit-development/</loc>
-    <lastmod>2021-08-24T00:00:00+00:00</lastmod>
+    <lastmod>2021-08-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/categories/hacking/</loc>
-    <lastmod>2021-08-24T00:00:00+00:00</lastmod>
+    <lastmod>2021-08-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/tags/hacking/</loc>
-    <lastmod>2021-08-24T00:00:00+00:00</lastmod>
+    <lastmod>2021-08-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/tags/pentesting/</loc>
-    <lastmod>2021-08-24T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://cybernetic.coffee/tags/</loc>
-    <lastmod>2021-08-24T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://cybernetic.coffee/categories/reversing/</loc>
-    <lastmod>2021-07-27T00:00:00+00:00</lastmod>
+    <lastmod>2021-08-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/tags/reversing/</loc>
-    <lastmod>2021-07-27T00:00:00+00:00</lastmod>
+    <lastmod>2021-08-26T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://cybernetic.coffee/tags/source-audits/</loc>
+    <lastmod>2021-08-26T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://cybernetic.coffee/categories/source-code-auditing/</loc>
+    <lastmod>2021-08-26T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://cybernetic.coffee/tags/static-analysis/</loc>
+    <lastmod>2021-08-26T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://cybernetic.coffee/tags/</loc>
+    <lastmod>2021-08-26T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://cybernetic.coffee/categories/reversing/</loc>
+    <lastmod>2021-08-15T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/tags/x86/</loc>
-    <lastmod>2021-07-27T00:00:00+00:00</lastmod>
+    <lastmod>2021-08-15T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/tags/buffer-overflows/</loc>
     <lastmod>2021-07-01T00:00:00+00:00</lastmod>
