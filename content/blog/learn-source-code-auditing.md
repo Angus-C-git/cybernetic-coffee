@@ -45,7 +45,7 @@ Weather a audit is black box or white box also influences what strategies are fo
 
 Dynamic analysis is probably the most familiar/natural to us when we think about understanding how something works. We try it out, play with it or modify it to understand how it works. In a computing this typically involves feeding different data to inputs, using the program in different settings or perhaps even debugging code in a debugger like gdb. Its easy for us as humans to experiment with various inputs and observe their outputs in order to understand how a program works or behaves under certain conditions. It is also common for dynamic analysis to be our only option for example when examining a remote target for which we have neither the executable nor the source code. Programs for which we have the obfuscated executable  may also lend themselves more to dynamic analysis. [Black Box Fuzzers](#), really any fuzzer, takes this idea of trying different data against a target and automates it on a massive scale trying and mutating thousands of input cases per second looking for data that may crash the program or cause it to act unexpectedly.  
 
-Static analysis is of course the prefred choice for white box testing situations where the source code is provided in its natural state. We take the programs file(s) and we scan over its contents looking for mistakes assisted by manuals and potentailly other tools like the one we will start bulding [next](#). No data is input to functions or the contents of variables examined in a debugger but rather how a function will behave under various conditions is theorised by the analyst. Being able to see how everything in a program links up like this is obviously very useful and is the reason we build tools like [dissassemblers](#https://en.wikipedia.org/wiki/Disassembler) so even in a black box setting, provided we have the executable program, we could examine a representation of its source code. 
+Static analysis is of course the preferred choice for white box testing situations where the source code is provided in its natural state. We take the programs file(s) and we scan over its contents looking for mistakes assisted by manuals and potentially other tools like the one we will start building [next](#). No data is input to functions or the contents of variables examined in a debugger but rather how a function will behave under various conditions is theorised by the analyst. Being able to see how everything in a program links up like this is obviously very useful and is the reason we build tools like [dissassemblers](#https://en.wikipedia.org/wiki/Disassembler) so even in a black box setting, provided we have the executable program, we could examine a representation of its source code. 
 
 Perhaps you have already started forming ideas abut the drawbacks of each approach but ill summarise some of the ones i've thought about.
 
@@ -55,14 +55,14 @@ Perhaps you have already started forming ideas abut the drawbacks of each approa
    + Its more natural to process logic by testing it and observing the results
    + This process can be automated with tools like fuzzers
    + Its easier to track testing/analysis coverage 
-   + Its easier to trace where user controlled data ends up / inteacts with
+   + Its easier to trace where user controlled data ends up / interacts with
 
 + Cons
-   + Its easier to miss potentailly vulnerable logic
+   + Its easier to miss potentially vulnerable logic
    + It can be time consuming to examine the entirety of a program only being
      able to move through it in a linear fashion
-   + Vulnerable input data may go untested even n autoamted settings
-      + For example the [sudoedit](https://liveoverflow.com/critical-sudo-vulnerability-walkthrough-cve-2021-3156/) vuln which went undiscovered for years
+   + Vulnerable input data may go untested even n automated settings
+      + For example the [sudoedit](https://liveoverflow.com/critical-sudo-vulnerability-walkthrough-cve-2021-3156/) vulnerability which went undiscovered for years
 
 **Static Analysis**
 
@@ -75,23 +75,70 @@ Perhaps you have already started forming ideas abut the drawbacks of each approa
 
 ## Top Down Vs Bottom Up
 
-With the prerequisites out of the way lets start drilling into static source code analysis methedlogies. When talking about source code auditing two approaches are typically thrown around; the top down approach and the bottom up approach.  
+With the prerequisites out of the way lets start drilling into static source code analysis methodologies. When talking about source code auditing two approaches are typically thrown around; the top down approach and the bottom up approach.  
 
 ### Top Down Approach
 
-<!-- TODO -->
++ Find and collate all external entry points into the program
+   + System input
+   + User input
+   + Network input
+   + Other external data interactions
++ Start analysis from these points and follow where externally controlled data goes
++ How can external inputs change the flow of program execution and what branches are exposed
++ Check if that data properly sanitised and how it gets used with various APIs
 
 ### Bottom Up Approach
 
-<!-- TODO -->
++ Start at the programs entry point
++ Work out where execution can diverge from here
+   + What functions are called
+   + What conditions expose different program logic
++ Analyses these blocks how does data from the entry point end up there and does it result in any security risks
++ The principle of locality dictates that a program will spend most of its execution time in the same region, this region also tends to be the most secure, 
+  so look to see how the program can be made to divert from its mainline
+  and if vulnerabilities are exposed on these less common execution paths
 
 ## Automating Source Code Audits
 
+Vulnerabilities uncovered in source code audits range from trivial api misuse to subtle one byte overflows and race conditions. Automated static analysers and pre-compilation analysis tools can detect these different security risks 
+with varying degrees of success. In most cases these tools will operate with a high yield of false positives and rely on the auditor to separate these from the real vulnerabilities. This is a key point, **automated tooling is not effective
+enough** to eliminate the need for manual analysis and testing! Let's take a look at some of the tools that exist and their various strengths and weaknesses. 
 
 ### GCC
 
+The gcc compiler is a source code analysis hybrid that few people consider when thinking about static analysis. 
+
+
+<!-- 
+   + good at detecting bad api usage with low false positives
+   + misses some simple security issues
+   + constructs abstract syntax trees to aid in analysis
+      + can tell you when and by how much a buffer will overflow
+   + can detect issues hundreds of lines apart that would be difficult 
+     with a purely static analyser
+ -->
 
 ### Clang Static Analyser
 
 
-### Graudit
+
+### linter's
+
+<!-- 
+   + classic source code analysis tool 
+   + designed to capture syntax errors over security flaws
+ -->
+
+### graudit
+
+gruudit or 'grep audit' is a grep styled static analysis tool which focuses on assisting the auditor by providing a 'list' of potentially interesting/vulnerable points in the source. 
+
+<!-- 
+
+   + High degree false positives
+   + Focuses on being a assistive tool
+   + Flexible, can just write rules to extend, plug and play
+   + Lightweight, no need for complete code ect
+
+ -->
