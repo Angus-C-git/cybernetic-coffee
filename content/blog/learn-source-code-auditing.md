@@ -107,44 +107,66 @@ enough** to eliminate the need for manual analysis and testing! Let's take a loo
 
 ### GCC
 
-The gcc compiler is a source code analysis hybrid that few people consider when thinking about static analysis. If you have ever tried to create a purposely vulnerable program in `C` using something like the `gets` function then you have likely seen gcc warn you that this is a security issue and that `gets` is deprecated. But gcc can also perform more powerful things that we take for granted such as detecting buffer overflows when working with statically sized buffers. If you think about how you would do this with purely static analysis you may come to the conclusion that you would't or shouldn't, and in fact this is not how gcc does it. Since gcc is a compiler at heart it constructs what's called an 'abstract syntax tree'. This is *basically* a way of tokenising the different keywords from the syntax and organising them as a tree which represents the 'logical structure' of the program as a tree. This in, assumed, combination with other compiler features allows gcc to detect that a particular operation will overflow a buffer. Of course gcc is not perfect and can not detect all security issues in fact it can only really detect a small subset.
+The gcc compiler is a source code analysis hybrid that few people consider when thinking about static analysis. If you have ever tried to create a purposely vulnerable program in `C` using something like the `gets` function then you have likely seen gcc warn you that this is a security issue and that `gets` is deprecated. But gcc can also perform more powerful things that we take for granted such as detecting buffer overflows when working with statically sized buffers or type overflows. If you think about how you would do this with purely static analysis you may come to the conclusion that you would't or shouldn't, and in fact this is not how gcc does it. Since gcc is a compiler at heart it constructs what's called an 'abstract syntax tree'. This is *basically* a way of tokenising the different keywords from the syntax and organising them as a tree which represents the 'logical structure' of the program as a tree. This in, assumed, combination with other compiler features allows gcc to detect that a particular operation will overflow a buffer and even by howe much. Of course gcc is not perfect and can not detect all security issues in fact it can only really detect a small subset.
 
 
 + **strengths**
    + Low false positive rate
-   + Automatically runs at build time
-   + 
+   + Automatically runs at build time   
+   + Can generally detect more complex bugs that pure static analysis tools
+   + Generally good at detecting bad api usage
+   + Good coverage
 
-
-<!-- 
-   + good at detecting bad api usage with low false positives
-   + misses some simple security issues
-   + constructs abstract syntax trees to aid in analysis
-      + can tell you when and by how much a buffer will overflow
-   + can detect issues hundreds of lines apart that would be difficult 
-     with a purely static analyser
- -->
++ **weaknesses**
+   + Does not cover many vulnerability classes
+   + Tends to miss some obvious bugs
+   + Focuses on warning about near certain flaws rather than potential risks
 
 ### Clang Static Analyser
 
+*Note: here I refer to the CodeChecker tool in the clang static analyser suite*
+
+The clang static analyser is basically a roided up version of gcc's analyser. It is designed to be integrated into a projects build chain where it collects "compiler calls and saves commands in a compilation database". This 
+database can then be used to feed the analysis tool `CodeChecker` which uses `clang` regardless of the compiler originally used to analyse the sources against another database of signatures which represent bad practice and
+potential security risks. It then generates a CLI or static HTML report for consumption which includes a:
+
+ + Brief description of the identified signature
+ + Severity/risk score 
+ + Review status
+
+among other items shown bellow. 
+
+{{< image ref="images/blog/src_audits/clang_static.png" >}}
+
+I've not really used this tool before so there's no value in me really weighing up strengths and weaknesses but I like that it includes a description message and a severity rating.  
 
 
 ### linter's
 
-<!-- 
-   + classic source code analysis tool 
-   + designed to capture syntax errors over security flaws
- -->
+It's worth mentioning that linter's are also a familiar form of static analysis they can tell us about syntax mistakes and api missuses before compilation or runtime. However they are more geared towards 
+syntactic issues over security ones.  
 
 ### graudit
 
-grudit or 'grep audit' is a grep styled static analysis tool which focuses on assisting the auditor by providing a 'list' of potentially interesting/vulnerable points in the source. 
+grudit or 'grep audit' is a grep styled static analysis tool which focuses on assisting the auditor by providing a 'list' of potentially interesting/vulnerable points in the source. It does so by using a set of 
+regex rules which it refers to as a signatures to match patterns in supplied source code. One of the main benefits of graudit is that it supports many languages and can be easily extended by adding more rules. This
+however does come with other drawbacks.  
 
-<!-- 
++ **strengths**
+   + Flexible, lightweight and extensible
+   + Support for many languages
++ **weaknesses**
+   + Huge degree of false positives
+   + No explanation of why a rule was triggered or what it means
+   + Limited rule sets for some languages, like `C`
 
-   + High degree false positives
-   + Focuses on being a assistive tool
-   + Flexible, can just write rules to extend, plug and play
-   + Lightweight, no need for complete code ect
 
- -->
+## Our Tool
+
+In the next post we will start building a simple tool similar to graudit but with extended features and a focus on C programs.
+
+
+## Resources
+
++ [graudit](https://github.com/wireghoul/graudit/)
++ [clang CodeChecker](https://github.com/Ericsson/codechecker/blob/master/docs/usage.md)
