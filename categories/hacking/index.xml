@@ -6,16 +6,14 @@
     <description>Recent content in Hacking on Cybernetic Coffee</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 26 Aug 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://cybernetic.coffee/categories/hacking/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 06 Sep 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://cybernetic.coffee/categories/hacking/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>C Sauce Audits</title>
-      <link>https://cybernetic.coffee/blog/c-sauce-audits/</link>
-      <pubDate>Thu, 26 Aug 2021 00:00:00 +0000</pubDate>
+      <title>Learn Source Code Auditing By Building a Tool #1: Static Analysis for the Dynamically Paralysed</title>
+      <link>https://cybernetic.coffee/blog/learn-source-auditing-1/</link>
+      <pubDate>Mon, 06 Sep 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://cybernetic.coffee/blog/c-sauce-audits/</guid>
-      <description>Everything is open source if you can afford a binaryninja licence
- Very basic an incomplete overview of C focused source code auditing.
-Heap Vulnerabilities Use After Free (UAF)  Look at the order in which functions are called or can be called and trace the execution Is memory free&amp;rsquo;d and then reused later? If so it may be possible for an attacker to edit a freed chunk if they can control data which reaches the part of the code which reuses the freed pointer Being able to edit a freed chunk forms the basis for most heap exploits  char* ptr = (char*)malloc (SIZE); .</description>
+      <guid>https://cybernetic.coffee/blog/learn-source-auditing-1/</guid>
+      <description>Source code auditing/analysis is like taking the blueprint for a car and trying to find flaws in the design before it is ever built and sold to the public. This has advantages over just testing the car once it has been manufactured but is not without flaws. It&amp;rsquo;s much easier to miss things when presented with a massively complex system whose operations may only be visualized or imagined. Of course it is also possible to have both a fully constructed model and a blueprint with which to audit the car for flaws.</description>
     </item>
     
     <item>

@@ -256,7 +256,7 @@
 <p>In this case we focus on those that overrun memory on the stack.</p>
 <h3 id="the-stack">The Stack</h3>
 <p>The stack is a region within a programs <a href="https://devsheets.cybernetic.coffee/os/virtual-memory/#address-space-layout">address space</a>, which in many operating systems have a structure similar to the following.</p>
-<pre><code>Stack Bottom +------------&gt; +---------------------------------------------------+        +
+<pre tabindex="0"><code>Stack Bottom +------------&gt; +---------------------------------------------------+        +
                             |                                                   |        |
                             |                                                   |        |
                             |                                                   |        |
@@ -602,7 +602,7 @@ target_binary<span style="color:#f92672">.</span>interactive()
 <li><code>checksec &lt;binary&gt;</code></li>
 </ul>
 <p>The output will resemble the following:</p>
-<pre><code>    Arch:     i386-32-little
+<pre tabindex="0"><code>    Arch:     i386-32-little
     RELRO:    Partial RELRO
     Stack:    No canary found
     NX:       NX disabled           &lt;-- if disabled we can execute code in the stack region
@@ -670,7 +670,7 @@ target_binary<span style="color:#f92672">.</span>interactive()
     <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
 }
 </code></pre></div><p>When we run the compiled program we receive the following output:</p>
-<pre><code>Hit me with your best shot @0xffdacae8
+<pre tabindex="0"><code>Hit me with your best shot @0xffdacae8
 
 </code></pre><p>with an input prompt on the next line. The hex after the @ corresponds to the buffers address on the stack.</p>
 <h4 id="exploit">Exploit</h4>
