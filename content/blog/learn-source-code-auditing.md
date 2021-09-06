@@ -107,7 +107,13 @@ enough** to eliminate the need for manual analysis and testing! Let's take a loo
 
 ### GCC
 
-The gcc compiler is a source code analysis hybrid that few people consider when thinking about static analysis. 
+The gcc compiler is a source code analysis hybrid that few people consider when thinking about static analysis. If you have ever tried to create a purposely vulnerable program in `C` using something like the `gets` function then you have likely seen gcc warn you that this is a security issue and that `gets` is deprecated. But gcc can also perform more powerful things that we take for granted such as detecting buffer overflows when working with statically sized buffers. If you think about how you would do this with purely static analysis you may come to the conclusion that you would't or shouldn't, and in fact this is not how gcc does it. Since gcc is a compiler at heart it constructs what's called an 'abstract syntax tree'. This is *basically* a way of tokenising the different keywords from the syntax and organising them as a tree which represents the 'logical structure' of the program as a tree. This in, assumed, combination with other compiler features allows gcc to detect that a particular operation will overflow a buffer. Of course gcc is not perfect and can not detect all security issues in fact it can only really detect a small subset.
+
+
++ **strengths**
+   + Low false positive rate
+   + Automatically runs at build time
+   + 
 
 
 <!-- 
@@ -132,7 +138,7 @@ The gcc compiler is a source code analysis hybrid that few people consider when 
 
 ### graudit
 
-gruudit or 'grep audit' is a grep styled static analysis tool which focuses on assisting the auditor by providing a 'list' of potentially interesting/vulnerable points in the source. 
+grudit or 'grep audit' is a grep styled static analysis tool which focuses on assisting the auditor by providing a 'list' of potentially interesting/vulnerable points in the source. 
 
 <!-- 
 
