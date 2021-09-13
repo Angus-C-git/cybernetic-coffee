@@ -8,3 +8,20 @@ weight: 400
 keywords: "hacking pentesting c source code auditing static analysis"
 ---
 
+I already rambled about; what source code auditing is, why we do it, and its pros vs cons over dynamic analysis. So in this post i'll present some basic vulnerabilities we can look for in audits and how we might build a tool for their detection using simple pattern matching and rules.
+
+## What are we Building?
+
+{{< image ref="images/blog/src_audits/csifterBasicPOC.png" >}}
+
+<!-- Hows it different to graudit -->
+
+<!-- Making a POC -->
+
+<!-- 
+ + signatures  = regex patterns
+ + grepping as a technique
+ + making it more useful to the uninformed researcher or developer
+    + descriptions, context
+
+-->
