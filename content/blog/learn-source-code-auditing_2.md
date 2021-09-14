@@ -16,6 +16,7 @@ I already rambled about; what source code auditing is, why we do it, and its pro
 
 <!-- Hows it different to graudit -->
 
+## Making the POC
 <!-- Making a POC -->
 
 <!-- 
@@ -25,3 +26,16 @@ I already rambled about; what source code auditing is, why we do it, and its pro
     + descriptions, context
 
 -->
+
+## Writing Tests to Ward Off Falling into the Debugging Abysses 
+
+<!-- Regression tests and methodology -->
+
+## Technologies
+<!-- rich -->
+
+<!-- gcc -->
+
+<!-- regexer || regex101 -->
+
+<!-- pytest -->
