@@ -6,7 +6,16 @@
     <description>Recent content on Cybernetic Coffee</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 06 Sep 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://cybernetic.coffee/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 11 Sep 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://cybernetic.coffee/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>TMU CTF: Writeups</title>
+      <link>https://cybernetic.coffee/blog/tmu-ctf/</link>
+      <pubDate>Sat, 11 Sep 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/blog/tmu-ctf/</guid>
+      <description>This was a well rounded CTF in my opinion with good challenges for beginners (like me) that were not too trivial. Instead of the standard robots.txt or source code inspection they had challenges where one could easily find clues to get started researching the challenges. That is even if the solution wasn&amp;rsquo;t immediately clear you had at least some direction for a google search and a shot at solving the challenge during the CTF runtime.</description>
+    </item>
+    
     <item>
       <title>Learn Source Code Auditing By Building a Tool #1: Static Analysis for the Dynamically Paralysed</title>
       <link>https://cybernetic.coffee/blog/learn-source-auditing-1/</link>

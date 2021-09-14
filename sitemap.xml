@@ -2,6 +2,9 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://cybernetic.coffee/blog/tmu-ctf/</loc>
+    <lastmod>2021-09-11T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://cybernetic.coffee/blog/learn-source-auditing-1/</loc>
     <lastmod>2021-09-06T00:00:00+00:00</lastmod>
   </url><url>
@@ -42,28 +45,49 @@
   </url><url>
     <loc>https://cybernetic.coffee/all-projects/verto/</loc>
   </url><url>
+    <loc>https://cybernetic.coffee/tags/binary-exploitation/</loc>
+    <lastmod>2021-09-11T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://cybernetic.coffee/categories/binary-exploitation/</loc>
-    <lastmod>2021-09-06T00:00:00+00:00</lastmod>
+    <lastmod>2021-09-11T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/blog/</loc>
-    <lastmod>2021-09-06T00:00:00+00:00</lastmod>
+    <lastmod>2021-09-11T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/categories/</loc>
-    <lastmod>2021-09-06T00:00:00+00:00</lastmod>
+    <lastmod>2021-09-11T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://cybernetic.coffee/tags/ctf/</loc>
+    <lastmod>2021-09-11T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://cybernetic.coffee/categories/ctf/</loc>
+    <lastmod>2021-09-11T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://cybernetic.coffee/</loc>
+    <lastmod>2021-09-11T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://cybernetic.coffee/categories/hacking/</loc>
+    <lastmod>2021-09-11T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://cybernetic.coffee/tags/hacking/</loc>
+    <lastmod>2021-09-11T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://cybernetic.coffee/tags/steganography/</loc>
+    <lastmod>2021-09-11T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://cybernetic.coffee/tags/</loc>
+    <lastmod>2021-09-11T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://cybernetic.coffee/tags/web-hacking/</loc>
+    <lastmod>2021-09-11T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://cybernetic.coffee/categories/web-hacking/</loc>
+    <lastmod>2021-09-11T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/categories/code-review/</loc>
     <lastmod>2021-09-06T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://cybernetic.coffee/</loc>
-    <lastmod>2021-09-06T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://cybernetic.coffee/tags/exploit-development/</loc>
-    <lastmod>2021-09-06T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://cybernetic.coffee/categories/hacking/</loc>
-    <lastmod>2021-09-06T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://cybernetic.coffee/tags/hacking/</loc>
     <lastmod>2021-09-06T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/tags/source-code-auditing/</loc>
@@ -73,9 +97,6 @@
     <lastmod>2021-09-06T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/tags/static-analysis/</loc>
-    <lastmod>2021-09-06T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://cybernetic.coffee/tags/</loc>
     <lastmod>2021-09-06T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/tags/pentesting/</loc>
