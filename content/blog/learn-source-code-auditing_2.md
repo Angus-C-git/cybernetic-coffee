@@ -230,6 +230,77 @@ def sift(target, limit=None):
 <!-- TODO  -->
 
 
+```python
+def search_pattern(rule, target):
+    """ search src file for rule """
+    with open(target, 'r') as src:
+        return regxsearch(rule, src.read())
+
+
+def resolve_block(signature, result, target):
+    """ 
+    creates a block which encapsulates
+    the affected code.
+
+    block:
+        signature: the rule that matched
+                   the source code block
+        line_no: the line where the 
+                 identified block 
+                 starts
+        snippet: the source code which
+                 was matched by the rule
+    """
+    with open(target, 'r') as src:
+        line_no = src.read()[:result.start()].count('\n') + 1
+        snippet = result.group()
+        return (signature, line_no, snippet)
+```
+
+<!-- TODO  -->
+
+**`ui/report`**
+
+```python
+def render_block(data):
+	""" render the potentially vulnerable code block """
+	snippet = data[2] 
+	title = data[0]['name']
+	description = data[0]['description']
+
+	code_snippet = Syntax(
+						snippet, 
+						SYNTAX, 
+						theme=THEME, 
+						line_numbers=True, 
+						start_line=data[1]
+					)
+
+	description_txt = Markdown(
+			f""" ## Explanation \n {description} """,
+			inline_code_lexer=SYNTAX,
+			inline_code_theme=THEME,
+		)
+	
+	components = RenderGroup(
+					code_snippet,
+					description_txt
+				)
+	
+	block = Panel(
+			components,
+			title=f'[b white]{title}',
+			width=60,
+			border_style='red1'
+		)
+
+	# render
+	print('\n')
+	print(block)
+```
+
+<!-- TODO  -->
+
 ## Writing Tests to Ward Off Falling into the Debugging Abysses 
 
 <!-- Regression tests and methodology -->
