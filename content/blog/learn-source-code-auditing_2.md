@@ -88,7 +88,7 @@ To start building out these rules we need to think about four main things:
 
 **An example detection**
 
-[Format strings](#) are an excellent detection to start with. Firstly because they are simple, narrowly scoped, missuses of common and familiar `C` apis. Secondly because their 'rareness' in the wild (nowadays) is characterised by the phrase. 
+[Format strings](https://secsheets.cybernetic.coffee/binary-exploitation/formatstrings/) are an excellent detection to start with. Firstly because they are simple, narrowly scoped, missuses of common and familiar `C` apis. Secondly because their 'rareness' in the wild (nowadays) is characterised by the phrase. 
 
 > "... they are trivial to grep for"
 
