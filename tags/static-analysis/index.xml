@@ -6,7 +6,17 @@
     <description>Recent content in Static Analysis on Cybernetic Coffee</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 06 Sep 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://cybernetic.coffee/tags/static-analysis/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 23 Sep 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://cybernetic.coffee/tags/static-analysis/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Learn Source Code Auditing By Building a Tool #2: POC and Pattern Analysis for Basic Vulnerabilities</title>
+      <link>https://cybernetic.coffee/blog/learn-source-code-auditing_2/</link>
+      <pubDate>Thu, 23 Sep 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/blog/learn-source-code-auditing_2/</guid>
+      <description>I already rambled about what source code auditing is, why we do it, and its pros vs cons over dynamic analysis. So in this post I&amp;rsquo;ll present some basic vulnerabilities we can look for in audits and how we might build a tool for their detection using simple pattern matching and rules.
+Key Terms  Signature: An encapsulating term to refer to both a set of rules and a description of what the rule aims to detect and why the matching of such a rule could indicate the presence of a vulnerability Rule: A regex pattern with a specific detection goal under a particular signature Regex: Regular expressions are a way of specifying a search pattern particular for natural languages  What are we Building?</description>
+    </item>
+    
     <item>
       <title>Learn Source Code Auditing By Building a Tool #1: Static Analysis for the Dynamically Paralysed</title>
       <link>https://cybernetic.coffee/blog/learn-source-auditing-1/</link>

@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="">
+<meta name="description" content="I already rambled about what source code auditing is, why we do it, and its pros vs cons over dynamic analysis. So in this post I&amp;rsquo;ll present some basic vulnerabilities we can look for in audits and how we might build a tool for their detection using simple pattern matching and rules.
+Key Terms  Signature: An encapsulating term to refer to both a set of rules and a description of what the rule aims to detect and why the matching of such a rule could indicate the presence of a vulnerability Rule: A regex pattern with a specific detection goal under a particular signature Regex: Regular expressions are a way of specifying a search pattern particular for natural languages  What are we Building?" />
+<meta name="keywords" content=", hacking, Source Code Auditing, Exploit Development, Static Analysis" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="#252627" />
+<link rel="canonical" href="https://cybernetic.coffee/blog/learn-source-code-auditing_2/" />
+
+
+    <title>
+        
+            Learn Source Code Auditing By Building a Tool #2: POC and Pattern Analysis for Basic Vulnerabilities :: Cybernetic Coffee 
+        
+    </title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.64cc374c419669695f00d5c55727fea41e0fdc86b9beb1b4d1d1bcf24284f422.css">
+
+
+
+
+<link rel="shortcut icon" href="https://cybernetic.coffee/images/favicon.ico" />
+
+
+<meta itemprop="name" content="Learn Source Code Auditing By Building a Tool #2: POC and Pattern Analysis for Basic Vulnerabilities">
+<meta itemprop="description" content="I already rambled about what source code auditing is, why we do it, and its pros vs cons over dynamic analysis. So in this post I&rsquo;ll present some basic vulnerabilities we can look for in audits and how we might build a tool for their detection using simple pattern matching and rules.
+Key Terms  Signature: An encapsulating term to refer to both a set of rules and a description of what the rule aims to detect and why the matching of such a rule could indicate the presence of a vulnerability Rule: A regex pattern with a specific detection goal under a particular signature Regex: Regular expressions are a way of specifying a search pattern particular for natural languages  What are we Building?"><meta itemprop="datePublished" content="2021-09-23T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2021-09-23T00:00:00+00:00" />
+<meta itemprop="wordCount" content="2782">
+<meta itemprop="keywords" content="hacking,Source Code Auditing,Exploit Development,Static Analysis," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Learn Source Code Auditing By Building a Tool #2: POC and Pattern Analysis for Basic Vulnerabilities"/>
+<meta name="twitter:description" content="I already rambled about what source code auditing is, why we do it, and its pros vs cons over dynamic analysis. So in this post I&rsquo;ll present some basic vulnerabilities we can look for in audits and how we might build a tool for their detection using simple pattern matching and rules.
+Key Terms  Signature: An encapsulating term to refer to both a set of rules and a description of what the rule aims to detect and why the matching of such a rule could indicate the presence of a vulnerability Rule: A regex pattern with a specific detection goal under a particular signature Regex: Regular expressions are a way of specifying a search pattern particular for natural languages  What are we Building?"/>
+
+
+
+
+
+    <meta property="article:section" content="Hacking" />
+
+    <meta property="article:section" content="Source Code Auditing" />
+
+    <meta property="article:section" content="Binary Exploitation" />
+
+    <meta property="article:section" content="Code Review" />
+
+
+
+    <meta property="article:published_time" content="2021-09-23 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <script src="https://kit.fontawesome.com/5eb4842dc5.js" crossorigin="anonymous"></script>
+
+<a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__text">Cybernetic <i class="fas fa-mug-hot"> </i> </span>
+            <span class="logo__mark"><i class="fas fa-terminal"></i></span>
+            <span class="logo__cursor" style=
+                  "
+                   background-color:#00ba68;
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://cybernetic.coffee/feed/">Activity Feed</a></li><li><a href="https://cybernetic.coffee/projects/">Projects</a></li><li><a href="https://cybernetic.coffee/blog">Blog</a></li><li><a href="https://cybernetic.coffee/ctf">CTF</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+        
+        <div class="post-info">
+            <p>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                
+                    2021-09-23 10:00
+                
+
+                
+            </p>
+        </div>
+        
+
+        <article>
+            <h2 class="post-title"><a href="https://cybernetic.coffee/blog/learn-source-code-auditing_2/">Learn Source Code Auditing By Building a Tool #2: POC and Pattern Analysis for Basic Vulnerabilities</a></h2>
+
+            
+
+            
+            <div class="post-info">
+
+                <div class="sharing-buttons">
+                    
+
+
+
+
+
+
+
+
+<a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?url=https%3a%2f%2fcybernetic.coffee%2fblog%2flearn-source-code-auditing_2%2f" target="_blank" rel="noopener" aria-label="" title="Share on twitter">
+  <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small">
+      <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a class="resp-sharing-button__link" href="https://reddit.com/submit/?url=https%3a%2f%2fcybernetic.coffee%2fblog%2flearn-source-code-auditing_2%2f&amp;resubmit=true&amp;title=Learn%20Source%20Code%20Auditing%20By%20Building%20a%20Tool%20%232%3a%20POC%20and%20Pattern%20Analysis%20for%20Basic%20Vulnerabilities" target="_blank" rel="noopener" aria-label="" title="Share on reddit">
+  <div class="resp-sharing-button resp-sharing-button--reddit resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a class="resp-sharing-button__link" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fcybernetic.coffee%2fblog%2flearn-source-code-auditing_2%2f&amp;t=Learn%20Source%20Code%20Auditing%20By%20Building%20a%20Tool%20%232%3a%20POC%20and%20Pattern%20Analysis%20for%20Basic%20Vulnerabilities" target="_blank" rel="noopener" aria-label="" title="Share on hacker news">
+  <div class="resp-sharing-button resp-sharing-button--hackernews resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M0 24V0h24v24H0zM6.951 5.896l4.112 7.708v5.064h1.583v-4.972l4.148-7.799h-1.749l-2.457 4.875c-.372.745-.688 1.434-.688 1.434s-.297-.708-.651-1.434L8.831 5.896h-1.88z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+
+
+
+
+
+
+
+                </div>
+            </div>
+            
+
+            <hr />
+
+            
+
+            
+
+            <div class="post-content">
+                <p>I already rambled about what source code auditing is, why we do it, and its pros vs cons over dynamic analysis. So in this post I&rsquo;ll present some basic vulnerabilities we can look for in audits and how we might build a tool for their detection using simple pattern matching and rules.</p>
+<h2 id="key-terms">Key Terms</h2>
+<ul>
+<li>Signature: An encapsulating term to refer to both a set of rules and a description of what the rule aims to detect and why the matching of such a rule could indicate the presence of a vulnerability</li>
+<li>Rule: A regex pattern with a specific detection goal under a particular signature</li>
+<li>Regex: Regular expressions are a way of specifying a search pattern particular for natural languages</li>
+</ul>
+<h2 id="what-are-we-building">What are we Building?</h2>
+<p>In this post i&rsquo;ll start building what will become the primary vulnerability detection model. That is the signature and pattern matching logic for <strong>csifter</strong>, a grep style source code auditing tool for <code>C</code> code bases.</p>
+<p>By the end we will end up with a cli tool that can produce output like the following.</p>
+
+
+    <br/>
+    <img src="https://cybernetic.coffee/images/blog/src_audits/csifterBasicPOC.png" class="">
+
+
+<p>Okay so how does this &lsquo;pattern&rsquo; matching and signature based detection work. In our case to keep the tool simple and flexible we want to avoid building abstract syntax trees or the like. So instead the core of our detection model will be handled by database of <strong>regex rules</strong>.</p>
+<p>Unsurprisingly this is very much the way graudit operates too. Bellow is a snippet of the <code>c.db</code> file.</p>
+<pre tabindex="0"><code>printf[[:space:]]*\([[:space:]]*[^\,\'\&quot;]+[[:space:]]*\)[[:space:]]*\;
+sprintf[[:space:]]*\([^\,]+,[^\,]+\%s
+.?scanf[[:space:]]*\([^\,]+\%s[^\,]+\,[^\,]+\)\;
+strnc(py|at)[[:space:]]*\([^\,]+\,[[:space:]]*[^\,]+\,[[:space:]]*sizeof\(
+memcpy[[:space:]]*\([^\,]+\,[^\,]+\,[[:space:]]*sizeof\(
+[[:space:]]gets[[:space:]]*\(
+^[[:space:]]*gets[[:space:]]*\(
+exec(ve|l|lp|le|v)[[:space:]]*\(
+system[[:space:]]*\(.+\)\;
+malloc[[:space:]]*\(.*strlen[[:space:]]*\(
+(strn?c(at|py)|memcpy|sn?printf|scanf)[[:space:]]*\(.*(arg|getenv)
+strnc(at|py)[[:space:]]*\([^,]+,[^,]+,[[:space:]]*strlen[[:space:]]*\([^\)]+\)[[:space:]]*\)
+malloc[[:space:]]*\(strlen[[:space:]]*\(.*\)
+\[[0-9][0-9]+\].*=.*\\0
+\[[^\]]+\+[^\]]*\].*=.*\\0
+snprintf[[:space:]]*\([^\,]+\,[[:space:]]*sizeof\(.*\%s
+strncpy[[:space:]]*\([^\,]+\,[[:space:]]*sizeof\(
+memcpy[[:space:]]*\([^\,]+\,[^\,]+\,[[:space:]]*sizeof\(
+memset[[:space:]]*\([^,]+,[^,]+,[[:space:]]*0[[:space:]]*\);
+</code></pre><p>Of interest here however is that graudit will detect on <strong>any</strong> usage of the APIs it has rules for in its database. For example consider the following <code>c</code> source code.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#66d9ef">void</span>
+<span style="color:#a6e22e">main</span>()
+{
+    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span> message <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;because im static and formatted&#34;</span>;
+    
+    printf(<span style="color:#e6db74">&#34;Im safe %s</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, message);
+}
+</code></pre></div><p>If we run graudit against this file using the <code>C</code> signatures we will get the following output.</p>
+
+
+    <br/>
+    <img src="https://cybernetic.coffee/images/blog/src_audits/grauditFalseOut.png" class="">
+
+
+<p>In this case the use of <code>printf</code> in this way is perfectly safe and no risk of a format string vulnerability is present. This is the nature of graudit. It is a tool to highlight potential areas of the code where some kind of unsafe functionality could occur rather than areas of high likelihood. Thus it is more of an assistive tool that may help spot some issues quickly or avoid large segments of uninteresting code (safe code).</p>
+<p>We will seek to improve on this by focusing on writing rules that can detect &lsquo;definite&rsquo;, or to a high degree of certainty, vulnerable usage of APIs, and otherwise distinguish between a warning for potential risk vs likely risk.</p>
+<p>Another area that I find lacking with graudit is that it does not provide any explanation or reasoning as to why the detection was triggered or what to look for/check to see if the particular signature triggered corresponds to a vulnerable usage. This tool takes the assumption that the auditor already has knowledge about safe usage of APIs and can distinguish between safe use cases and vulnerable ones. This tool is of little use to a developer who wants assurances that their code does not contain trivial vulnerabilities or risks or to the security researcher who is not well versed in <code>C</code> based vulnerabilities risks. Thus in our tool we will seek to provide explanation of, the particular rule, why it was triggered and under what circumstances the detected &lsquo;block&rsquo; would be vulnerable.</p>
+<h2 id="the-signatures-database">The Signatures Database</h2>
+<p>Now we may start building things out. A logical place to start is with the signatures or &lsquo;rules database&rsquo;, the regex patterns that will be used in matching to create detections.</p>
+<p>To start building out these rules we need to think about four main things:</p>
+<ol>
+<li>What are we trying to detect?</li>
+<li>What characterises this detected item as &lsquo;vulnerable&rsquo;</li>
+<li>What edge cases or variations exist that a detection for such a vulnerability needs to take into account?</li>
+<li>What are the limitations of the detection? When and how can/would it fail?</li>
+</ol>
+<p><strong>An example detection</strong></p>
+<p><a href="https://secsheets.cybernetic.coffee/binary-exploitation/formatstrings/">Format strings</a> are an excellent detection to start with. Firstly because they are simple, narrowly scoped, missuses of common and familiar <code>C</code> apis. Secondly because their &lsquo;rareness&rsquo; in the wild (nowadays) is characterised by the phrase.</p>
+<blockquote>
+<p>&ldquo;&hellip; they are trivial to grep for&rdquo;</p>
+</blockquote>
+<p><strong>The characteristics of a format string</strong></p>
+<p>We now think about how a format string vulnerability presents in <code>C</code> source code. The obvious example is a typical misuse of the <code>printf</code> function by supplying a user controlled input directly without a format specifier.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C">printf(user_controlled_buffer);
+</code></pre></div><p>This misuse is generalisable however to the following vulnerable usage description.</p>
+<blockquote>
+<p>Any format family API which takes a user controlled argument directly in the place of a format specifier.</p>
+</blockquote>
+<p>As a rule, from which to build a detection, perhaps we could define it as,</p>
+<blockquote>
+<p>any time a format API takes a non-static (quote) argument in place of the format specifier argument the usage is potentially vulnerable.</p>
+</blockquote>
+<p>Now then to define a regex pattern for this rule we could first look to match format functions in source code and then check if the specifier argument for the function did <strong>not</strong> start with a <code>&quot;</code> or <code>'</code> indicating a non-static argument. Thus the following regex pattern could work for the <code>printf</code> api.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">printf\([<span style="color:#f92672">^</span>\<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\&#39;</span><span style="color:#e6db74">]+\);</span>
+</code></pre></div><p>Note, however, that the definition for the rule was carefully constructed. This is because not all format functions are created equally and some are not well known. Bellow is a list of format functions we will consider (I was not able to find more).</p>
+<ul>
+<li>printf</li>
+<li>fprintf</li>
+<li>sprintf</li>
+<li>snprintf</li>
+<li>vsnprintf</li>
+<li>vsprintf</li>
+<li>vfprintf</li>
+<li>vprintf</li>
+<li>dprintf</li>
+<li>syslog</li>
+<li>vscanf</li>
+<li>vsscanf</li>
+<li>fscanf</li>
+<li>scanf</li>
+</ul>
+<p>An interesting one that often catches people by surprise is the <code>syslog</code> API for logging. It is also of interest because it manifests differently to printf in terms of argument arrangement. Consider the manpage reference for <code>syslog</code>.</p>
+
+
+    <br/>
+    <img src="https://cybernetic.coffee/images/blog/src_audits/syslogMan.png" class="">
+
+
+<p>We note that a <code>priority</code> should be supplied as the first value which is an integer quantity and will thus not contain any <code>&quot;</code> characters.</p>
+<p>Thus we need to take into account the first argument in our regex pattern. There is also another edgecase we must consider for our patterns and that is <strong>alternative syntax</strong>. Not all programmers or codebases are the same and the way a function call ins structured can change. For example consider the following alternative way of calling the <code>vsnprintf</code> API.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C">vsnprintf(
+        tmp, 
+        <span style="color:#ae81ff">0x100</span>, 
+        argv[<span style="color:#ae81ff">1</span>], 
+        NULL
+    );
+</code></pre></div><p>If we try to simply apply a rule like the one we used for <code>printf</code> it will fail when things are split over multiple lines or a space proceeds the bracketed arguments. Hence we would define our regex pattern for <code>vsnprintf</code> to look more like the following:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#e6db74">&#34;vsnprintf[ ]*\([^\,]+\,[^\,]+\,[^\,</span><span style="color:#ae81ff">\&#39;\&#34;</span><span style="color:#e6db74">]+\,[^\,]+\);&#34;</span>
+</code></pre></div><p>In terms of code/project structure I define these regex patterns in a file called <code>db.py</code> and store the rule along with a name and description in a JSON like python object. The bellow is a snippet of the file showcasing the rules and description for the format string detections.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">signatures <span style="color:#f92672">=</span> [
+
+    {
+        <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;Format String&#34;</span>,
+        <span style="color:#e6db74">&#34;description&#34;</span>: <span style="color:#e6db74">&#34;An variable is supplied directly to the format argument of the  function, &#34;</span> <span style="color:#f92672">+</span>
+                       <span style="color:#e6db74">&#34;if the variable is user controlled a format string exploit my be possible.&#34;</span>,
+        
+        <span style="color:#e6db74">&#34;rules&#34;</span>: [
+            <span style="color:#75715e">#printf</span>
+            <span style="color:#e6db74">&#34;printf[ ]*\([^\,</span><span style="color:#ae81ff">\&#39;\&#34;</span><span style="color:#e6db74">]+\)\;&#34;</span>,
+            <span style="color:#e6db74">&#34;fprintf[ ]*\([^\,]+\,[^\,</span><span style="color:#ae81ff">\&#39;\&#34;</span><span style="color:#e6db74">]+\);&#34;</span>,
+            <span style="color:#e6db74">&#34;sprintf[ ]*\([^\,]+\,[^\,</span><span style="color:#ae81ff">\&#39;\&#34;</span><span style="color:#e6db74">]+\);&#34;</span>,
+            <span style="color:#e6db74">&#34;vprintf[ ]*\([^\,</span><span style="color:#ae81ff">\&#39;\&#34;</span><span style="color:#e6db74">]+\,[^\,]+\);&#34;</span>,
+            
+            <span style="color:#e6db74">&#34;snprintf[ ]*\([^\,]+\,[^\,]+\,[^\,</span><span style="color:#ae81ff">\&#39;\&#34;</span><span style="color:#e6db74">]+\);&#34;</span>,
+            <span style="color:#e6db74">&#34;vsprintf[ ]*\([^\,]+\,[^\,</span><span style="color:#ae81ff">\&#39;\&#34;</span><span style="color:#e6db74">]+\,[^\,]+\);&#34;</span>,
+            <span style="color:#e6db74">&#34;vfprintf[ ]*\([^\,]+\,[^\,</span><span style="color:#ae81ff">\&#39;\&#34;</span><span style="color:#e6db74">]+\,[^\,]+\);&#34;</span>,
+
+            <span style="color:#e6db74">&#34;vsnprintf[ ]*\([^\,]+\,[^\,]+\,[^\,</span><span style="color:#ae81ff">\&#39;\&#34;</span><span style="color:#e6db74">]+\,[^\,]+\);&#34;</span>,
+
+            <span style="color:#75715e"># logging </span>
+            <span style="color:#e6db74">&#34;dprintf[ ]*\([^\,]+\,[^\,</span><span style="color:#ae81ff">\&#39;\&#34;</span><span style="color:#e6db74">]+\);&#34;</span>,
+            <span style="color:#e6db74">&#34;syslog[ ]*\([^\,]+\,[^\,</span><span style="color:#ae81ff">\&#39;\&#34;</span><span style="color:#e6db74">]+\);&#34;</span>,
+
+            <span style="color:#75715e"># scanf</span>
+            <span style="color:#e6db74">&#34;scanf[ ]*\([^\,</span><span style="color:#ae81ff">\&#39;\&#34;</span><span style="color:#e6db74">]+\);&#34;</span>,
+            <span style="color:#e6db74">&#34;fscanf[ ]*\([^\,]+\,[^\,</span><span style="color:#ae81ff">\&#39;\&#34;</span><span style="color:#e6db74">]+\);&#34;</span>,
+            <span style="color:#e6db74">&#34;vscanf[ ]*\([^\,</span><span style="color:#ae81ff">\&#39;\&#34;</span><span style="color:#e6db74">]+\,[^\,]+\);&#34;</span>,
+            <span style="color:#e6db74">&#34;vsscanf[ ]*\([^\,]+\,[^\,</span><span style="color:#ae81ff">\&#39;\&#34;</span><span style="color:#e6db74">]+\,[^\,]+\);&#34;</span>,
+        ]
+    },
+
+
+    <span style="color:#75715e"># &lt;snip&gt;</span>
+</code></pre></div><p>Defining things in this way means that when we build the functions that use the rules to match parts of target source code we can also include <strong>useful</strong> a description in the UI module explaining why the rule was matched and what makes the detected usage a risk.</p>
+<h2 id="making-the-poc">Making the POC</h2>
+<p>Next we will construct the main detection module that will use our defined rules to hunt for offending source code block. Rather than just pasting all the code that can be found on <a href="https://github.com/Angus-C-git/csifter/tree/7b2b5ca6ddfaf6bbb55349221ef4f1c477bae3c9">GitHub</a>, the approximate commit for this blog is linked, I will just explore the key snippets that implement our desired functionality.</p>
+<p><em>Note that the functions presented here are from the latest version of the code so some function names and variables have changed to support cli args, but the purpose of the code is largely the same.</em></p>
+<p><strong>sifter.py</strong></p>
+<p>The sifter module is the core of the csifter tool. It reads the patterns from the signature database and greps through the target source code file for matching results. The entry point to this module is the <code>sift</code> function.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">sift</span>(target, limit<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>):
+    <span style="color:#e6db74">&#34;&#34;&#34; 
+</span><span style="color:#e6db74">    pass over target file searching for
+</span><span style="color:#e6db74">    source code which matches a rule.
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    target: the path to the current
+</span><span style="color:#e6db74">            candidate for source analysis
+</span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+    blocks_of_interest <span style="color:#f92672">=</span> []
+    <span style="color:#66d9ef">for</span> signature <span style="color:#f92672">in</span> signatures:
+        <span style="color:#66d9ef">for</span> rule <span style="color:#f92672">in</span> signature[<span style="color:#e6db74">&#39;rules&#39;</span>]:
+            results <span style="color:#f92672">=</span> search_pattern(rule, target)
+
+            <span style="color:#66d9ef">if</span> (
+                limit <span style="color:#f92672">is</span> <span style="color:#f92672">not</span> <span style="color:#66d9ef">None</span> 
+                <span style="color:#f92672">and</span> len(blocks_of_interest) <span style="color:#f92672">&gt;=</span> limit
+            ): <span style="color:#66d9ef">break</span>
+
+            <span style="color:#66d9ef">for</span> match <span style="color:#f92672">in</span> results:
+                blocks_of_interest<span style="color:#f92672">.</span>append(
+                    resolve_block(signature, match, target)
+                )
+
+    <span style="color:#75715e"># render blocks</span>
+    render_blocks(blocks_of_interest)
+    <span style="color:#66d9ef">return</span> blocks_of_interest
+</code></pre></div><p>The role of this function is to extract each signature and rule from the database and trigger a pattern based search for this rule in the current target source code file. Then for each of the source code lines matched (blocks) a array of blocks to present to the auditor is constructed. The function the hands off these blocks to the UI report component to handel.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">search_pattern</span>(rule, target):
+    <span style="color:#e6db74">&#34;&#34;&#34; search src file for rule &#34;&#34;&#34;</span>
+    <span style="color:#66d9ef">with</span> open(target, <span style="color:#e6db74">&#39;r&#39;</span>) <span style="color:#66d9ef">as</span> src:
+        <span style="color:#66d9ef">return</span> regxsearch(rule, src<span style="color:#f92672">.</span>read())
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">resolve_block</span>(signature, result, target):
+    <span style="color:#e6db74">&#34;&#34;&#34; 
+</span><span style="color:#e6db74">    creates a block which encapsulates
+</span><span style="color:#e6db74">    the affected code.
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    block:
+</span><span style="color:#e6db74">        signature: the rule that matched
+</span><span style="color:#e6db74">                   the source code block
+</span><span style="color:#e6db74">        line_no: the line where the 
+</span><span style="color:#e6db74">                 identified block 
+</span><span style="color:#e6db74">                 starts
+</span><span style="color:#e6db74">        snippet: the source code which
+</span><span style="color:#e6db74">                 was matched by the rule
+</span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+    <span style="color:#66d9ef">with</span> open(target, <span style="color:#e6db74">&#39;r&#39;</span>) <span style="color:#66d9ef">as</span> src:
+        line_no <span style="color:#f92672">=</span> src<span style="color:#f92672">.</span>read()[:result<span style="color:#f92672">.</span>start()]<span style="color:#f92672">.</span>count(<span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+        snippet <span style="color:#f92672">=</span> result<span style="color:#f92672">.</span>group()
+        <span style="color:#66d9ef">return</span> (signature, line_no, snippet)
+</code></pre></div><p>The <code>search_pattern</code> function is the main utility for the tool. It performs a regex search using the <code>regex</code> module which is not the same as the inbuilt python regex module. Of note is that the <code>regexsearch</code> function is actually the <code>finditer</code> function from this module, <code>from regex import finditer as regxsearch</code>. The reason
+we want to use this variation of the find function is that their could be multiple detections for the same
+rule in one file.</p>
+<p>The <code>resolve_block</code> function handles taking a matched result from the pattern search and extracting the relevant source code syntax snippet and line information from the target file for use in the report interface.</p>
+<p><strong><code>ui/report</code></strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">render_block</span>(data):
+	<span style="color:#e6db74">&#34;&#34;&#34; render the potentially vulnerable code block &#34;&#34;&#34;</span>
+	snippet <span style="color:#f92672">=</span> data[<span style="color:#ae81ff">2</span>] 
+	title <span style="color:#f92672">=</span> data[<span style="color:#ae81ff">0</span>][<span style="color:#e6db74">&#39;name&#39;</span>]
+	description <span style="color:#f92672">=</span> data[<span style="color:#ae81ff">0</span>][<span style="color:#e6db74">&#39;description&#39;</span>]
+
+	code_snippet <span style="color:#f92672">=</span> Syntax(
+						snippet, 
+						SYNTAX, 
+						theme<span style="color:#f92672">=</span>THEME, 
+						line_numbers<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, 
+						start_line<span style="color:#f92672">=</span>data[<span style="color:#ae81ff">1</span>]
+					)
+
+	description_txt <span style="color:#f92672">=</span> Markdown(
+			<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;&#34;&#34; ## Explanation </span><span style="color:#ae81ff">\n</span><span style="color:#e6db74"> </span><span style="color:#e6db74">{</span>description<span style="color:#e6db74">}</span><span style="color:#e6db74"> &#34;&#34;&#34;</span>,
+			inline_code_lexer<span style="color:#f92672">=</span>SYNTAX,
+			inline_code_theme<span style="color:#f92672">=</span>THEME,
+		)
+	
+	components <span style="color:#f92672">=</span> RenderGroup(
+					code_snippet,
+					description_txt
+				)
+	
+	block <span style="color:#f92672">=</span> Panel(
+			components,
+			title<span style="color:#f92672">=</span><span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;[b white]</span><span style="color:#e6db74">{</span>title<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>,
+			width<span style="color:#f92672">=</span><span style="color:#ae81ff">60</span>,
+			border_style<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;red1&#39;</span>
+		)
+
+	<span style="color:#75715e"># render</span>
+	print(<span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>)
+	print(block)
+</code></pre></div><p>The <code>render_block</code> function is key driver for the audit report that is generated for auditor consumption. It
+utilises rich&rsquo;s panel, syntax and markdown rendering capabilities to combine the information from the signature description, source code syntax snippet and line information, to construct a HUD element which displays key information to the auditor to quickly diagnose the offending code.</p>
+<h2 id="writing-tests-to-ward-off-falling-into-the-debugging-abysses">Writing Tests to Ward Off Falling into the Debugging Abysses</h2>
+<!-- raw HTML omitted -->
+<p>Now lets quickly talk about writing some tests with <a href="https://docs.pytest.org/en/6.2.x/">pytest</a> and why we might want to do something so satanic. Note that I actually wrote the test cases for the functionality presented here in a later commit, <a href="https://github.com/Angus-C-git/csifter/tree/87a13319a59300b4f1a48e07b6016006ac3edfa4/tests">here</a> so check that out for complete context.</p>
+<p>Typically when we make software especially me - a complete novice -, we hack away at a project making rapid progress at times and then slowing down at others while we solve a problem. By the time we finish such a cycle we probably have something that works against a little test input that we wrote but does it hold up against all the inputs the program could receive?</p>
+<p>This is where unit testing comes in, we insure that each discreet module of the program can withstand the full variety of inputs it may be exposed to. This involves:</p>
+<ul>
+<li>Testing all paths data can take through the &lsquo;unit&rsquo;</li>
+<li>Testing all the branches in the unit itself</li>
+<li>Ensuring the test data allows the above to happen</li>
+</ul>
+<p>The other reason we want to write tests is for what happens when we return to a project that we have been hacking on and start working on a new feature or module. Its easy to plough forward working on something against a new little test case only to come back and find that the original feature now doesn&rsquo;t work as expected. Writing tests to ward against this &lsquo;backwards progress&rsquo; is called <strong>regression</strong> testing.</p>
+<p>One useful thing I discovered while doing this is that we can keep our tests completely separate to csifter&rsquo;s logic and create all the tests in a top level directory while still being able to access the necessary internals we want to test with imports. To do this we need to structure the project as follows, importantly adding a <code>__init__.py</code> file to the tests directory so that python will recognise it as a module.</p>
+<pre tabindex="0"><code>.
+├── csifter
+│   ├── database
+│   ├── __init__.py
+│   ├── sifter.py
+│   ├── ui
+│   └── util
+├── sift
+└── tests
+    ├── __init__.py
+    ├── modules
+    └── test_fmtstrings.py
+</code></pre><p>Then inside our test file <code>test_fmtstrings.py</code> we can simply import the csifter internal functions we want to test with conventional imports.</p>
+<p>With pytest, and probably any testing library at all, we write tests by first submitting a test case and then <strong>asserting</strong> something about the returned data that the functions we are testing produce. The assertion we make should support what we expect the functions to do under certain conditions determined by the <strong>test input</strong>.</p>
+<p>In this case I decided to write <code>C</code> files with specific detection cases and edgecases such as variations in syntax and formatting and then check that the core sift function returned the right number of detections based on my manual analysis and that the matched starting line numbers corresponded to the actual starting lines in the original source file.</p>
+<p>Now this is not necessarily the best way to do this since:</p>
+<ul>
+<li>If new test cases are added to the file without care for the existing tests then all the assertions will have to be updated</li>
+<li>Only one function is directly tested, <code>sift</code>, which places a reliance on nothing going wrong in the helper functions that <code>sift</code> calls. Thus if the test reported a failing case we could not be certain that it was caused by the sift function directly or one of the helpers.</li>
+</ul>
+<p>However, in this case it should be pretty easy to triage the source of any errors since the functions <code>sift</code> calls are directly responsible for a particular assertion. For example if a line number is wrong but the number of matches returned is correct that means that the problem <strong>should</strong> lie in the function that resolves line numbers for detected blocks. Further, should we want to add more test cases we could potentially just ignore the formatting of the test <code>C</code> file and just append the cases to the end of the file which would not interfere with the previous assertions.</p>
+<p>Thus we end up with the following simple test.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> pytest
+
+<span style="color:#75715e"># CONFIG</span>
+<span style="color:#f92672">from</span> csifter.sifter <span style="color:#f92672">import</span> sift
+fmtstrings_test_file <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;./modules/fmtstrings.c&#39;</span>  
+vulnerable_lines <span style="color:#f92672">=</span> [
+	<span style="color:#ae81ff">42</span>, <span style="color:#ae81ff">65</span>,
+	<span style="color:#ae81ff">43</span>, <span style="color:#ae81ff">68</span>,
+	<span style="color:#ae81ff">44</span>, <span style="color:#ae81ff">72</span>,
+	<span style="color:#ae81ff">45</span>, <span style="color:#ae81ff">76</span>,
+	<span style="color:#ae81ff">46</span>, <span style="color:#ae81ff">80</span>,
+	<span style="color:#ae81ff">47</span>, <span style="color:#ae81ff">85</span>,
+	<span style="color:#ae81ff">48</span>, <span style="color:#ae81ff">90</span>,
+	<span style="color:#ae81ff">49</span>, <span style="color:#ae81ff">95</span>,
+	<span style="color:#ae81ff">53</span>, <span style="color:#ae81ff">104</span>,
+	<span style="color:#ae81ff">54</span>, <span style="color:#ae81ff">108</span>,
+	<span style="color:#ae81ff">57</span>, <span style="color:#ae81ff">114</span>,
+	<span style="color:#ae81ff">58</span>, <span style="color:#ae81ff">117</span>,
+	<span style="color:#ae81ff">59</span>, <span style="color:#ae81ff">121</span>,
+	<span style="color:#ae81ff">60</span>, <span style="color:#ae81ff">125</span>,
+]
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">test_fmtstrings_found</span>():
+	found_blocks <span style="color:#f92672">=</span> sift(fmtstrings_test_file)
+	<span style="color:#66d9ef">assert</span> len(found_blocks) <span style="color:#f92672">==</span> <span style="color:#ae81ff">28</span>
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">test_fmtstring_src_ref</span>():
+	<span style="color:#e6db74">&#34;&#34;&#34; test the lines format string
+</span><span style="color:#e6db74">	vulnerabilities were identified on
+</span><span style="color:#e6db74">	&#34;&#34;&#34;</span>
+	blocks <span style="color:#f92672">=</span> sift(fmtstrings_test_file)
+	
+	<span style="color:#66d9ef">for</span> block_no, line <span style="color:#f92672">in</span> enumerate(vulnerable_lines):
+		<span style="color:#66d9ef">assert</span> blocks[block_no][<span style="color:#ae81ff">1</span>] <span style="color:#f92672">==</span> line
+</code></pre></div><p>We can now execute all the tests simply by running <code>pytest</code> in the <code>tests</code> directory providing a near instant method to check that new code added doesn&rsquo;t break existing functionality.</p>
+<h2 id="technologies">Technologies</h2>
+<p>Here&rsquo;s a list of technologies used in <strong>csifter</strong> and some assistive tools for development of the regex rules.</p>
+<ul>
+<li><a href="https://github.com/willmcgugan/rich">Rich</a> - rich is a python library for building better cli outputs and prettifying information presented to users
+<ul>
+<li>cisfter relies on rich for syntax highlighting and panel construction for the final output as well as the ability to use markdown</li>
+</ul>
+</li>
+<li><a href="https://regexr.com/">Regexer</a> and <a href="https://regex101.com/">regex101</a> - are similar sites that allow you to develop regex patterns and receive instant feedback of how they will perform in practice by supplying a test file to apply the pattern to
+<ul>
+<li>I used this to design the regex patterns that make up the detections</li>
+</ul>
+</li>
+<li><a href="https://docs.pytest.org/en/6.2.x/">pytest</a> - is a testing framework for python
+<ul>
+<li>We use this to ensure that we don&rsquo;t break existing functionality as we move forward and properly test new modules</li>
+</ul>
+</li>
+</ul>
+
+            </div>
+        </article>
+
+        <hr />
+
+        
+        <div class="post-info">
+            
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://cybernetic.coffee/tags/hacking/">hacking</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/source-code-auditing/">Source Code Auditing</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/exploit-development/">Exploit Development</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/static-analysis/">Static Analysis</a></span>
+        
+    </p>
+
+
+
+            <p>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                2782 Words
+            </p>
+  		</div>
+        
+
+
+        
+            
+                <div class="pagination">
+                    <div class="pagination__title">
+                        <span class="pagination__title-h"></span>
+
+                    </div>
+
+                    <div class="pagination__buttons">
+                        
+
+                        
+                            <span class="button next">
+                              <a href="https://cybernetic.coffee/blog/tmu-ctf/">
+                                <span class="button__text">TMU CTF: Writeups</span>
+                                <span class="button__icon">→</span>
+                              </a>
+                            </span>
+                        
+                    </div>
+                </div>
+            
+        
+
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Hacked together with &#10084; by <a href="https://github.com/Angus-C-git">Angus C</a> <i class='fas fa-ghost'></i> </span>
+          </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.549d9d8402283235466245c699b04a81b6fb2c75fc03669ba95af9f5e8ad22ab134f177abab9e431efc3441fe5921fd3fb3f8bf50f66dffbdce9eb7994ef69dc.js" integrity="sha512-VJ2dhAIoMjVGYkXGmbBKgbb7LHX8A2abqVr59eitIqsTTxd6urnkMe/DRB/lkh/T&#43;z&#43;L9Q9m3/vc6et5lO9p3A=="></script>
+
+
+
+    </body>
+</html>
