@@ -2,13 +2,19 @@
 title: "Learn Source Code Auditing By Building a Tool #2: POC and Pattern Analysis for Basic Vulnerabilities"
 categories: ["Hacking", "Source Code Auditing", "Binary Exploitation", "Code Review"]
 tags: ["hacking", "Source Code Auditing", "Exploit Development", "Static Analysis"]
-date: "2021-09-02"
+date: "2021-09-23"
 type: "post"
 weight: 400
 keywords: "hacking pentesting c source code auditing static analysis"
 ---
 
-I already rambled about; what source code auditing is, why we do it, and its pros vs cons over dynamic analysis. So in this post i'll present some basic vulnerabilities we can look for in audits and how we might build a tool for their detection using simple pattern matching and rules.
+I already rambled about what source code auditing is, why we do it, and its pros vs cons over dynamic analysis. So in this post I'll present some basic vulnerabilities we can look for in audits and how we might build a tool for their detection using simple pattern matching and rules.
+
+## Key Terms
+
++ Signature: An encapsulating term to refer to both a set of rules and a description of what the rule aims to detect and why the matching of such a rule could indicate the presence of a vulnerability
++ Rule: A regex pattern with a specific detection goal under a particular signature
++ Regex: Regular expressions are a way of specifying a search pattern particular for natural languages
 
 ## What are we Building?
 
@@ -192,7 +198,9 @@ Defining things in this way means that when we build the functions that use the 
 
 ## Making the POC
 
-Next we will construct the main detection module that will use our defined rules to hunt for offending source code block. Rather than just pasting all the code that can be found on [GitHub](#), the approximate commit for this blog is linked, I will just explore the key snippets that implement our desired functionality.
+Next we will construct the main detection module that will use our defined rules to hunt for offending source code block. Rather than just pasting all the code that can be found on [GitHub](https://github.com/Angus-C-git/csifter/tree/7b2b5ca6ddfaf6bbb55349221ef4f1c477bae3c9), the approximate commit for this blog is linked, I will just explore the key snippets that implement our desired functionality. 
+
+*Note that the functions presented here are from the latest version of the code so some function names and variables have changed to support cli args, but the purpose of the code is largely the same.*
 
 **sifter.py**
 
@@ -227,7 +235,7 @@ def sift(target, limit=None):
     return blocks_of_interest
 ```
 
-<!-- TODO  -->
+The role of this function is to extract each signature and rule from the database and trigger a pattern based search for this rule in the current target source code file. Then for each of the source code lines matched (blocks) a array of blocks to present to the auditor is constructed. The function the hands off these blocks to the UI report component to handel.
 
 
 ```python
@@ -257,7 +265,11 @@ def resolve_block(signature, result, target):
         return (signature, line_no, snippet)
 ```
 
-<!-- TODO  -->
+The `search_pattern` function is the main utility for the tool. It performs a regex search using the `regex` module which is not the same as the inbuilt python regex module. Of note is that the `regexsearch` function is actually the `finditer` function from this module, `from regex import finditer as regxsearch`. The reason 
+we want to use this variation of the find function is that their could be multiple detections for the same 
+rule in one file.
+
+The `resolve_block` function handles taking a matched result from the pattern search and extracting the relevant source code syntax snippet and line information from the target file for use in the report interface.
 
 **`ui/report`**
 
@@ -299,17 +311,106 @@ def render_block(data):
 	print(block)
 ```
 
-<!-- TODO  -->
+The `render_block` function is key driver for the audit report that is generated for auditor consumption. It
+utilises rich's panel, syntax and markdown rendering capabilities to combine the information from the signature description, source code syntax snippet and line information, to construct a HUD element which displays key information to the auditor to quickly diagnose the offending code. 
+
 
 ## Writing Tests to Ward Off Falling into the Debugging Abysses 
 
 <!-- Regression tests and methodology -->
 
+Now lets quickly talk about writing some tests with [pytest](https://docs.pytest.org/en/6.2.x/) and why we might want to do something so satanic. Note that I actually wrote the test cases for the functionality presented here in a later commit, [here](https://github.com/Angus-C-git/csifter/tree/87a13319a59300b4f1a48e07b6016006ac3edfa4/tests) so check that out for complete context. 
+
+Typically when we make software especially me - a complete novice -, we hack away at a project making rapid progress at times and then slowing down at others while we solve a problem. By the time we finish such a cycle we probably have something that works against a little test input that we wrote but does it hold up against all the inputs the program could receive?
+
+This is where unit testing comes in, we insure that each discreet module of the program can withstand the full variety of inputs it may be exposed to. This involves:
+
++ Testing all paths data can take through the 'unit'
++ Testing all the branches in the unit itself
++ Ensuring the test data allows the above to happen
+
+The other reason we want to write tests is for what happens when we return to a project that we have been hacking on and start working on a new feature or module. Its easy to plough forward working on something against a new little test case only to come back and find that the original feature now doesn't work as expected. Writing tests to ward against this 'backwards progress' is called **regression** testing.
+
+One useful thing I discovered while doing this is that we can keep our tests completely separate to csifter's logic and create all the tests in a top level directory while still being able to access the necessary internals we want to test with imports. To do this we need to structure the project as follows, importantly adding a `__init__.py` file to the tests directory so that python will recognise it as a module.
+
+```
+.
+├── csifter
+│   ├── database
+│   ├── __init__.py
+│   ├── sifter.py
+│   ├── ui
+│   └── util
+├── sift
+└── tests
+    ├── __init__.py
+    ├── modules
+    └── test_fmtstrings.py
+```
+
+Then inside our test file `test_fmtstrings.py` we can simply import the csifter internal functions we want to test with conventional imports.
+
+With pytest, and probably any testing library at all, we write tests by first submitting a test case and then **asserting** something about the returned data that the functions we are testing produce. The assertion we make should support what we expect the functions to do under certain conditions determined by the **test input**.
+
+In this case I decided to write `C` files with specific detection cases and edgecases such as variations in syntax and formatting and then check that the core sift function returned the right number of detections based on my manual analysis and that the matched starting line numbers corresponded to the actual starting lines in the original source file. 
+
+Now this is not necessarily the best way to do this since:
+
++ If new test cases are added to the file without care for the existing tests then all the assertions will have to be updated
++ Only one function is directly tested, `sift`, which places a reliance on nothing going wrong in the helper functions that `sift` calls. Thus if the test reported a failing case we could not be certain that it was caused by the sift function directly or one of the helpers. 
+
+However, in this case it should be pretty easy to triage the source of any errors since the functions `sift` calls are directly responsible for a particular assertion. For example if a line number is wrong but the number of matches returned is correct that means that the problem **should** lie in the function that resolves line numbers for detected blocks. Further, should we want to add more test cases we could potentially just ignore the formatting of the test `C` file and just append the cases to the end of the file which would not interfere with the previous assertions. 
+
+Thus we end up with the following simple test.
+
+```python
+import pytest
+
+# CONFIG
+from csifter.sifter import sift
+fmtstrings_test_file = './modules/fmtstrings.c'  
+vulnerable_lines = [
+	42, 65,
+	43, 68,
+	44, 72,
+	45, 76,
+	46, 80,
+	47, 85,
+	48, 90,
+	49, 95,
+	53, 104,
+	54, 108,
+	57, 114,
+	58, 117,
+	59, 121,
+	60, 125,
+]
+
+
+def test_fmtstrings_found():
+	found_blocks = sift(fmtstrings_test_file)
+	assert len(found_blocks) == 28
+
+
+def test_fmtstring_src_ref():
+	""" test the lines format string
+	vulnerabilities were identified on
+	"""
+	blocks = sift(fmtstrings_test_file)
+	
+	for block_no, line in enumerate(vulnerable_lines):
+		assert blocks[block_no][1] == line
+```
+
+We can now execute all the tests simply by running `pytest` in the `tests` directory providing a near instant method to check that new code added doesn't break existing functionality.
+
 ## Technologies
-<!-- rich -->
 
-<!-- gcc -->
+Here's a list of technologies used in **csifter** and some assistive tools for development of the regex rules.
 
-<!-- regexer || regex101 -->
-
-<!-- pytest -->
++ Rich - rich is a python library for building better cli outputs and prettifying information presented to users
+    + cisfter relies on rich for syntax highlighting and panel construction for the final output as well as the ability to use markdown 
++ [Regexer](https://regexr.com/) and [regex101](https://regex101.com/) - are similar sites that allow you to develop regex patterns and receive instant feedback of how they will perform in practice by supplying a test file to apply the pattern to 
+    + I used this to design the regex patterns that make up the detections
++ [pytest](https://docs.pytest.org/en/6.2.x/) - is a testing framework for python 
+    + We use this to ensure that we don't break existing functionality as we move forward and properly test new modules
