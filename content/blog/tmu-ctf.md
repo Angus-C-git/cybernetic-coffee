@@ -1,5 +1,5 @@
 ---
-title: "TMU CTF: Writeups"
+title: "TMU{CTF Writeup}"
 categories: ["Hacking", "CTF", "Binary Exploitation", "Web Hacking"]
 tags: ["hacking", "CTF", "Binary Exploitation", "Web Hacking", "Steganography"]
 date: "2021-09-11"
