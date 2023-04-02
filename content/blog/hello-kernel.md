@@ -9,7 +9,7 @@ tags:
 'rootkits',
 'security research',
 ]
-date: '2020-03-14'
+date: '2020-03-18'
 type: 'post'
 weight: 400
 keywords: 'hacking rootkits'
