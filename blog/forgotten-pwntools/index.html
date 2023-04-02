@@ -277,53 +277,52 @@ alphabet = &#39;bcdefhijklmnopqrstuvwyz&#39; # cleansed alphabet payload = fit({
                 <p>You&rsquo;d think after searching for <code>/bin/sh</code> in libc that many times in <code>pwntools</code> that I&rsquo;d remember the syntax. But actually my brain is too busy remembering when the milk in the fridge expires. Here&rsquo;s a collection of my favorite forgotten syntactic gems for <code>pwntools</code>.</p>
 <h2 id="general">General</h2>
 <h3 id="flat"><code>flat</code></h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">payload <span style="color:#f92672">=</span> flat({
-    <span style="color:#75715e"># pad with garbage to this offset</span>
-    cyclic_find(<span style="color:#e6db74">&#39;amia&#39;</span>): rop<span style="color:#f92672">.</span>chain()
-})
-</code></pre></div><p><strong>custom filler</strong></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">alphabet <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;bcdefhijklmnopqrstuvwyz&#39;</span>     <span style="color:#75715e"># cleansed alphabet</span>
-
-payload <span style="color:#f92672">=</span> fit({
-    cyclic_find(<span style="color:#e6db74">&#39;nbbb&#39;</span>, alphabet<span style="color:#f92672">=</span>bet): rop<span style="color:#f92672">.</span>chain()
-}, filler<span style="color:#f92672">=</span>alphabet)
-</code></pre></div><h3 id="logging"><code>logging</code></h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Data section @ </span><span style="color:#e6db74">{</span>data_section<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
-log<span style="color:#f92672">.</span>success(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Leaked libc system @ </span><span style="color:#e6db74">{</span>libc_system_addr<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
-</code></pre></div><h3 id="sections"><code>sections</code></h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">data_section <span style="color:#f92672">=</span> elf<span style="color:#f92672">.</span>symbols<span style="color:#f92672">.</span>data_start
-</code></pre></div><h3 id="rebase"><code>rebase</code></h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">libc<span style="color:#f92672">.</span>address <span style="color:#f92672">=</span> leaked_setbuf_libc <span style="color:#f92672">-</span> libc<span style="color:#f92672">.</span>symbols[<span style="color:#e6db74">&#39;setbuf&#39;</span>]
-elf<span style="color:#f92672">.</span>address <span style="color:#f92672">=</span> leaked_menu_address <span style="color:#f92672">-</span> elf<span style="color:#f92672">.</span>symbols[<span style="color:#e6db74">&#39;menu&#39;</span>]
-
-<span style="color:#75715e"># now we have defeated PIE/ASLR globally</span>
-</code></pre></div><h3 id="unhex"><code>unhex</code></h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">txt_bytes <span style="color:#f92672">=</span> unhex(<span style="color:#e6db74">&#39;75736566756c&#39;</span>)
-</code></pre></div><h2 id="rop">ROP</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>payload <span style="color:#f92672">=</span> flat({
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># pad with garbage to this offset</span>
+</span></span><span style="display:flex;"><span>    cyclic_find(<span style="color:#e6db74">&#39;amia&#39;</span>): rop<span style="color:#f92672">.</span>chain()
+</span></span><span style="display:flex;"><span>})
+</span></span></code></pre></div><p><strong>custom filler</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>alphabet <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;bcdefhijklmnopqrstuvwyz&#39;</span>     <span style="color:#75715e"># cleansed alphabet</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>payload <span style="color:#f92672">=</span> fit({
+</span></span><span style="display:flex;"><span>    cyclic_find(<span style="color:#e6db74">&#39;nbbb&#39;</span>, alphabet<span style="color:#f92672">=</span>bet): rop<span style="color:#f92672">.</span>chain()
+</span></span><span style="display:flex;"><span>}, filler<span style="color:#f92672">=</span>alphabet)
+</span></span></code></pre></div><h3 id="logging"><code>logging</code></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Data section @ </span><span style="color:#e6db74">{</span>data_section<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>success(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Leaked libc system @ </span><span style="color:#e6db74">{</span>libc_system_addr<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span></code></pre></div><h3 id="sections"><code>sections</code></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>data_section <span style="color:#f92672">=</span> elf<span style="color:#f92672">.</span>symbols<span style="color:#f92672">.</span>data_start
+</span></span></code></pre></div><h3 id="rebase"><code>rebase</code></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>libc<span style="color:#f92672">.</span>address <span style="color:#f92672">=</span> leaked_setbuf_libc <span style="color:#f92672">-</span> libc<span style="color:#f92672">.</span>symbols[<span style="color:#e6db74">&#39;setbuf&#39;</span>]
+</span></span><span style="display:flex;"><span>elf<span style="color:#f92672">.</span>address <span style="color:#f92672">=</span> leaked_menu_address <span style="color:#f92672">-</span> elf<span style="color:#f92672">.</span>symbols[<span style="color:#e6db74">&#39;menu&#39;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># now we have defeated PIE/ASLR globally</span>
+</span></span></code></pre></div><h3 id="unhex"><code>unhex</code></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>txt_bytes <span style="color:#f92672">=</span> unhex(<span style="color:#e6db74">&#39;75736566756c&#39;</span>)
+</span></span></code></pre></div><h2 id="rop">ROP</h2>
 <h3 id="raw"><code>raw</code></h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">rop <span style="color:#f92672">=</span> ROP(binary)
-
-rop<span style="color:#f92672">.</span>raw([
-    pop_eax_edx,
-    <span style="color:#e6db74">&#39;flag&#39;</span>,
-    <span style="color:#ae81ff">0x0</span>
-])
-
-</code></pre></div><h3 id="libcsearch"><code>libc.search</code></h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">libc <span style="color:#f92672">=</span> ELF(<span style="color:#e6db74">&#39;&lt;some-libc&gt;.so&#39;</span>)
-
-<span style="color:#75715e"># Its an iterator guys</span>
-next(libc<span style="color:#f92672">.</span>search(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;/bin/sh&#39;</span>))
-</code></pre></div><h3 id="call"><code>call</code></h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">rop <span style="color:#f92672">=</span> ROP(<span style="color:#e6db74">&#39;&lt;some-libc&gt;.so&#39;</span>)
-
-rop<span style="color:#f92672">.</span>call(libc<span style="color:#f92672">.</span>symbols[<span style="color:#e6db74">&#39;system&#39;</span>], [next(libc<span style="color:#f92672">.</span>search(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;/bin/sh&#39;</span>))])
-</code></pre></div><h3 id="function"><code>function</code></h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">rop <span style="color:#f92672">=</span> ROP(binary)
-
-<span style="color:#75715e"># call function in symbols table with args</span>
-rop<span style="color:#f92672">.</span>some_function(arg1, arg2)
-</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>rop <span style="color:#f92672">=</span> ROP(binary)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>rop<span style="color:#f92672">.</span>raw([
+</span></span><span style="display:flex;"><span>    pop_eax_edx,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;flag&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">0x0</span>
+</span></span><span style="display:flex;"><span>])
+</span></span></code></pre></div><h3 id="libcsearch"><code>libc.search</code></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>libc <span style="color:#f92672">=</span> ELF(<span style="color:#e6db74">&#39;&lt;some-libc&gt;.so&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Its an iterator guys</span>
+</span></span><span style="display:flex;"><span>next(libc<span style="color:#f92672">.</span>search(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;/bin/sh&#39;</span>))
+</span></span></code></pre></div><h3 id="call"><code>call</code></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>rop <span style="color:#f92672">=</span> ROP(<span style="color:#e6db74">&#39;&lt;some-libc&gt;.so&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>rop<span style="color:#f92672">.</span>call(libc<span style="color:#f92672">.</span>symbols[<span style="color:#e6db74">&#39;system&#39;</span>], [next(libc<span style="color:#f92672">.</span>search(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;/bin/sh&#39;</span>))])
+</span></span></code></pre></div><h3 id="function"><code>function</code></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>rop <span style="color:#f92672">=</span> ROP(binary)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># call function in symbols table with args</span>
+</span></span><span style="display:flex;"><span>rop<span style="color:#f92672">.</span>some_function(arg1, arg2)
+</span></span></code></pre></div>
             </div>
         </article>
 
@@ -414,7 +413,7 @@ rop<span style="color:#f92672">.</span>some_function(arg1, arg2)
 
 
 
-<script type="text/javascript" src="/bundle.min.549d9d8402283235466245c699b04a81b6fb2c75fc03669ba95af9f5e8ad22ab134f177abab9e431efc3441fe5921fd3fb3f8bf50f66dffbdce9eb7994ef69dc.js" integrity="sha512-VJ2dhAIoMjVGYkXGmbBKgbb7LHX8A2abqVr59eitIqsTTxd6urnkMe/DRB/lkh/T&#43;z&#43;L9Q9m3/vc6et5lO9p3A=="></script>
+<script type="text/javascript" src="/bundle.min.755e4cf350f154c0fee20aa6a1b7fa2b35fcbeaaf4cc62ef45531b19ae1fd43e5ed19c3c3bbf522045953eaef03e1cb96a64a636782486a3aa0b0563d0ef5406.js" integrity="sha512-dV5M81DxVMD&#43;4gqmobf6KzX8vqr0zGLvRVMbGa4f1D5e0Zw8O79SIEWVPq7wPhy5amSmNngkhqOqCwVj0O9UBg=="></script>
 
 
 

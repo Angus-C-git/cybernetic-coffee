@@ -1,7 +1,7 @@
 {
 	"version": 3,
 	"file": "main.css",
-	"sourceRoot": "/home/zephyr/Desktop/Development Projects/cybernetic-coffee",
+	"sourceRoot": "/home/zephyr/Desktop/DevelopmentProjects/cybernetic-coffee",
 	"sources": [
 		"themes/cybernetic-coffee/assets/scss/main.scss",
 		"themes/cybernetic-coffee/assets/scss/_normalize.scss",

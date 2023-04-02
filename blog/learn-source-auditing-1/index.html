@@ -359,7 +359,7 @@ and if vulnerabilities are exposed on these less common execution paths</li>
 with varying degrees of success. In most cases these tools will operate with a high yield of false positives and rely on the auditor to separate these from the real vulnerabilities. This is a key point, <strong>automated tooling is not effective
 enough</strong> to eliminate the need for manual analysis and testing! Let&rsquo;s take a look at some of the tools that exist and their various strengths and weaknesses.</p>
 <h3 id="gcc">GCC</h3>
-<p>The gcc compiler is a source code analysis hybrid that few people consider when thinking about static analysis. If you have ever tried to create a purposely vulnerable program in <code>C</code> using something like the <code>gets</code> function then you have likely seen gcc warn you that this is a security issue and that <code>gets</code> is deprecated. But gcc can also perform more powerful things that we take for granted such as detecting buffer overflows when working with statically sized buffers or type overflows. If you think about how you would do this with purely static analysis you may come to the conclusion that you would&rsquo;t or shouldn&rsquo;t, and in fact this is not how gcc does it. Since gcc is a compiler at heart it constructs what&rsquo;s called an &lsquo;abstract syntax tree&rsquo;. This is <em>basically</em> a way of tokenising the different keywords from the syntax and organising them as a tree which represents the &lsquo;logical structure&rsquo; of the program as a tree. This in, assumed, combination with other compiler features allows gcc to detect that a particular operation will overflow a buffer and even by howe much. Of course gcc is not perfect and can not detect all security issues in fact it can only really detect a small subset.</p>
+<p>The gcc compiler is a source code analysis hybrid that few people consider when thinking about static analysis. If you have ever tried to create a purposely vulnerable program in <code>C</code> using something like the <code>gets</code> function then you have likely seen gcc warn you that this is a security issue and that <code>gets</code> is deprecated. But gcc can also perform more powerful things that we take for granted such as detecting buffer overflows when working with statically sized buffers or type overflows. If you think about how you would do this with purely static analysis you may come to the conclusion that you would&rsquo;t or shouldn&rsquo;t, and in fact this is not how gcc does it. Since gcc is a compiler at heart it constructs what&rsquo;s called an &lsquo;abstract syntax tree&rsquo;. This is <em>basically</em> a way of tokenising the different keywords from the syntax and organising them as a tree which represents the &rsquo;logical structure&rsquo; of the program as a tree. This in, assumed, combination with other compiler features allows gcc to detect that a particular operation will overflow a buffer and even by howe much. Of course gcc is not perfect and can not detect all security issues in fact it can only really detect a small subset.</p>
 <ul>
 <li>
 <p><strong>strengths</strong></p>
@@ -402,7 +402,7 @@ potential security risks. It then generates a CLI or static HTML report for cons
 <p>It&rsquo;s worth mentioning that linter&rsquo;s are also a familiar form of static analysis they can tell us about syntax mistakes and api missuses before compilation or runtime. However they are more geared towards
 syntactic issues over security ones.</p>
 <h3 id="graudit">graudit</h3>
-<p>grudit or &lsquo;grep audit&rsquo; is a grep styled static analysis tool which focuses on assisting the auditor by providing a &lsquo;list&rsquo; of potentially interesting/vulnerable points in the source. It does so by using a set of
+<p>grudit or &lsquo;grep audit&rsquo; is a grep styled static analysis tool which focuses on assisting the auditor by providing a &rsquo;list&rsquo; of potentially interesting/vulnerable points in the source. It does so by using a set of
 regex rules which it refers to as a signatures to match patterns in supplied source code. One of the main benefits of graudit is that it supports many languages and can be easily extended by adding more rules. This
 however does come with other drawbacks.</p>
 <ul>
@@ -519,7 +519,7 @@ however does come with other drawbacks.</p>
 
 
 
-<script type="text/javascript" src="/bundle.min.549d9d8402283235466245c699b04a81b6fb2c75fc03669ba95af9f5e8ad22ab134f177abab9e431efc3441fe5921fd3fb3f8bf50f66dffbdce9eb7994ef69dc.js" integrity="sha512-VJ2dhAIoMjVGYkXGmbBKgbb7LHX8A2abqVr59eitIqsTTxd6urnkMe/DRB/lkh/T&#43;z&#43;L9Q9m3/vc6et5lO9p3A=="></script>
+<script type="text/javascript" src="/bundle.min.755e4cf350f154c0fee20aa6a1b7fa2b35fcbeaaf4cc62ef45531b19ae1fd43e5ed19c3c3bbf522045953eaef03e1cb96a64a636782486a3aa0b0563d0ef5406.js" integrity="sha512-dV5M81DxVMD&#43;4gqmobf6KzX8vqr0zGLvRVMbGa4f1D5e0Zw8O79SIEWVPq7wPhy5amSmNngkhqOqCwVj0O9UBg=="></script>
 
 
 

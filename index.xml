@@ -15,7 +15,7 @@
       <guid>https://cybernetic.coffee/blog/atlassian-ctf/</guid>
       <description>This was a really fun CTF with plenty of variety in terms of challenges. Lots of fun doable ones with plenty of learning opportunities as well as some more challenging ones. I managed to pull off a second place finish with the help of the smaller number of players (40 odd) and the generosity of the pwn challenge points.
 Idiot warning ⚠️
- Please note that everything I write here and in these blogs is what I think I know to be true.</description>
+Please note that everything I write here and in these blogs is what I think I know to be true.</description>
     </item>
     
     <item>
@@ -25,7 +25,7 @@ Idiot warning ⚠️
       
       <guid>https://cybernetic.coffee/blog/learn-source-code-auditing_2/</guid>
       <description>I already rambled about what source code auditing is, why we do it, and its pros vs cons over dynamic analysis. So in this post I&amp;rsquo;ll present some basic vulnerabilities we can look for in audits and how we might build a tool for their detection using simple pattern matching and rules.
-Key Terms  Signature: An encapsulating term to refer to both a set of rules and a description of what the rule aims to detect and why the matching of such a rule could indicate the presence of a vulnerability Rule: A regex pattern with a specific detection goal under a particular signature Regex: Regular expressions are a way of specifying a search pattern particular for natural languages  What are we Building?</description>
+Key Terms Signature: An encapsulating term to refer to both a set of rules and a description of what the rule aims to detect and why the matching of such a rule could indicate the presence of a vulnerability Rule: A regex pattern with a specific detection goal under a particular signature Regex: Regular expressions are a way of specifying a search pattern particular for natural languages What are we Building?</description>
     </item>
     
     <item>
@@ -63,10 +63,21 @@ alphabet = &amp;#39;bcdefhijklmnopqrstuvwyz&amp;#39; # cleansed alphabet payload
       <pubDate>Sun, 15 Aug 2021 00:00:00 +0000</pubDate>
       
       <guid>https://cybernetic.coffee/blog/reversing-34-binaries/</guid>
-      <description>&amp;ldquo;If you know the enemy and know yourself, you need not fear the result disassembly of a hundred battles 31 binaries.&amp;quot;
+      <description>&amp;ldquo;If you know the enemy and know yourself, you need not fear the result disassembly of a hundred battles 31 binaries.&amp;rdquo;
 &amp;ndash; Sun Tzu, The Art of War Exploitation
- Overview So you want to hack a program? Go to nsogroup.com &amp;hellip;
+Overview So you want to hack a program? Go to nsogroup.com &amp;hellip;
 Reverse engineering, or &amp;lsquo;reversing&amp;rsquo;, is the process of taking something whose inner workings are not immediately clear or incredibly complex and making sense of them. Thus we see that reversing is not just a skill for security engineers but for all engineers, programmers and problem solvers.</description>
+    </item>
+    
+    <item>
+      <title>ROP Emporium Revisited</title>
+      <link>https://cybernetic.coffee/blog/rop-emporium-revisited/</link>
+      <pubDate>Tue, 27 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/blog/rop-emporium-revisited/</guid>
+      <description>Overview ROP highlights a classical strategy across all facets of security exploitation, living off the land.
+ret2win #2 ret2win is the first challenge among the rop emporium suite and plays out like a classical buffer overflow. The only real takeaway from this challenge is to note the state of the memory protections enabled for the binary.
+Arch: i386-32-little RELRO: Partial RELRO Stack: No canary found NX: NX enabled PIE: No PIE (0x8048000) We see that the NX bit is enabled this is true of almost all ROP challenges since we wish to prevent execution off the stack with shellcode.</description>
     </item>
     
     <item>
@@ -102,7 +113,7 @@ Reverse engineering, or &amp;lsquo;reversing&amp;rsquo;, is the process of takin
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://cybernetic.coffee/feed/</guid>
-      <description>import { Octokit } from &#34;https://cdn.skypack.dev/@octokit/core&#34;; const octokit = new Octokit(); // Fetch recent activity from GitHub window.pullFeed = async function pullFeed(){ await octokit.request(&#39;GET /users/{username}/events/public&#39;, { username: &#39;Angus-C-git&#39;, page: 1, per_page: 30 }).then(response = { console.log(response); let nonSelected = document.getElementById(&#39;twitter&#39;); nonSelected.classList.remove(&#39;feed-selected&#39;); nonSelected.classList.add(&#39;feed-non-selected&#39;); let selected = document.getElementById(&#39;github&#39;); selected.classList.remove(&#39;feed-non-selected&#39;); selected.classList.add(&#39;feed-selected&#39;); let feed = document.getElementById(&#34;feed&#34;); feed.innerHTML = &#39;&#39;; document.getElementById(&#39;loader&#39;).innerHTML = &#34; &#34;; response.data.map(event = { let eventBody = null; switch (event.type) { case &#34;</description>
+      <description> Loading ... </description>
     </item>
     
     <item>
@@ -111,7 +122,7 @@ Reverse engineering, or &amp;lsquo;reversing&amp;rsquo;, is the process of takin
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://cybernetic.coffee/ctf/</guid>
-      <description>Coming soon ...  Welcome ______  &#34;The year is 2084. A company called SharpNet control over 80% of traffic on the internet. A resistance company OpenWaves seeks to restore balance to the internet. You work as a ghost for the resistance hacking SharpNet systems in an effort to protect the original mission of the internet.&#34;   OSINT Acquisition 150pts  0 Solves   NextStart has just been acquired by SharpNet.</description>
+      <description> Coming soon ... </description>
     </item>
     
     <item>
@@ -147,7 +158,7 @@ Reverse engineering, or &amp;lsquo;reversing&amp;rsquo;, is the process of takin
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://cybernetic.coffee/leaderboard/</guid>
-      <description> Rank Username Points     (function getLeaderboard() { console.log(&#34;[] Pulling leaderboard&#34;); const url = &#39;https://cybernetic-coffee-api.herokuapp.com/api/ctf/leaderboard&#39;; const token = &#39;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDU1ZDA4ZWYyNDM2ODNlNmUxYjk5ZTEiLCJpYXQiOjE2MTYyMzY2ODZ9.cRXLq8FmfH4qstR0qNWyiuW4HyGgIKf2fDS5VdFA_tI&#39;; fetch(url, { method: &#39;GET&#39;, mode: &#39;cors&#39;, redirect: &#39;follow&#39;, headers: { &#39;Content-Type&#39;: &#39;application/json&#39;, //TODO: remove this &#39;auth-token&#39;: token } }) .then(response = response.json()) .then(result = { let rows = document.getElementById(&#39;leaderboard-inject&#39;); console.log(result.leaderboard); result.leaderboard.map((row, count=1) = { rows.innerHTML += `${count} ${row.usrName} ${row.score} ` }) }) .catch(error = console.log(&#39;error&#39;, error)); })(); </description>
+      <description> Rank Username Points </description>
     </item>
     
     <item>
@@ -156,7 +167,7 @@ Reverse engineering, or &amp;lsquo;reversing&amp;rsquo;, is the process of takin
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://cybernetic.coffee/all-projects/livebreachtimeline/</guid>
-      <description>      </description>
+      <description> </description>
     </item>
     
     <item>
@@ -183,7 +194,7 @@ Reverse engineering, or &amp;lsquo;reversing&amp;rsquo;, is the process of takin
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://cybernetic.coffee/projects/</guid>
-      <description>Loading ...     import { Octokit } from &#34;https://cdn.skypack.dev/@octokit/core&#34;; const octokit = new Octokit(); (async function pullRepos(){ const excludedRepos = [&#34;Angus-C-git&#34;, &#34;insurance-management-system&#34;, &#34;ipcalc&#34;, &#34;freeCodeCamp&#34;, &#34;first-contributions&#34;]; const specials = [&#34;LiveBreachTimeline&#34;]; await octokit.request(&#39;GET /users/{username}/repos&#39;, { username: &#39;Angus-C-git&#39;, page: 1, per_page: 30 }).then(response = { let timeLine = document.getElementById(&#34;projects-timeline&#34;); timeLine.innerHTML = &#39;&#39;; response.data.sort(function(a,b){ return new Date(b.created_at) - new Date(a.created_at); }); response.data.map(project = { if (!excludedRepos.includes(project.name)) timeLine.innerHTML += `${project.created_at.slice(0,7)}    ${project.</description>
+      <description> Loading ... </description>
     </item>
     
     <item>

