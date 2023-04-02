@@ -1,13 +1,12 @@
 ---
 title: 'Hello Kernel'
 categories: ['Hacking', 'Rootkits', 'Post Exploitation', 'security research']
-tags:
-[
-'Exploit Development',
-'hacking',
-'redteaming',
-'rootkits',
-'security research',
+tags: [
+    'Exploit Development',
+    'hacking',
+    'redteaming',
+    'rootkits',
+    'security research',
 ]
 date: '2020-03-18'
 type: 'post'

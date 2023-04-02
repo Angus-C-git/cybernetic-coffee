@@ -408,7 +408,7 @@ We can now execute all the tests simply by running `pytest` in the `tests` direc
 
 Here's a list of technologies used in **csifter** and some assistive tools for development of the regex rules.
 
-+ Rich - rich is a python library for building better cli outputs and prettifying information presented to users
++ [Rich](https://github.com/willmcgugan/rich) - rich is a python library for building better cli outputs and prettifying information presented to users
     + cisfter relies on rich for syntax highlighting and panel construction for the final output as well as the ability to use markdown 
 + [Regexer](https://regexr.com/) and [regex101](https://regex101.com/) - are similar sites that allow you to develop regex patterns and receive instant feedback of how they will perform in practice by supplying a test file to apply the pattern to 
     + I used this to design the regex patterns that make up the detections

