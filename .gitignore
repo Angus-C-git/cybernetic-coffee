@@ -2,3 +2,6 @@ public
 .env
 .idea/
 .hugo*
+*.content
+
+resources/_gen/assets/scss/scss/main.scss_38b1322b728d0fc31bc0aabb683ebc6d.json
