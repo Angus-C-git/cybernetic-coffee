@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="">
+<meta name="description" content="The Power Of REST APIs REST APIs are a way to conveniently abstract away application logic and reduce the load on front-end processing. This is achieved by engineering the API to return data in such a way that we can simply render it straight out onto the page without sorting or intensive manipulation. In this way we can achieve faster load times for web pages, and at the same time reduce the amount of JavaScript running in users browsers." />
+<meta name="keywords" content=", REST API, Backend, Node.js, express, web" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="#252627" />
+<link rel="canonical" href="https://cybernetic.coffee/blog/building-a-rest-api/" />
+
+
+    <title>
+        
+            Building A REST API :: Cybernetic Coffee 
+        
+    </title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.64cc374c419669695f00d5c55727fea41e0fdc86b9beb1b4d1d1bcf24284f422.css">
+
+
+
+
+<link rel="shortcut icon" href="https://cybernetic.coffee/images/favicon.ico" />
+
+
+<meta itemprop="name" content="Building A REST API">
+<meta itemprop="description" content="The Power Of REST APIs REST APIs are a way to conveniently abstract away application logic and reduce the load on front-end processing. This is achieved by engineering the API to return data in such a way that we can simply render it straight out onto the page without sorting or intensive manipulation. In this way we can achieve faster load times for web pages, and at the same time reduce the amount of JavaScript running in users browsers."><meta itemprop="datePublished" content="2020-12-28T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-12-28T00:00:00+00:00" />
+<meta itemprop="wordCount" content="2394">
+<meta itemprop="keywords" content="REST API,Backend,Node.js,express,web," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Building A REST API"/>
+<meta name="twitter:description" content="The Power Of REST APIs REST APIs are a way to conveniently abstract away application logic and reduce the load on front-end processing. This is achieved by engineering the API to return data in such a way that we can simply render it straight out onto the page without sorting or intensive manipulation. In this way we can achieve faster load times for web pages, and at the same time reduce the amount of JavaScript running in users browsers."/>
+
+
+
+
+
+    <meta property="article:section" content="Development" />
+
+    <meta property="article:section" content="Backend" />
+
+
+
+    <meta property="article:published_time" content="2020-12-28 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <script src="https://kit.fontawesome.com/5eb4842dc5.js" crossorigin="anonymous"></script>
+
+<a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__text">Cybernetic <i class="fas fa-mug-hot"> </i> </span>
+            <span class="logo__mark"><i class="fas fa-terminal"></i></span>
+            <span class="logo__cursor" style=
+                  "
+                   background-color:#00ba68;
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://cybernetic.coffee/feed/">Activity Feed</a></li><li><a href="https://cybernetic.coffee/projects/">Projects</a></li><li><a href="https://cybernetic.coffee/blog">Blog</a></li><li><a href="https://cybernetic.coffee/ctf">CTF</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+        
+        <div class="post-info">
+            <p>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                
+                    2020-12-28 11:00
+                
+
+                
+            </p>
+        </div>
+        
+
+        <article>
+            <h2 class="post-title"><a href="https://cybernetic.coffee/blog/building-a-rest-api/">Building A REST API</a></h2>
+
+            
+
+            
+            <div class="post-info">
+
+                <div class="sharing-buttons">
+                    
+
+
+
+
+
+
+
+
+<a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?url=https%3a%2f%2fcybernetic.coffee%2fblog%2fbuilding-a-rest-api%2f" target="_blank" rel="noopener" aria-label="" title="Share on twitter">
+  <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small">
+      <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a class="resp-sharing-button__link" href="https://reddit.com/submit/?url=https%3a%2f%2fcybernetic.coffee%2fblog%2fbuilding-a-rest-api%2f&amp;resubmit=true&amp;title=Building%20A%20REST%20API" target="_blank" rel="noopener" aria-label="" title="Share on reddit">
+  <div class="resp-sharing-button resp-sharing-button--reddit resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a class="resp-sharing-button__link" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fcybernetic.coffee%2fblog%2fbuilding-a-rest-api%2f&amp;t=Building%20A%20REST%20API" target="_blank" rel="noopener" aria-label="" title="Share on hacker news">
+  <div class="resp-sharing-button resp-sharing-button--hackernews resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M0 24V0h24v24H0zM6.951 5.896l4.112 7.708v5.064h1.583v-4.972l4.148-7.799h-1.749l-2.457 4.875c-.372.745-.688 1.434-.688 1.434s-.297-.708-.651-1.434L8.831 5.896h-1.88z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+
+
+
+
+
+
+
+                </div>
+            </div>
+            
+
+            <hr />
+
+            
+
+            
+
+            <div class="post-content">
+                <h2 id="the-power-of-rest-apis">The Power Of REST APIs</h2>
+<p>REST APIs are a way to conveniently abstract away application logic and reduce the load on front-end
+processing. This is achieved by engineering the API to return data in such a way that we can simply
+render it straight out onto the page without sorting or intensive manipulation. In this way we can
+achieve faster load times for web pages, and at the same time reduce the amount of JavaScript running
+in users browsers.</p>
+<p>REST APIs have many other benefits too, two feature of REST APIs that I frequently exploit is their
+ability to remove the need for secret management on the front-end, and their ability to add dynamic
+behaviour to static webapps (like this one).</p>
+<p>You may have seen on the activity page of this site that my recent GitHub activity is rendered as a simple timeline.
+This fetching from the GitHub REST API is done in your browser via a small JS function. This works fine for the Git
+API because large portions of it are exposed unauthenticated meaning there is no need to worry about keys leaking from
+the front-end.</p>
+<p>The same is not true for the Twitter feed, also present on the activity feed page. Even tho I only wish
+to pull publicly available data from Twitter an API key is still required. Here a tactic I exploit is
+API chaining, my API which feeds the Twitter activity page acts as a wrapper for the Twitter REST API.
+Keeping my twitter access keys secret and exposing only data which is required for site functionality.</p>
+<p>From here it should be apparent that the functionality that a REST API can provide is diverse and relatively
+boundless. Let&rsquo;s explore how we can build one for your projects.</p>
+<h2 id="getting-started">Getting Started</h2>
+<p>For this article we will be exploring the creation of a REST API using:</p>
+<ul>
+<li>Node.js</li>
+<li>Express.js</li>
+<li>MongoDB</li>
+</ul>
+<p>three of the components which make up part of the exceptionally popular MEAN stack. However, this is but
+one approach to building a REST API. Alternatives include combinations of the following:</p>
+<ul>
+<li>Flask</li>
+<li>Django</li>
+<li>Postgres SQL</li>
+<li>MySQL</li>
+</ul>
+<p>However, there are many other stacks too.</p>
+<h3 id="dependencies">Dependencies</h3>
+<p>There are also a number of libraries present too, which I will explain briefly:</p>
+<ul>
+<li>Mongoose
+<ul>
+<li>Wrapper for Mongo DB (our database) which provides us with neat functions for many common tasks like searching
+for specific records</li>
+</ul>
+</li>
+<li>CORS
+<ul>
+<li>Cross-Origin resource sharing is a security oriented feature which allows us to define where requests should come
+from, and which we should respond to/handle. For example often only our front-end website should be able to send
+requests to the API.</li>
+</ul>
+</li>
+<li>Bcryptjs
+<ul>
+<li>Allows us to generate bcrypt hashes for JWT (JSON Web Token) management, our authentication system.</li>
+</ul>
+</li>
+<li>Jsonwebtoken
+<ul>
+<li>Used to generate authentication tokens for the API.</li>
+</ul>
+</li>
+<li>dotenv
+<ul>
+<li>Used for secrets management.</li>
+</ul>
+</li>
+<li>@hapi/joi
+<ul>
+<li>Schema description language and data validator for JavaScript.</li>
+</ul>
+</li>
+</ul>
+<h3 id="clone-the-template">Clone the template</h3>
+<p>To speed up the process and reduce the boilerplate involved in setting up express, node and the other required
+dependencies I have created a template called <a href="https://github.com/Angus-C-git/RESTPLATE">RESTPLATE</a>. To get started
+clone the repo:</p>
+<p><code>git clone https://github.com/Angus-C-git/RESTPLATE.git &amp;&amp; cd RESTPLATE</code></p>
+<p>then install the dependencies with,</p>
+<p><code>npm install</code>.</p>
+<h2 id="using-the-template">Using The Template</h2>
+<p>The template has the following structure, common to many APIS:</p>
+<pre tabindex="0"><code>RESTPLATE/
+    /models
+        * Post
+        * User
+    /routes
+        * auth
+        * posts
+        * validateJWT
+    * app.js
+    * validation.js
+    * package.json
+    * .env
+</code></pre><p>the template is populated with a number of example files including:</p>
+<ul>
+<li><code>models/Post.js</code></li>
+<li><code>models/User.js</code></li>
+<li><code>routes/posts.js</code></li>
+<li><code>routes/auth.js</code></li>
+<li><code>routes/validateJWT</code></li>
+<li><code>validation.js</code></li>
+</ul>
+<p>and several core files:</p>
+<ul>
+<li><code>app.js</code></li>
+<li><code>package.json</code></li>
+</ul>
+<h3 id="models">Models</h3>
+<p>Files under the <code>models</code> directory define database objects (which can be thought of as traditional database tables).
+This definition includes the fields found in the database schema, and their properties which typically includes:</p>
+<ul>
+<li>The type of the data; String, Number, Array &hellip;</li>
+<li>If the field is required</li>
+<li>The minimum and maximum length of the data in the field</li>
+</ul>
+<p>The Post model from the template:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">mongoose</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;mongoose&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// DB Post schema
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">postSchema</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">mongoose</span>.<span style="color:#a6e22e">Schema</span>({
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">author</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> String,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">required</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">min</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">6</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">max</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">25</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">message</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> String,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">required</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">date</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">type</span><span style="color:#f92672">:</span> Date,
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">default</span><span style="color:#f92672">:</span> Date.<span style="color:#a6e22e">now</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">mongoose</span>.<span style="color:#a6e22e">model</span>(<span style="color:#e6db74">&#39;Post&#39;</span>, <span style="color:#a6e22e">postSchema</span>);
+</span></span></code></pre></div><h3 id="routes">Routes</h3>
+<p>Files under the <code>routes</code> directory correlate to endpoints that can be &lsquo;hit&rsquo; (interacted with) by clients. Interactions
+for a REST API are the HTTP methods:</p>
+<ul>
+<li><code>GET</code>
+<ul>
+<li>Fetch a resource</li>
+</ul>
+</li>
+<li><code>POST</code>
+<ul>
+<li>Send a resource</li>
+</ul>
+</li>
+<li><code>PUT</code>
+<ul>
+<li>Update a resource</li>
+</ul>
+</li>
+<li><code>DELETE</code>
+<ul>
+<li>Remove a resource</li>
+</ul>
+</li>
+</ul>
+<p>the included routes in the template only demonstrate usage of <code>GET</code> and <code>POST</code> but the other methods are fairly
+self-explanatory.</p>
+<p>Lets take a look at the <code>posts</code> route.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">router</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;express&#39;</span>).<span style="color:#a6e22e">Router</span>();
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">verify</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;./validateJWT&#39;</span>);  <span style="color:#75715e">// Authenticated route
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">Post</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;../models/Post&#39;</span>);   <span style="color:#75715e">// Post model
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Fetch all shared posts ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * */</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">router</span>.<span style="color:#a6e22e">get</span>(<span style="color:#e6db74">&#39;/&#39;</span>, <span style="color:#a6e22e">verify</span>, <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">res</span>) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">posts</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">Post</span>.<span style="color:#a6e22e">find</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">status</span>(<span style="color:#ae81ff">200</span>).<span style="color:#a6e22e">json</span>(<span style="color:#a6e22e">posts</span>);
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">catch</span> (<span style="color:#a6e22e">err</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">status</span>(<span style="color:#ae81ff">503</span>).<span style="color:#a6e22e">json</span>({<span style="color:#a6e22e">error</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">err</span>});
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Share a post ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * */</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">router</span>.<span style="color:#a6e22e">post</span>(<span style="color:#e6db74">&#39;/&#39;</span>, <span style="color:#a6e22e">verify</span>, <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">res</span>) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">post</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Post</span>({
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">author</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">body</span>.<span style="color:#a6e22e">author</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">postContents</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">body</span>.<span style="color:#a6e22e">postContents</span>
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">savedPost</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">post</span>.<span style="color:#a6e22e">save</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">status</span>(<span style="color:#ae81ff">200</span>).<span style="color:#a6e22e">json</span>(<span style="color:#a6e22e">savedPost</span>);
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">catch</span> (<span style="color:#a6e22e">err</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">status</span>(<span style="color:#ae81ff">503</span>).<span style="color:#a6e22e">json</span>({<span style="color:#a6e22e">error</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">err</span>});
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">router</span>;
+</span></span></code></pre></div><p>As discussed above a route will define HTTP methods that the endpoint can handle. This is typically inferred from the
+name of the endpoint. We would expect on your average website which has a page called posts that we would be able
+to <strong>share</strong> a post and <strong>view</strong> other posts. These terms map to the HTTP methods <code>GET</code> and <code>POST</code> on the backend. In
+many cases one would also expect to be able to <strong>remove</strong> (<code>DELETE</code>) a post, however we will not discuss this here.</p>
+<h4 id="get">GET</h4>
+<p>The <code>router.get ...</code> line in the code means that the route (in this case <code>/api/posts, discussed later)</code> accepts <code>GET</code> requests from a client. The route handler then queries the mongo database, with
+<code>Post.find()</code>, to retrieve all the posts stored there.</p>
+<p>The API then returns the found posts as a JSON object with,</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">status</span>(<span style="color:#ae81ff">200</span>).<span style="color:#a6e22e">json</span>(<span style="color:#a6e22e">posts</span>);
+</span></span></code></pre></div><p>where status code 200 indicates a request ok.</p>
+<h4 id="post">POST</h4>
+<p>The <code>router.post...</code> line in the code means that <code>POST</code> requests made to this endpoint will be handled by this function.
+When the <code>POST</code> route is hit the function looks to create a new <code>Post</code> database object. Normally we would validate the
+<code>POST</code> request body sent to the route to avoid processing a malformed request, I.E one where a required field was left out.
+This process can be observed in the provided <code>auth</code> route,</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> {<span style="color:#a6e22e">error</span>} <span style="color:#f92672">=</span> <span style="color:#a6e22e">registerSchema</span>.<span style="color:#a6e22e">validate</span>(<span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">body</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">error</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">error</span>.<span style="color:#a6e22e">details</span>[<span style="color:#ae81ff">0</span>].<span style="color:#a6e22e">message</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">status</span>(<span style="color:#ae81ff">400</span>).<span style="color:#a6e22e">send</span>(<span style="color:#a6e22e">err</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>where an error will be thrown if the provided schema does not match the format of the defined register schema.</p>
+<h3 id="authenticated-routes">Authenticated Routes</h3>
+<p>In a lot of cases you will not want to allow anyone on the internet access to your routes, for example you can&rsquo;t view posts
+on instagram without creating an account. To provide this protection we implement authenticated routes, authenticated
+routes act as a way to ensure that only authenticated (registered) users can interact with a given endpoint.</p>
+<p>In the template this manifests as the <code>verify</code> parameter in the route header,</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">router</span>.<span style="color:#a6e22e">get</span>(<span style="color:#e6db74">&#39;/&#39;</span>, <span style="color:#a6e22e">verify</span>, <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">res</span>) =&gt; { ...}
+</span></span></code></pre></div><p>which will drop requests which do not include a valid authentication header in the request.</p>
+<p>The verify function, exported from the <code>validateJWT</code> route, looks like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">jwt</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;jsonwebtoken&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Validate Auth Tokens
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">module</span>.<span style="color:#a6e22e">exports</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">res</span>, <span style="color:#a6e22e">next</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">token</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">header</span>(<span style="color:#e6db74">&#39;auth-token&#39;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">token</span>) <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">status</span>(<span style="color:#ae81ff">401</span>).<span style="color:#a6e22e">send</span>(<span style="color:#e6db74">&#39;Access Denied&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// JWT middleware
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">user</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">jwt</span>.<span style="color:#a6e22e">verify</span>(<span style="color:#a6e22e">token</span>, <span style="color:#a6e22e">process</span>.<span style="color:#a6e22e">env</span>.<span style="color:#a6e22e">TOKEN_SECRET</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">next</span>();
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">catch</span> (<span style="color:#a6e22e">err</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">status</span>(<span style="color:#ae81ff">403</span>).<span style="color:#a6e22e">send</span>(<span style="color:#e6db74">&#39;Invalid Token&#39;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The first thing to note is that we require the <code>jsonwebtoken</code> library in order to generate authentication tokens. Next
+we perform a precursor check to ensure that an authentication token is present before we continue creating an early
+exit and reducing processing time of clearly invalid requests.</p>
+<p>Next we enter the crux of the function:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">user</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">jwt</span>.<span style="color:#a6e22e">verify</span>(<span style="color:#a6e22e">token</span>, <span style="color:#a6e22e">process</span>.<span style="color:#a6e22e">env</span>.<span style="color:#a6e22e">TOKEN_SECRET</span>);
+</span></span></code></pre></div><p>where we pass the token provided in the request header to the <code>verify()</code> function which checks that the provided token
+is signed correctly in accordance with the signing secret, stored as an environment variable (in our .env file). If the
+token is valid the <code>next()</code> call continues the execution from whence <code>verify</code> was called. Otherwise, a 403 is returned,
+and an error message sent.</p>
+<h3 id="the-api-core-appjs">The API Core: <code>app.js</code></h3>
+<p>To bind all of this functionality together we require a runner of sorts which maps inbound requests to the server to
+the appropriate routes and implements server configurations. This is where the <code>app.js</code> file comes into play.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * &lt;-------------------------&gt; IMPORTS &lt;-------------------------&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * */</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">express</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;express&#39;</span>);     <span style="color:#75715e">// Express JS
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">dotenv</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;dotenv&#39;</span>);       <span style="color:#75715e">// Environment variables
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">mongoose</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;mongoose&#39;</span>);   <span style="color:#75715e">// Mongo DB Wrapper
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">cors</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;cors&#39;</span>);           <span style="color:#75715e">// Cross Origin Security Headers
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">app</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">express</span>();
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">dotenv</span>.<span style="color:#a6e22e">config</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// DB Connection init
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">mongoose</span>.<span style="color:#a6e22e">connect</span>(<span style="color:#a6e22e">process</span>.<span style="color:#a6e22e">env</span>.<span style="color:#a6e22e">DB_CONNECT</span>, { <span style="color:#a6e22e">useNewUrlParser</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span> }, () =&gt; {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Connected to db...&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Middlewares
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">use</span>(<span style="color:#a6e22e">express</span>.<span style="color:#a6e22e">json</span>());
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">use</span>(<span style="color:#a6e22e">cors</span>());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * &lt;---------------------------&gt; ROUTES &lt;---------------------------&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * */</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Basic JWT auth routes
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">authRoute</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;./routes/auth&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Example posts route
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">posts</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;./routes/posts&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * &lt;---------------------&gt; ROUTE MIDDLEWARES &lt;----------------------&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * */</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">use</span>(<span style="color:#e6db74">&#39;/api/user&#39;</span>, <span style="color:#a6e22e">authRoute</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">use</span>(<span style="color:#e6db74">&#39;/api/posts&#39;</span>, <span style="color:#a6e22e">posts</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// API Base Endpoint
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">get</span>(<span style="color:#e6db74">&#34;/&#34;</span>, (<span style="color:#a6e22e">Req</span>, <span style="color:#a6e22e">res</span>) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">send</span>(<span style="color:#e6db74">&#34;Running ..&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * &lt;-----------------------&gt; DEVOPS RUNNER &lt;------------------------&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * */</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">port</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">process</span>.<span style="color:#a6e22e">env</span>.<span style="color:#a6e22e">PORT</span>;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// dev mode switch
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">port</span> <span style="color:#f92672">=</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">port</span> <span style="color:#f92672">||</span> <span style="color:#a6e22e">port</span> <span style="color:#f92672">===</span> <span style="color:#e6db74">&#34;&#34;</span>) <span style="color:#f92672">?</span> <span style="color:#ae81ff">8000</span> <span style="color:#f92672">:</span> <span style="color:#a6e22e">port</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// API Listener init
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">listen</span>(<span style="color:#a6e22e">port</span>);
+</span></span></code></pre></div><p>First we see a number of our dependencies being imported with require and some configuration settings being bound with</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">app</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">express</span>();
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">dotenv</span>.<span style="color:#a6e22e">config</span>();
+</span></span></code></pre></div><p>and</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">use</span>(<span style="color:#a6e22e">express</span>.<span style="color:#a6e22e">json</span>());
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">use</span>(<span style="color:#a6e22e">cors</span>());
+</span></span></code></pre></div><p>of note here is that <code>cors</code> is currently set to accept all origins, this should be adjusted to something like</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">corsOptions</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">origin</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;http://my-site.com&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">optionsSuccessStatus</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">200</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>and then used on routes like this</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">get</span>(<span style="color:#e6db74">&#39;/posts&#39;</span>, <span style="color:#a6e22e">cors</span>(<span style="color:#a6e22e">corsOptions</span>), <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">res</span>, <span style="color:#a6e22e">next</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">json</span>({<span style="color:#a6e22e">msg</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;Only requests from http://my-site.com will reach here&#39;</span>});
+</span></span><span style="display:flex;"><span>})
+</span></span></code></pre></div><p>in order to prevent access to the API from origins other than the frontend webapp.</p>
+<p>The next important function here is,</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#75715e">// DB Connection init
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">mongoose</span>.<span style="color:#a6e22e">connect</span>(<span style="color:#a6e22e">process</span>.<span style="color:#a6e22e">env</span>.<span style="color:#a6e22e">DB_CONNECT</span>, { <span style="color:#a6e22e">useNewUrlParser</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span> }, () =&gt; {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Connected to db...&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>which establishes a connection to the Mongo database by passing the database connection token stored in the <code>.env</code> file.
+This will allow the API to interact with the database in later functions.</p>
+<p>The following two blocks establish how requests to specific endpoints should be mapped internally. Firstly we establish
+the functions/files that should handle calls to a particular endpoint and store them in associated variables.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#75715e">// route file to handel authentication
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">authRoute</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;./routes/auth&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// route file to handel post logic
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">posts</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;./routes/posts&#39;</span>);    
+</span></span></code></pre></div><p>Then we point specific external endpoints to these routes to be handled.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">use</span>(<span style="color:#e6db74">&#39;/api/user&#39;</span>, <span style="color:#a6e22e">authRoute</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">use</span>(<span style="color:#e6db74">&#39;/api/posts&#39;</span>, <span style="color:#a6e22e">posts</span>);
+</span></span></code></pre></div><p>Finally, we use a neat ternary operation to determine how the server should listen based on if the server is being run
+locally in development mode or in production.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#75715e">// presence of enviroment variable PORT indicates prod mode
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">port</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">process</span>.<span style="color:#a6e22e">env</span>.<span style="color:#a6e22e">PORT</span>; 
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// listen on port 8000 in dev mode
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">port</span> <span style="color:#f92672">=</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">port</span> <span style="color:#f92672">||</span> <span style="color:#a6e22e">port</span> <span style="color:#f92672">===</span> <span style="color:#e6db74">&#34;&#34;</span>) <span style="color:#f92672">?</span> <span style="color:#ae81ff">8000</span> <span style="color:#f92672">:</span> <span style="color:#a6e22e">port</span>; 
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// API Listener init
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">listen</span>(<span style="color:#a6e22e">port</span>);
+</span></span></code></pre></div><h2 id="wrangling-the-api-to-your-needs">Wrangling the API to Your Needs</h2>
+<p>Adapting the API to suite your needs will mostly involve writing additional routes and creating additional models.
+Doing so is a relatively straightforward process of wrangling existing route and model code to your needs and adding
+support for additional HTTP methods. For routes that alter data the database will also need to be updated in order
+for changes to persist. Mongoose should make this a relatively simple process as well since it is well documented, and
+most IDE autocomplete libraries should provide enough details to implement common methods.</p>
+<p>For more information the following resources should be enough to implement most functionality:</p>
+<ul>
+<li><a href="https://mongoosejs.com/docs/index.html">Mongoose Documentation</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods">HTTP Methods</a></li>
+<li><a href="https://www.npmjs.com/package/cors">CORS</a></li>
+<li><a href="http://expressjs.com/en/starter/basic-routing.html">Express Basic Routing</a></li>
+<li><a href="https://jwt.io/">JWT Disassembly</a></li>
+</ul>
+<h2 id="hosting-the-rest-api">Hosting The REST API</h2>
+<h3 id="database">Database</h3>
+<p>For database hosting we will be using MongoDB&rsquo;s own solution: <a href="https://www.mongodb.com/cloud/atlas">Atlas</a>. To begin with
+create an account, and a new cluster.</p>
+<p>After spinning up a new cluster you will need to set up a user to authenticate to the DBMs and connect via your Node.js
+server. These credentials will then be stored in your <code>.env</code> file and used to establish a connection to the database
+after your node server starts up.</p>
+<p>To start the setup process:</p>
+<p><code>Your-Cluster =&gt; Connect =&gt; Create A User</code></p>
+<h3 id="api-server">API Server</h3>
+<p>There are a number of different options for hosting code for free these days some of my go to&rsquo;s are:</p>
+<ul>
+<li>Firebase</li>
+<li>Heroku</li>
+<li>Surge</li>
+</ul>
+<p>but for this tutorial we will stick with Heroku for the hosting of the Node.js server. To begin with authenticate with
+heroku,</p>
+<p><code>heroku login</code></p>
+<p>then create a project on heroku with,</p>
+<p><code>heroku create your-api-name</code>.</p>
+<p>Then stage and commit your changes with git.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git add .
+</span></span><span style="display:flex;"><span>git commit -m <span style="color:#e6db74">&#34;commit_message&#34;</span>
+</span></span></code></pre></div><p>Finally, push your changes to heroku.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git push heroku master<span style="color:#e6db74">`</span>
+</span></span></code></pre></div><p><em>Note</em>: If you get an error you may need to add your projects git remote as a remote origin.</p>
+<h2 id="testing-the-api-with-postman">Testing the API With Postman</h2>
+<p>The final step is to test your API routes to ensure they behave as expected in all situations. <a href="https://www.postman.com/">Postman</a> allows us to
+achieve this coverage by providing a clean UI, and a bunch of useful functionality to test our routes. Start by downloading
+the application and setting up a new project.</p>
+<h3 id="testing-a-route">Testing A Route</h3>
+<p>To demonstrate we will use postman to test the <code>/api/user/register</code> route from the template. I&rsquo;ll be using the local
+development server to demonstrate this, but the only difference is your url will replace <code>http://localhost:8000</code> with
+<code>https://your-sites-domain</code>.</p>
+<p>First setup a new request like the one bellow:</p>
+
+
+    <br/>
+    <img src="https://cybernetic.coffee/images/blog/register-test-post.png" class="">
+
+
+
+    <p style="text-align: center">
+        <b>[Postman Route Setup]</b>
+    </p>
+
+<p>Then add a JSON body with the required fields to register a user under the &lsquo;Body&rsquo; tab.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;usrName&#34;</span>: <span style="color:#e6db74">&#34;devTest1&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;email&#34;</span>: <span style="color:#e6db74">&#34;devtest1@email.com&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;password&#34;</span>: <span style="color:#e6db74">&#34;stronkPasswd&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>
+
+    <br/>
+    <img src="https://cybernetic.coffee/images/blog/register-test-res.png" class="">
+
+
+
+    <p style="text-align: center">
+        <b>[Testing Valid Register]</b>
+    </p>
+
+<p>We see that if we send the post request to the running backend server we are returned a JWT for the newly registered
+user. Here we should also test that the API responds appropriately to invalid and malformed requests such as a
+register request which is missing one of the required fields.</p>
+
+
+    <br/>
+    <img src="https://cybernetic.coffee/images/blog/register-test-missing.png" class="">
+
+
+
+    <p style="text-align: center">
+        <b>[Testing Missing Fields]</b>
+    </p>
+
+<h3 id="testing-authenticated-routes">Testing Authenticated Routes</h3>
+<p>To test a route which requires authentication we simply need to pass a valid JWT as a header with the required header
+name, in our case &lsquo;auth-token&rsquo;.</p>
+
+
+    <br/>
+    <img src="https://cybernetic.coffee/images/blog/test-auth-route.png" class="">
+
+
+
+    <p style="text-align: center">
+        <b>[Testing Protected Routes]</b>
+    </p>
+
+<p>~&gt; If you have any comments or questions feel free to leave them on this <a href="https://twitter.com/ghostinthefiber/status/1344281710372954115">thread</a>.</p>
+
+            </div>
+        </article>
+
+        <hr />
+
+        
+        <div class="post-info">
+            
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://cybernetic.coffee/tags/rest-api/">REST API</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/backend/">Backend</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/node.js/">Node.js</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/express/">express</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/web/">web</a></span>
+        
+    </p>
+
+
+
+            <p>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                2394 Words
+            </p>
+  		</div>
+        
+
+
+        
+            
+                <div class="pagination">
+                    <div class="pagination__title">
+                        <span class="pagination__title-h"></span>
+
+                    </div>
+
+                    <div class="pagination__buttons">
+                        
+                        <span class="button previous">
+                      <a href="https://cybernetic.coffee/blog/web-app-testing-methodologies/">
+                        <span class="button__icon">←</span>
+                        <span class="button__text">Web Application Testing Methodologies</span>
+                      </a>
+                    </span>
+                        
+
+                        
+                            <span class="button next">
+                              <a href="https://cybernetic.coffee/blog/hello-kernel/">
+                                <span class="button__text">Hello Kernel</span>
+                                <span class="button__icon">→</span>
+                              </a>
+                            </span>
+                        
+                    </div>
+                </div>
+            
+        
+
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Hacked together with &#10084; by <a href="https://github.com/Angus-C-git">Angus C</a> <i class='fas fa-ghost'></i> </span>
+          </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.755e4cf350f154c0fee20aa6a1b7fa2b35fcbeaaf4cc62ef45531b19ae1fd43e5ed19c3c3bbf522045953eaef03e1cb96a64a636782486a3aa0b0563d0ef5406.js" integrity="sha512-dV5M81DxVMD&#43;4gqmobf6KzX8vqr0zGLvRVMbGa4f1D5e0Zw8O79SIEWVPq7wPhy5amSmNngkhqOqCwVj0O9UBg=="></script>
+
+
+
+    </body>
+</html>

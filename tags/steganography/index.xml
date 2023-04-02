@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Steganography on Cybernetic Coffee</title>
+    <link>https://cybernetic.coffee/tags/steganography/</link>
+    <description>Recent content in Steganography on Cybernetic Coffee</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 22 Oct 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://cybernetic.coffee/tags/steganography/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Atlassian{CTF Writeup}</title>
+      <link>https://cybernetic.coffee/blog/atlassian-ctf/</link>
+      <pubDate>Fri, 22 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/blog/atlassian-ctf/</guid>
+      <description>This was a really fun CTF with plenty of variety in terms of challenges. Lots of fun doable ones with plenty of learning opportunities as well as some more challenging ones. I managed to pull off a second place finish with the help of the smaller number of players (40 odd) and the generosity of the pwn challenge points.
+Idiot warning ⚠️
+Please note that everything I write here and in these blogs is what I think I know to be true.</description>
+    </item>
+    
+    <item>
+      <title>TMU{CTF Writeup}</title>
+      <link>https://cybernetic.coffee/blog/tmu-ctf/</link>
+      <pubDate>Sat, 11 Sep 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/blog/tmu-ctf/</guid>
+      <description>This was a well rounded CTF in my opinion with good challenges for beginners (like me) that were not too trivial. Instead of the standard robots.txt or source code inspection they had challenges where one could easily find clues to get started researching the challenges. That is even if the solution wasn&amp;rsquo;t immediately clear you had at least some direction for a google search and a shot at solving the challenge during the CTF runtime.</description>
+    </item>
+    
+  </channel>
+</rss>

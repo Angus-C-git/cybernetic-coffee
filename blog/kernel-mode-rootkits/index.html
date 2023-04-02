@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="">
+<meta name="description" content="What is a kernel mode rootkit? How is a kernel mode rootkit developed?
+This week looks at the second alternative &amp;rsquo;type&amp;rsquo; of rootkit that could be constructed over the course of the project. This post also provides reasoning for which combination of decision points have been chosen and details a development plan going forward.
+Kernel Mode Rootkits Unlike ‘user mode’ rootkits, which were discussed last week, kernel mode rootkits execute directly at kernel level privilege." />
+<meta name="keywords" content=", Exploit Development, hacking, redteaming, rootkits, security research" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="#252627" />
+<link rel="canonical" href="https://cybernetic.coffee/blog/kernel-mode-rootkits/" />
+
+
+    <title>
+        
+            Kernel Mode Rootkits :: Cybernetic Coffee 
+        
+    </title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.64cc374c419669695f00d5c55727fea41e0fdc86b9beb1b4d1d1bcf24284f422.css">
+
+
+
+
+<link rel="shortcut icon" href="https://cybernetic.coffee/images/favicon.ico" />
+
+
+<meta itemprop="name" content="Kernel Mode Rootkits">
+<meta itemprop="description" content="What is a kernel mode rootkit? How is a kernel mode rootkit developed?
+This week looks at the second alternative &rsquo;type&rsquo; of rootkit that could be constructed over the course of the project. This post also provides reasoning for which combination of decision points have been chosen and details a development plan going forward.
+Kernel Mode Rootkits Unlike ‘user mode’ rootkits, which were discussed last week, kernel mode rootkits execute directly at kernel level privilege."><meta itemprop="datePublished" content="2020-03-14T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-03-14T00:00:00+00:00" />
+<meta itemprop="wordCount" content="783">
+<meta itemprop="keywords" content="Exploit Development,hacking,redteaming,rootkits,security research," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Kernel Mode Rootkits"/>
+<meta name="twitter:description" content="What is a kernel mode rootkit? How is a kernel mode rootkit developed?
+This week looks at the second alternative &rsquo;type&rsquo; of rootkit that could be constructed over the course of the project. This post also provides reasoning for which combination of decision points have been chosen and details a development plan going forward.
+Kernel Mode Rootkits Unlike ‘user mode’ rootkits, which were discussed last week, kernel mode rootkits execute directly at kernel level privilege."/>
+
+
+
+
+
+    <meta property="article:section" content="Hacking" />
+
+    <meta property="article:section" content="Rootkits" />
+
+    <meta property="article:section" content="Post Exploitation" />
+
+    <meta property="article:section" content="security research" />
+
+
+
+    <meta property="article:published_time" content="2020-03-14 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <script src="https://kit.fontawesome.com/5eb4842dc5.js" crossorigin="anonymous"></script>
+
+<a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__text">Cybernetic <i class="fas fa-mug-hot"> </i> </span>
+            <span class="logo__mark"><i class="fas fa-terminal"></i></span>
+            <span class="logo__cursor" style=
+                  "
+                   background-color:#00ba68;
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://cybernetic.coffee/feed/">Activity Feed</a></li><li><a href="https://cybernetic.coffee/projects/">Projects</a></li><li><a href="https://cybernetic.coffee/blog">Blog</a></li><li><a href="https://cybernetic.coffee/ctf">CTF</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+        
+        <div class="post-info">
+            <p>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                
+                    2020-03-14 11:00
+                
+
+                
+            </p>
+        </div>
+        
+
+        <article>
+            <h2 class="post-title"><a href="https://cybernetic.coffee/blog/kernel-mode-rootkits/">Kernel Mode Rootkits</a></h2>
+
+            
+
+            
+            <div class="post-info">
+
+                <div class="sharing-buttons">
+                    
+
+
+
+
+
+
+
+
+<a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?url=https%3a%2f%2fcybernetic.coffee%2fblog%2fkernel-mode-rootkits%2f" target="_blank" rel="noopener" aria-label="" title="Share on twitter">
+  <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small">
+      <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a class="resp-sharing-button__link" href="https://reddit.com/submit/?url=https%3a%2f%2fcybernetic.coffee%2fblog%2fkernel-mode-rootkits%2f&amp;resubmit=true&amp;title=Kernel%20Mode%20Rootkits" target="_blank" rel="noopener" aria-label="" title="Share on reddit">
+  <div class="resp-sharing-button resp-sharing-button--reddit resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a class="resp-sharing-button__link" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fcybernetic.coffee%2fblog%2fkernel-mode-rootkits%2f&amp;t=Kernel%20Mode%20Rootkits" target="_blank" rel="noopener" aria-label="" title="Share on hacker news">
+  <div class="resp-sharing-button resp-sharing-button--hackernews resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M0 24V0h24v24H0zM6.951 5.896l4.112 7.708v5.064h1.583v-4.972l4.148-7.799h-1.749l-2.457 4.875c-.372.745-.688 1.434-.688 1.434s-.297-.708-.651-1.434L8.831 5.896h-1.88z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+
+
+
+
+
+
+
+                </div>
+            </div>
+            
+
+            <hr />
+
+            
+
+            
+
+            <div class="post-content">
+                <p>What is a kernel mode rootkit? How is a kernel mode rootkit developed?</p>
+<p>This week looks at the second alternative &rsquo;type&rsquo; of rootkit that could be constructed over the course of the project. This post also provides reasoning for which combination of decision points have been chosen and details a development plan going forward.</p>
+<h2 id="kernel-mode-rootkits">Kernel Mode Rootkits</h2>
+<p>Unlike ‘user mode’ rootkits, which were discussed last week, kernel mode rootkits execute directly at kernel level privilege. This means they operate at the highest level of privilege on the system, in regard to the previously introduced ‘Security Ring’ model they execute within ring-0:</p>
+<p><img src="https://lh5.googleusercontent.com/GiNmpBC_lAlOUpgP9kErDW4QYbC7y1Z1oJTg0mR9S9ZchqyCZu_uUWd4O7g5n-3P3UcLzv95ZT-GjpsKs7vD3LgA9haq40lhz-Bf7a_EmkuIwo5M_x3CUtjGCDMoWEW4R1dsW72X" alt="CPU ring scheme"></p>
+<p>The ‘advantage’ of deploying a rootkit in this mode is that it is inherently trusted by the operating system, as it is effectively part of the operating system itself. Software that runs within the ring-0 architecture is capable of both ‘direct’ communication with the systems hardware and applications and networking layers running in higher rings. It is therefore easier to maintain persistence on the system and hide the rootkit more effectively as it is already out of the scope of the majority of antivirus and system scans.</p>
+<h2 id="kernel-mode-rootkit-development">Kernel Mode Rootkit Development</h2>
+<p>As kernel mode rootkits execute in kernel space they are particularly low level pieces of software and thus are more difficult to compose than code that executes at higher levels, this is largely because it is not possible (generally) to utilize external libraries. This increases both code length and complexity. In light of this most kernel mode rootkits are developed as ‘drivers’, specifically device drivers, as this is done outside of nefarious reasons and is thus relatively documented and doesn’t require as much knowledge of the operating systems kernel. This is of particular importance to windows operating systems as the kernel source is not public.</p>
+<p>A ‘authentic’ device driver is a program which is typically used to operate or handle a specific type of device which is connected to the system on which it is deployed. It forms a link between hardware and software and is thus classified as a ‘software interface’. As device drivers communicate directly with hardware and must operate differently on different kernels they must be developed with a narrow target scope in mind.</p>
+<p>Another critical feature of kernel mode rootkits is that they can take advantage of ‘Direct kernel object manipulation’ (DKOM). DKOM is specific to Windows operating systems, but has a sister concept in linux kernels which ultimately performs the same actions. DKOM aims to hide the rootkit and any other malicious/nefarious articles installed/added to the host system, from the task manager and event scheduler, and on linux the system call table, by modifying the linked-list (abstract data structure) which catalogs all active threads and processes which are running.</p>
+<h2 id="side-note-on-rootkits">Side Note on Rootkits</h2>
+<p>At this point I have looked ‘extensively’ at two types of rootkits, perhaps giving the false perception that these are the only types of rootkits in existence. There are in fact a number of other rootkit types which are implemented/deployed at even lower levels than kernel and user mode rootkits. Bellow is a summary of these rootkits:</p>
+<p><strong>Bootkits</strong></p>
+<p>Infects OS startup code executing on system reboot, because it executes from the boot sector it can also perform full disk encryption</p>
+<p><strong>Hypervisor level</strong></p>
+<p>Runs in ring-1 on top of the kernel, hosts a VM operating system from which it can intercept calls</p>
+<p><strong>Firmware and hardware</strong></p>
+<p>Execute from hardware firmware like motherboard BIOS, router firmware and expansion cards (network, PCI etc), can survive operating system rewrites and disk replacement</p>
+<h2 id="project-plan">Project Plan</h2>
+<p>Having read rather extensively about both of the options which were considered for the project a conclusion about the approach from here could be appropriately made. From here the focus will shift to developing a kernel mode rootkit for linux (linux kernel). This decision is based on a number of factors outlined below:</p>
+<ul>
+<li>
+<p>Mandatory driver signing for Windows 64 bit architecture</p>
+<ul>
+<li>Involves getting a certificate, which probably isn’t possible due to the nature of the project, in order to execute it in a proof of concept</li>
+<li>A lot of extra effort to find a work around potentially</li>
+</ul>
+</li>
+<li>
+<p>Limited resources for windows rootkits &amp; device drivers</p>
+<ul>
+<li>Without any kind of concrete (up to date) resources to reference during the development the time to develop the rootkit will be dramatically increased, further the main documentation located for developing windows device drivers was produced by microsoft themselves and lacks the details needed to port the concepts their to malicious rootkit methods</li>
+</ul>
+</li>
+<li>
+<p>Availability of Linux resources</p>
+<ul>
+<li>With the linux kernel being open source it is significantly easier to learn about and locate resources for Linux driver development</li>
+<li>There is also up to date kernel mode specific rootkit resources</li>
+</ul>
+</li>
+</ul>
+
+            </div>
+        </article>
+
+        <hr />
+
+        
+        <div class="post-info">
+            
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://cybernetic.coffee/tags/exploit-development/">Exploit Development</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/hacking/">hacking</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/redteaming/">redteaming</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/rootkits/">rootkits</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/security-research/">security research</a></span>
+        
+    </p>
+
+
+
+            <p>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                783 Words
+            </p>
+  		</div>
+        
+
+
+        
+            
+                <div class="pagination">
+                    <div class="pagination__title">
+                        <span class="pagination__title-h"></span>
+
+                    </div>
+
+                    <div class="pagination__buttons">
+                        
+                        <span class="button previous">
+                      <a href="https://cybernetic.coffee/blog/hello-kernel/">
+                        <span class="button__icon">←</span>
+                        <span class="button__text">Hello Kernel</span>
+                      </a>
+                    </span>
+                        
+
+                        
+                            <span class="button next">
+                              <a href="https://cybernetic.coffee/blog/radical-rootkit-research/">
+                                <span class="button__text">Radical Rootkit Research</span>
+                                <span class="button__icon">→</span>
+                              </a>
+                            </span>
+                        
+                    </div>
+                </div>
+            
+        
+
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Hacked together with &#10084; by <a href="https://github.com/Angus-C-git">Angus C</a> <i class='fas fa-ghost'></i> </span>
+          </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.755e4cf350f154c0fee20aa6a1b7fa2b35fcbeaaf4cc62ef45531b19ae1fd43e5ed19c3c3bbf522045953eaef03e1cb96a64a636782486a3aa0b0563d0ef5406.js" integrity="sha512-dV5M81DxVMD&#43;4gqmobf6KzX8vqr0zGLvRVMbGa4f1D5e0Zw8O79SIEWVPq7wPhy5amSmNngkhqOqCwVj0O9UBg=="></script>
+
+
+
+    </body>
+</html>

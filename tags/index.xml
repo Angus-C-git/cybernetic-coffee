@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on Cybernetic Coffee</title>
+    <link>https://cybernetic.coffee/tags/</link>
+    <description>Recent content in Tags on Cybernetic Coffee</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 22 Oct 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://cybernetic.coffee/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Binary Exploitation</title>
+      <link>https://cybernetic.coffee/tags/binary-exploitation/</link>
+      <pubDate>Fri, 22 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/binary-exploitation/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>CTF</title>
+      <link>https://cybernetic.coffee/tags/ctf/</link>
+      <pubDate>Fri, 22 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/ctf/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>hacking</title>
+      <link>https://cybernetic.coffee/tags/hacking/</link>
+      <pubDate>Fri, 22 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/hacking/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Steganography</title>
+      <link>https://cybernetic.coffee/tags/steganography/</link>
+      <pubDate>Fri, 22 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/steganography/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Web Hacking</title>
+      <link>https://cybernetic.coffee/tags/web-hacking/</link>
+      <pubDate>Fri, 22 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/web-hacking/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Exploit Development</title>
+      <link>https://cybernetic.coffee/tags/exploit-development/</link>
+      <pubDate>Thu, 23 Sep 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/exploit-development/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Source Code Auditing</title>
+      <link>https://cybernetic.coffee/tags/source-code-auditing/</link>
+      <pubDate>Thu, 23 Sep 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/source-code-auditing/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Static Analysis</title>
+      <link>https://cybernetic.coffee/tags/static-analysis/</link>
+      <pubDate>Thu, 23 Sep 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/static-analysis/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>pentesting</title>
+      <link>https://cybernetic.coffee/tags/pentesting/</link>
+      <pubDate>Tue, 24 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/pentesting/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>reversing</title>
+      <link>https://cybernetic.coffee/tags/reversing/</link>
+      <pubDate>Sun, 15 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/reversing/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>x86</title>
+      <link>https://cybernetic.coffee/tags/x86/</link>
+      <pubDate>Sun, 15 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/x86/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>pwntools</title>
+      <link>https://cybernetic.coffee/tags/pwntools/</link>
+      <pubDate>Tue, 27 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/pwntools/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Buffer Overflows</title>
+      <link>https://cybernetic.coffee/tags/buffer-overflows/</link>
+      <pubDate>Thu, 01 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/buffer-overflows/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Stack Based Overflows</title>
+      <link>https://cybernetic.coffee/tags/stack-based-overflows/</link>
+      <pubDate>Thu, 01 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/stack-based-overflows/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>web</title>
+      <link>https://cybernetic.coffee/tags/web/</link>
+      <pubDate>Sun, 14 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/web/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Web App Testing</title>
+      <link>https://cybernetic.coffee/tags/web-app-testing/</link>
+      <pubDate>Sun, 14 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/web-app-testing/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Backend</title>
+      <link>https://cybernetic.coffee/tags/backend/</link>
+      <pubDate>Mon, 28 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/backend/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>express</title>
+      <link>https://cybernetic.coffee/tags/express/</link>
+      <pubDate>Mon, 28 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/express/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Node.js</title>
+      <link>https://cybernetic.coffee/tags/node.js/</link>
+      <pubDate>Mon, 28 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/node.js/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>REST API</title>
+      <link>https://cybernetic.coffee/tags/rest-api/</link>
+      <pubDate>Mon, 28 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/rest-api/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>redteaming</title>
+      <link>https://cybernetic.coffee/tags/redteaming/</link>
+      <pubDate>Wed, 18 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/redteaming/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>rootkits</title>
+      <link>https://cybernetic.coffee/tags/rootkits/</link>
+      <pubDate>Wed, 18 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/rootkits/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>security research</title>
+      <link>https://cybernetic.coffee/tags/security-research/</link>
+      <pubDate>Wed, 18 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/tags/security-research/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
