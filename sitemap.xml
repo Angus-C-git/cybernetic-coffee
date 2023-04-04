@@ -32,6 +32,9 @@
     <loc>https://cybernetic.coffee/blog/building-a-rest-api/</loc>
     <lastmod>2020-12-28T00:00:00+00:00</lastmod>
   </url><url>
+    <loc>https://cybernetic.coffee/blog/the-art-of-hooking/</loc>
+    <lastmod>2020-03-28T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://cybernetic.coffee/blog/hello-kernel/</loc>
     <lastmod>2020-03-18T00:00:00+00:00</lastmod>
   </url><url>
@@ -166,22 +169,22 @@
     <lastmod>2020-12-28T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/categories/post-exploitation/</loc>
-    <lastmod>2020-03-18T00:00:00+00:00</lastmod>
+    <lastmod>2020-03-28T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/tags/redteaming/</loc>
-    <lastmod>2020-03-18T00:00:00+00:00</lastmod>
+    <lastmod>2020-03-28T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/tags/rootkits/</loc>
-    <lastmod>2020-03-18T00:00:00+00:00</lastmod>
+    <lastmod>2020-03-28T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/categories/rootkits/</loc>
-    <lastmod>2020-03-18T00:00:00+00:00</lastmod>
+    <lastmod>2020-03-28T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/tags/security-research/</loc>
-    <lastmod>2020-03-18T00:00:00+00:00</lastmod>
+    <lastmod>2020-03-28T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/categories/security-research/</loc>
-    <lastmod>2020-03-18T00:00:00+00:00</lastmod>
+    <lastmod>2020-03-28T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://cybernetic.coffee/all-projects/</loc>
   </url>

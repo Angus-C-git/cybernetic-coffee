@@ -108,6 +108,18 @@ Arch: i386-32-little RELRO: Partial RELRO Stack: No canary found NX: NX enabled 
     </item>
     
     <item>
+      <title>The Art of Syscall Hooking</title>
+      <link>https://cybernetic.coffee/blog/the-art-of-hooking/</link>
+      <pubDate>Sat, 28 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://cybernetic.coffee/blog/the-art-of-hooking/</guid>
+      <description>How can we have our rootkit avoid detection from prying eyes? What kinds of things do we want to hide from?
+This time we get into the meat and bones of our rootkit and look at hooking system calls (sys calls) to help us remain hidden from the wandering eyes of system administrators.
+Syscall Hooking Note there are other types of hooking, I.E inline hooking (most windows rootkits)
+Hooking is not a new concept and forms a part of normal operation in the Linux kernel.</description>
+    </item>
+    
+    <item>
       <title>Hello Kernel</title>
       <link>https://cybernetic.coffee/blog/hello-kernel/</link>
       <pubDate>Wed, 18 Mar 2020 00:00:00 +0000</pubDate>

